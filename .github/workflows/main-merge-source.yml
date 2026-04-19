@@ -1,0 +1,36 @@
+# Companion workflow for branch rulesets on `main`. Merge rights are enforced in GitHub settings.
+name: main-merge-source
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  merge_group:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  main-merge-source:
+    name: main-merge-source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve head ref
+        id: head
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "merge_group" ]]; then
+            echo "ref=${{ github.event.merge_group.head_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=${{ github.head_ref }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Record merge source (any branch allowed)
+        env:
+          HEAD_REF: ${{ steps.head.outputs.ref }}
+        run: |
+          set -euo pipefail
+          echo "Head ref: ${HEAD_REF:-<merge-group>}"
+          echo "OK: PR source check passed (no dedicated staging branch gate)."
+          echo "Merge access: configure in GitHub repo settings (see agentic-swe/agentic-swe docs/branch-workflow.md)."
