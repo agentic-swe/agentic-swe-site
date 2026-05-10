@@ -622,6 +622,52 @@ section#pipeline.pipeline-section {
   user-select: none;
 }
 
+.pipeline-enhancements {
+  max-width: 720px;
+  margin: 2.5rem auto 0;
+  text-align: left;
+}
+
+.pipeline-enhancements h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+.pipeline-enhancements ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pipeline-enhancements li {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text);
+  padding-left: 1.1em;
+  position: relative;
+}
+
+.pipeline-enhancements li::before {
+  content: '\25B8';
+  position: absolute;
+  left: 0;
+  color: var(--cyan);
+}
+
+.pipeline-enhancements li strong {
+  color: var(--text-heading);
+}
+
+.pipeline-enhancements code {
+  font-size: 0.85em;
+}
+
 .pipeline-note {
   font-size: 0.85rem;
   color: var(--text);
@@ -693,6 +739,102 @@ section#pipeline.pipeline-section {
 .feature-card p {
   font-size: 0.9rem;
   line-height: 1.65;
+}
+
+.feature-card--interactive {
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  width: 100%;
+  position: relative;
+}
+
+.feature-card-hint {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--cyan);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.feature-card--interactive:hover .feature-card-hint,
+.feature-card--interactive:focus-visible .feature-card-hint {
+  opacity: 0.8;
+}
+
+.feature-card--interactive:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* ── Capability modal body ── */
+.capability-modal-panel {
+  max-width: 560px;
+}
+
+.capability-modal-body h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.capability-modal-summary {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.capability-modal-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.capability-modal-benefits li {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text);
+  padding-left: 1.1em;
+  position: relative;
+}
+
+.capability-modal-benefits li::before {
+  content: '\25B8';
+  position: absolute;
+  left: 0;
+  color: var(--cyan);
+}
+
+.capability-modal-doc-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--cyan);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.capability-modal-doc-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.install-modal-title .feature-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
 }
 
 /* ── Subagents ── */

@@ -98,7 +98,7 @@ export function Hero() {
           Hypervisor policy · Pure markdown · No cloud runtime
         </motion.div>
         <motion.h1 variants={item} className="hero-headline">
-          <span className="hero-headline-primary">Autonomous SWE</span>
+          <span className="hero-headline-primary">Autonomous</span>
           <br />
           <span className="gradient-text hero-headline-tagline">
           policy-driven autonomous engineering

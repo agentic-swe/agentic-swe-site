@@ -40,6 +40,10 @@ const COMMANDS: [string, string][] = [
   ['/check budget', 'Before phases — budgets intact'],
   ['/check transition', 'Before state changes — edge allowed for track'],
   ['/check artifacts', 'Before transition — required files present'],
+  ['/doubt <claim>', 'Doubt-Driven Verification cycle on a claim or artifact'],
+  ['/policy show | explain | check', 'Inspect merged Policy-as-Code; validate repo policy'],
+  ['/swe-tui', 'Terminal cockpit for live pipeline and gate monitoring'],
+  ['/swe-dashboard', 'Local browser dashboard for all .worklogs work items'],
 ]
 
 export function HomePage() {
@@ -70,6 +74,42 @@ export function HomePage() {
         </motion.div>
 
         <PipelineViz />
+
+        <motion.div
+          className="pipeline-enhancements"
+          variants={sectionFade}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+        >
+          <h3>Built on top of the tracks</h3>
+          <ul>
+            <li>
+              <strong>Adaptive Track Router</strong> — past <code>.worklogs</code> inform track selection with
+              cost-aware similarity scoring at routing time.
+            </li>
+            <li>
+              <strong>Doubt-Driven Verification</strong> — bounded adversarial review cycles (3-cycle cap) wired
+              into design-review, code-review, and validation phases.
+            </li>
+            <li>
+              <strong>Policy-as-Code</strong> — org, repo, and pack policies merge deterministically to enforce
+              minimum tracks, mandatory subagents, and budget overrides.
+            </li>
+            <li>
+              <strong>Cross-model verification</strong> — optional fourth panel axis invoking independent model
+              CLIs with sandbox-read-only safety.
+            </li>
+            <li>
+              <strong>Replayable worklogs</strong> — hashed artifact snapshots per transition for full
+              auditability and deterministic replay.
+            </li>
+            <li>
+              <strong>OWAI interchange</strong> — open spec (L1/L2/L3 conformance) so any tool can read, write, or
+              enforce portable work items.
+            </li>
+          </ul>
+        </motion.div>
 
         <motion.p
           className="pipeline-note"
