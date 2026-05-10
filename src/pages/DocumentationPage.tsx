@@ -30,6 +30,18 @@ const GROUPS: { label: string; slugs: DocSlug[]; extraCards?: HubExtraCard[] }[]
     ],
   },
   {
+    label: 'Advanced capabilities',
+    slugs: [
+      'doubt-driven-verification',
+      'cross-model-review',
+      'context-packs',
+      'owai-spec',
+      'policy-as-code',
+      'adaptive-track-router',
+      'runtime-facade',
+    ],
+  },
+  {
     label: 'Product and legal',
     slugs: ['product-positioning', 'adoption-one-pager', 'licensing', 'privacy'],
     extraCards: [
