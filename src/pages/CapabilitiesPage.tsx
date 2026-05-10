@@ -74,6 +74,51 @@ const CARDS = [
       </>
     ),
   },
+  {
+    icon: '\u2694',
+    iconClass: 'violet' as const,
+    title: 'Cross-model verification',
+    body: (
+      <>
+        Four-axis panel review: architect, security, adversarial, and{' '}
+        <strong>cross-model</strong> — invoking Codex or Gemini CLIs with sandbox-read-only safety for truly independent
+        verification.
+      </>
+    ),
+  },
+  {
+    icon: '\u2753',
+    iconClass: 'amber' as const,
+    title: 'Doubt-Driven Verification',
+    body: (
+      <>
+        Bounded adversarial review protocol with a 3-cycle cap, anti-theater detection, and CI-enforced counters.
+        Catches wrong directions before they become PRs.
+      </>
+    ),
+  },
+  {
+    icon: '\u2696',
+    iconClass: 'cyan' as const,
+    title: 'Policy-as-Code',
+    body: (
+      <>
+        Typed org and repo policies for track rules, mandatory subagents, banned tools, and budget overrides —
+        deterministically merged and CI-enforced.
+      </>
+    ),
+  },
+  {
+    icon: '\u2B50',
+    iconClass: 'violet' as const,
+    title: 'Open interchange (OWAI)',
+    body: (
+      <>
+        Open Work-item Interchange spec with L1/L2/L3 conformance levels. Be the{' '}
+        <strong>standard</strong>, not just a product — any tool can read, write, or enforce conformant worklogs.
+      </>
+    ),
+  },
 ]
 
 export function CapabilitiesPage() {

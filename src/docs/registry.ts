@@ -26,6 +26,13 @@ export const DOC_SLUGS = [
   'opencode',
   'codex',
   'antigravity',
+  'doubt-driven-verification',
+  'cross-model-review',
+  'context-packs',
+  'owai-spec',
+  'policy-as-code',
+  'adaptive-track-router',
+  'runtime-facade',
 ] as const
 
 export type DocSlug = (typeof DOC_SLUGS)[number]
@@ -61,6 +68,13 @@ export const MARKDOWN_FILE_TO_SLUG: Record<string, DocSlug> = {
   'README.opencode.md': 'opencode',
   'README.codex.md': 'codex',
   'antigravity.md': 'antigravity',
+  'doubt-driven-verification.md': 'doubt-driven-verification',
+  'cross-model-review.md': 'cross-model-review',
+  'context-packs.md': 'context-packs',
+  'owai-spec.md': 'owai-spec',
+  'policy-as-code.md': 'policy-as-code',
+  'adaptive-track-router.md': 'adaptive-track-router',
+  'runtime-facade.md': 'runtime-facade',
 }
 
 export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
@@ -174,6 +188,41 @@ export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
     description: 'Using the pack with Google Antigravity: CLAUDE.md merge and pack paths.',
     globKey: '../content/docs/antigravity.md',
   },
+  'doubt-driven-verification': {
+    title: 'Doubt-Driven Verification',
+    description: 'Bounded adversarial review protocol: CLAIM/EXTRACT/DOUBT/RECONCILE/STOP with 3-cycle cap.',
+    globKey: '../content/docs/doubt-driven-verification.md',
+  },
+  'cross-model-review': {
+    title: 'Cross-model review',
+    description: 'Fourth panel axis using Codex/Gemini CLIs with sandbox-read-only safety.',
+    globKey: '../content/docs/cross-model-review.md',
+  },
+  'context-packs': {
+    title: 'Context packs',
+    description: 'Typed, schema-validated artifact for delegation: five-level hierarchy and trust levels.',
+    globKey: '../content/docs/context-packs.md',
+  },
+  'owai-spec': {
+    title: 'OWAI specification',
+    description: 'Open Work-item Interchange spec with L1/L2/L3 conformance levels.',
+    globKey: '../content/docs/owai-spec.md',
+  },
+  'policy-as-code': {
+    title: 'Policy-as-Code',
+    description: 'Typed org/repo policies for track rules, mandatory subagents, and budget overrides.',
+    globKey: '../content/docs/policy-as-code.md',
+  },
+  'adaptive-track-router': {
+    title: 'Adaptive Track Router',
+    description: 'Cost-aware track selection learned from completed worklogs via TF-IDF similarity.',
+    globKey: '../content/docs/adaptive-track-router.md',
+  },
+  'runtime-facade': {
+    title: 'Runtime facade',
+    description: 'Host-agnostic typed actions with adapters for Claude Code, Codex, and Gemini.',
+    globKey: '../content/docs/runtime-facade.md',
+  },
 }
 
 export function isDocSlug(s: string): s is DocSlug {
@@ -203,4 +252,11 @@ export const LEGACY_MD_TO_SLUG: Record<string, DocSlug> = {
   '/README.opencode.md': 'opencode',
   '/README.codex.md': 'codex',
   '/antigravity.md': 'antigravity',
+  '/doubt-driven-verification.md': 'doubt-driven-verification',
+  '/cross-model-review.md': 'cross-model-review',
+  '/context-packs.md': 'context-packs',
+  '/owai-spec.md': 'owai-spec',
+  '/policy-as-code.md': 'policy-as-code',
+  '/adaptive-track-router.md': 'adaptive-track-router',
+  '/runtime-facade.md': 'runtime-facade',
 }
