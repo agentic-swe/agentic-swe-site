@@ -1,6 +1,6 @@
 # Subagent Catalog
 
-135+ specialized subagents organized into 10 categories. Each agent has a recommended model (opus for deep reasoning, sonnet for everyday coding, haiku for quick tasks).
+<!-- catalog-counts:start kind=total-line -->138+ specialized subagents<!-- catalog-counts:end --> organized into 10 categories. Each agent has a recommended model (opus for deep reasoning, sonnet for everyday coding, haiku for quick tasks).
 
 **Quick reference:**
 - Browse: `/subagent`
@@ -12,7 +12,7 @@
 
 ---
 
-## 01 - Core Development (10 agents)
+## 01 - Core Development (<!-- catalog-counts:start kind=cat-core-development -->10<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -27,7 +27,7 @@
 | `ui-designer` | sonnet | Visual interfaces, design systems, component libraries |
 | `websocket-engineer` | sonnet | Real-time bidirectional communication at scale |
 
-## 02 - Language Specialists (29 agents)
+## 02 - Language Specialists (<!-- catalog-counts:start kind=cat-language-specialists -->29<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -61,7 +61,7 @@
 | `typescript-pro` | sonnet | Advanced TypeScript type system, generics, type-level programming |
 | `vue-expert` | sonnet | Vue 3 Composition API, reactivity, Nuxt 3 |
 
-## 03 - Infrastructure (16 agents)
+## 03 - Infrastructure (<!-- catalog-counts:start kind=cat-infrastructure -->16<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -82,7 +82,7 @@
 | `terragrunt-expert` | sonnet | Terragrunt orchestration, DRY configs, multi-environment |
 | `windows-infra-admin` | sonnet | Windows Server, Active Directory, DNS, DHCP, Group Policy |
 
-## 04 - Quality & Security (14 agents)
+## 04 - Quality & Security (<!-- catalog-counts:start kind=cat-quality-security -->14<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -101,7 +101,7 @@
 | `security-auditor` | opus | Comprehensive security audit and risk evaluation |
 | `test-automator` | sonnet | Automated test frameworks and CI/CD test integration |
 
-## 05 - Data & AI (13 agents)
+## 05 - Data & AI (<!-- catalog-counts:start kind=cat-data-ai -->13<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -119,7 +119,7 @@
 | `prompt-engineer` | sonnet | Prompt design, optimization, and evaluation for LLMs |
 | `reinforcement-learning-engineer` | sonnet | RL environments, policy gradients, autonomous agents |
 
-## 06 - Developer Experience (13 agents)
+## 06 - Developer Experience (<!-- catalog-counts:start kind=cat-developer-experience -->13<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -137,7 +137,7 @@
 | `slack-expert` | sonnet | Slack app development and API integrations |
 | `tooling-engineer` | sonnet | Developer tools: CLIs, code generators, IDE extensions |
 
-## 07 - Specialized Domains (12 agents)
+## 07 - Specialized Domains (<!-- catalog-counts:start kind=cat-specialized-domains -->15<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -152,9 +152,12 @@
 | `payment-integration` | opus | Payment gateways, PCI compliance, fraud prevention |
 | `quant-analyst` | opus | Quantitative trading strategies, financial models, risk analytics |
 | `risk-manager` | opus | Enterprise risk assessment, control frameworks, compliance |
+| `salesforce-agentforce` | opus | Agentforce DX agents, Einstein Trust Layer, Apex-backed actions, Agentforce 360 |
+| `salesforce-developer` | opus | Apex, LWC, SOQL, Flows, Metadata API, scratch orgs, SF CLI, packaging |
+| `salesforce-headless` | sonnet | B2C Commerce Cloud headless storefronts, SCAPI, PWA Kit, Managed Runtime |
 | `seo-specialist` | haiku | Technical SEO audits, keyword strategy, search rankings |
 
-## 08 - Business & Product (11 agents)
+## 08 - Business & Product (<!-- catalog-counts:start kind=cat-business-product -->11<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -170,7 +173,7 @@
 | `ux-researcher` | sonnet | User research, usability testing, persona development |
 | `wordpress-master` | sonnet | WordPress architecture, performance, security, WooCommerce |
 
-## 09 - Meta & Orchestration (10 agents)
+## 09 - Meta & Orchestration (<!-- catalog-counts:start kind=cat-meta-orchestration -->10<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|
@@ -185,7 +188,7 @@
 | `task-distributor` | haiku | Task decomposition, queue management, workload balancing |
 | `workflow-orchestrator` | opus | Complex business process workflows with error handling |
 
-## 10 - Research & Analysis (7 agents)
+## 10 - Research & Analysis (<!-- catalog-counts:start kind=cat-research-analysis -->7<!-- catalog-counts:end --> agents)
 
 | Agent | Model | Description |
 |-------|-------|-------------|

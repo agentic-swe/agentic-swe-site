@@ -10,7 +10,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync:counts": "node scripts/sync-catalog-counts.mjs",
+    "sync:counts:check": "node scripts/sync-catalog-counts.mjs --check"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",

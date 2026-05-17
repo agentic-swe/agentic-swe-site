@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 export function GuidePage() {
   return (
@@ -327,7 +328,7 @@ claude`}
         resolves conflicts.
       </p>
 
-      <h3 id="subagent-selection">Subagents (135+)</h3>
+      <h3 id="subagent-selection">Subagents ({CATALOG_TOTAL}+)</h3>
       <p>
         Specialists live under <code>{'${CLAUDE_PLUGIN_ROOT}/agents/subagents/<category>/'}</code> (core-development,
         language-specialists, infrastructure, quality-security, data-ai, …). Use <code>/subagent</code> to discover them,
