@@ -17,7 +17,7 @@ A short, honest map for **socializing** agentic-swe. It aligns with the product 
 
 ## What you get **today**
 
-- Installable **workflow pack** (policies, phases, **135+** subagent prompts, templates).
+- Installable **workflow pack** (policies, phases, **<!-- catalog-counts:start kind=total -->138+<!-- catalog-counts:end -->** subagent prompts, templates).
 - **State + artifacts** under **`.worklogs/<id>/`** when the Hypervisor follows **`CLAUDE.md`**.
 - **Slash commands** and plugin resolution on **Claude Code** (primary).
 - **Tier B** documented paths for **OpenCode** and **Antigravity**; other hosts per [Multi-platform support](multi-platform-support.md).

@@ -1,6 +1,7 @@
 import { motion, useReducedMotionConfig } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { InstallPlatformModal, type InstallPlatformId } from './InstallPlatformModal'
+import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 const INSTALL_DOC_PATHS: Record<InstallPlatformId, string> = {
   claude: '../content/docs/claude-code-plugin.md',
@@ -107,7 +108,7 @@ export function Hero() {
         <motion.p variants={item} className="hero-lead">
           A state-machine pipeline with <strong>three tracks</strong> (lean, standard, rigorous),{' '}
           <strong>human gates</strong>, and evidence-backed artifacts. Your primary session follows the{' '}
-          <strong>Hypervisor</strong> policy in the repo root — plus <strong>135+</strong> auto-selected
+          <strong>Hypervisor</strong> policy in the repo root — plus <strong>{CATALOG_TOTAL}+</strong> auto-selected
           specialists. Zero in-repo runtime: policies, phases, and agents are markdown.
         </motion.p>
 

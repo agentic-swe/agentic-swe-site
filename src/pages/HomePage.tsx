@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Hero } from '../components/Hero'
 import { PipelineViz } from '../components/PipelineViz'
+import { CATALOG_COUNTS, CATALOG_TOTAL } from '../data/catalog-counts'
 
 const sectionFade = {
   hidden: { opacity: 0, y: 18 },
@@ -11,18 +12,9 @@ const sectionFade = {
   },
 }
 
-const AGENT_ROWS = [
-  ['Core Development', '10'],
-  ['Language Specialists', '29'],
-  ['Infrastructure', '16'],
-  ['Quality & Security', '14'],
-  ['Data & AI', '13'],
-  ['Developer Experience', '13'],
-  ['Specialized Domains', '12'],
-  ['Business & Product', '11'],
-  ['Meta & Orchestration', '10'],
-  ['Research & Analysis', '7'],
-] as const
+const AGENT_ROWS: ReadonlyArray<readonly [string, string]> = CATALOG_COUNTS.categories.map(
+  (c) => [c.label, String(c.count)] as const,
+)
 
 const COMMANDS: [string, string][] = [
   ['/work <task>', 'Start a new task — auto-routes lean, standard, or rigorous track'],
@@ -135,7 +127,7 @@ export function HomePage() {
           viewport={{ once: true, amount: 0.2 }}
         >
           <div className="section-label">// subagents</div>
-          <h2>135+ agents across 10 categories</h2>
+          <h2>{CATALOG_TOTAL}+ agents across {CATALOG_COUNTS.categories.length} categories</h2>
           <p className="section-desc">
             Automatically selected during pipeline execution. Agents can also call other agents when they encounter
             domain-specific problems.

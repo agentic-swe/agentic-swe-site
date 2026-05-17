@@ -82,7 +82,7 @@ To resume paused work:
 
 ## Using Specialized Subagents
 
-135+ specialized subagents are available for domain-specific tasks. You can use them in three ways:
+<!-- catalog-counts:start kind=total-line -->138+ specialized subagents<!-- catalog-counts:end --> are available for domain-specific tasks. You can use them in three ways:
 
 ### Way 1: Via the `/subagent` command
 

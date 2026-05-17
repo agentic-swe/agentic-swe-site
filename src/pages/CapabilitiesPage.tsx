@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { CapabilityModal, type CapabilityDetail } from '../components/CapabilityModal'
+import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 type CardDef = CapabilityDetail & {
   body: React.ReactNode
@@ -47,7 +48,7 @@ const CARDS: CardDef[] = [
   {
     icon: '\u2605',
     iconClass: 'amber',
-    title: '135+ specialized agents',
+    title: `${CATALOG_TOTAL}+ specialized agents`,
     summary:
       'Auto-selected based on your codebase. Python, TypeScript, Rust, Kubernetes, security, ML — agents that know the domain.',
     benefits: [
