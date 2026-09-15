@@ -1,33 +1,86 @@
 import { Link } from 'react-router-dom'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
+const LAYERS: ReadonlyArray<{ name: string; role: string; where: string }> = [
+  {
+    name: 'Root policy',
+    role: 'The operating rules the primary session follows: the transition graph, budget caps, gate definitions, and the enforcement steps that cannot be skipped.',
+    where: 'CLAUDE.md in your repository root',
+  },
+  {
+    name: 'Hypervisor session',
+    role: 'The chat you are already in. It owns state, chooses the next legal edge, runs the checks, delegates bounded work, and stays accountable for the result.',
+    where: 'Your editor or CLI session',
+  },
+  {
+    name: 'Phases and commands',
+    role: 'One markdown file per pipeline state and per slash command. The session reads the file for the current state and does what it says.',
+    where: 'phases/ and commands/ in the pack',
+  },
+  {
+    name: 'Agents',
+    role: `Three core agents — developer, git-operations, pr-manager — plus ${CATALOG_TOTAL} catalog specialists, all markdown prompts invoked for bounded work.`,
+    where: 'agents/ and agents/subagents/ in the pack',
+  },
+  {
+    name: 'Work state',
+    role: 'Everything a run produces, written to disk so the work can be resumed, audited, replayed, or rendered as a receipt.',
+    where: '.worklogs/<id>/ in your repository',
+  },
+]
+
+const TRACK_ROWS: ReadonlyArray<{ track: string; verdict: string; shape: string }> = [
+  {
+    track: 'lean',
+    verdict: 'simple',
+    shape: 'lean-track-implementation → validation → pr-creation → approval-wait',
+  },
+  {
+    track: 'standard',
+    verdict: 'standard',
+    shape: 'design → verification → test-strategy → implementation → self-review → validation → pr-creation → approval-wait',
+  },
+  {
+    track: 'rigorous',
+    verdict: 'complex',
+    shape: 'adds design-review, code-review, and permissions-check around the standard shape',
+  },
+]
+
 export function GuidePage() {
   return (
-    <main className="page-main reveal visible">
-      <p className="section-label">// documentation</p>
-      <h1>Guide</h1>
-      <p>
-        Install the pack, run <code>/work</code>, and understand how the Hypervisor, tracks, commands, and agents fit
-        together.
+    <main id="main-content" className="page-main reveal visible guide-page">
+      <p className="section-label">// how it works</p>
+      <h1>How it works</h1>
+      <p className="guide-lede">
+        Agentic SWE is a finite state machine written in markdown. Your assistant session reads the policy,
+        moves through explicit states, writes an artifact at every step, and stops at the points where a person
+        should decide. This page is the short version; each section links to the reference behind it.
       </p>
 
       <nav className="guide-toc" aria-label="On this page">
         <strong>On this page</strong>
         <ul>
           <li>
-            <a href="#install">Install &amp; first run</a>
+            <a href="#architecture">Architecture</a>
           </li>
           <li>
-            <a href="#pipeline">Pipeline</a>
+            <a href="#install">Install and first run</a>
+          </li>
+          <li>
+            <a href="#pipeline">The loop</a>
+          </li>
+          <li>
+            <a href="#gates">Gates and budgets</a>
+          </li>
+          <li>
+            <a href="#memory">Memory and replay</a>
           </li>
           <li>
             <a href="#commands">Commands</a>
           </li>
           <li>
             <a href="#agents">Agents</a>
-          </li>
-          <li>
-            <a href="#subagent-selection">Subagent selection</a>
           </li>
           <li>
             <a href="#platforms">Platforms</a>
@@ -38,193 +91,134 @@ export function GuidePage() {
         </ul>
       </nav>
 
-      <h2 id="install">Install &amp; first run</h2>
+      <h2 id="architecture">Architecture</h2>
       <p>
-        agentic-swe is a <strong>markdown workflow pack</strong> for Claude Code: commands, phases, agents, templates, and
-        hooks resolve from <code>{'${CLAUDE_PLUGIN_ROOT}/'}</code> when the plugin is enabled. Root <strong>Hypervisor</strong>{' '}
-        policy merges into <code>CLAUDE.md</code>; per-work state lives under <code>.worklogs/&lt;id&gt;/</code>. There is{' '}
-        <strong>no</strong> separate cloud runtime.
+        There are five moving parts and no server. Everything below ships as files, either in the installed pack
+        or in your own repository.
       </p>
+      <dl className="guide-architecture">
+        {LAYERS.map((layer) => (
+          <div key={layer.name} className="guide-architecture__layer">
+            <dt className="guide-architecture__name">{layer.name}</dt>
+            <dd className="guide-architecture__role">
+              {layer.role}
+              <span className="guide-architecture__where">{layer.where}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
 
-      <h3>Prerequisites</h3>
-      <ul>
-        <li>
-          <strong>Claude Code</strong> (primary host — see <a href="#platforms">Platforms</a>)
-        </li>
-        <li>
-          <strong>Git</strong> — recommended for the target project
-        </li>
-        <li>
-          <strong>GitHub CLI (<code>gh</code>)</strong> — optional; for PR flows
-        </li>
-      </ul>
-
-      <h3>Enable the plugin</h3>
+      <h2 id="install">Install and first run</h2>
       <p>
-        In Claude Code, add the marketplace and install the plugin (see{' '}
-        <Link to="/docs/claude-code-plugin">Claude Code plugin</Link>):
+        Install the pack globally, then point your host at it. In Claude Code you can instead add the plugin
+        marketplace; other hosts have their own one-line route.
       </p>
       <pre>
-        {`/plugin marketplace add agentic-swe/agentic-swe
-/plugin install agentic-swe@agentic-swe-catalog`}
+        {`npm install -g @agentic-swe/agentic-swe
+claude --plugin-dir "$(agentic-swe path)"`}
       </pre>
       <p>
-        In your <strong>target repository</strong>, run <code>/install</code> to merge the policy block into <code>CLAUDE.md</code>{' '}
-        and configure <code>.worklogs/</code> (optional <code>.gitignore</code>).
+        In your target repository, run <code>/install</code> once. It merges the policy block into{' '}
+        <code>CLAUDE.md</code> and sets up <code>.worklogs/</code> with an optional{' '}
+        <code>.gitignore</code> entry. Then start work:
       </p>
-
-      <h3>Open Claude Code and start work</h3>
-      <pre>
-        {`cd /path/to/your/project
-claude`}
-      </pre>
-      <p>Example task:</p>
-      <pre>/work Add retry logic to the API client</pre>
+      <pre>{`/work Add retry logic to the API client`}</pre>
       <p>
-        The Hypervisor follows the root policy: feasibility, <code>lean-track-check</code>, then the track that matches
-        risk (see <a href="#pipeline">Pipeline</a>).
+        When the run reaches <code>approval-wait</code>, review the PR. After it merges, run{' '}
+        <code>/receipt</code> for the shareable summary. Full detail:{' '}
+        <Link to="/docs/installation">installation guide</Link> ·{' '}
+        <Link to="/docs/golden-path">golden path</Link> (about fifteen minutes).
       </p>
 
-      <h3>Upgrades and repairs</h3>
-      <p>
-        Update the plugin from the marketplace; re-run <code>/install</code> if you need to refresh the merged policy
-        block. Full detail: <Link to="/docs/installation">installation guide</Link>.
-      </p>
-
-      <h3>Local development</h3>
-      <pre>claude --plugin-dir /path/to/agentic-swe-checkout</pre>
-      <p>Run from your target project so the plugin root points at your clone of this repository.</p>
-
-      <h3>Optional: repo knowledge</h3>
-      <p>
-        Teams may add an <code>AGENTS</code> companion file, knowledge under <code>docs/agentic-swe/</code>, etc., for
-        extra context during feasibility — see the longer <Link to="/docs/installation">installation guide</Link>.
-      </p>
-
-      <h2 id="pipeline">Pipeline &amp; Hypervisor</h2>
-      <p>
-        agentic-swe is a <strong>finite state machine</strong> with explicit artifacts, iteration budgets, and human
-        gates. The <strong>Hypervisor</strong> is the primary chat session that reads and writes <code>state.json</code>,
-        invokes <code>/check</code>, delegates to core agents and subagents, and never skips persisted transitions.
-      </p>
-
-      <h3>Source of truth per work item</h3>
-      <p>Each run lives under <code>.worklogs/&lt;id&gt;/</code>:</p>
-      <ul>
+      <h2 id="pipeline">The loop</h2>
+      <p>Every iteration the Hypervisor does the same five things:</p>
+      <ol className="guide-loop">
         <li>
-          <code>state.json</code> — <code>current_state</code>, <code>pipeline.track</code>, budgets, counters,{' '}
-          <code>history</code>
+          Read <code>current_state</code> and <code>pipeline.track</code> from <code>state.json</code>.
         </li>
         <li>
-          <code>progress</code> log — human-readable (plus a context summary every third transition)
+          Run <code>/check budget</code>, pick an allowed edge, run <code>/check transition</code>.
         </li>
         <li>
-          <code>audit.log</code> — append-only delegation and gate trail
+          Execute <code>phases/&lt;state&gt;.md</code>, write its artifacts, run <code>/check artifacts</code>.
         </li>
-        <li>Phase artifacts — e.g. feasibility, design, implementation write-ups, …</li>
-      </ul>
-
-      <h3>Three tracks</h3>
+        <li>
+          Update <code>state.json</code>, <code>progress.md</code>, and <code>audit.log</code> with the actor,
+          reason, and evidence for the transition.
+        </li>
+        <li>Repeat until a gate, an escalation, or <code>completed</code>.</li>
+      </ol>
       <p>
-        After <code>feasibility</code>, <code>lean-track-check</code> sets <code>pipeline.track</code> in{' '}
-        <code>state.json</code>:
+        After <code>feasibility</code>, the <code>lean-track-check</code> phase writes{' '}
+        <code>pipeline.track</code>, and that value decides which edges are legal for the rest of the run.
       </p>
       <table>
         <thead>
           <tr>
             <th>Track</th>
-            <th>When</th>
-            <th>Shape (abbreviated)</th>
+            <th>Feasibility verdict</th>
+            <th>Shape, abbreviated</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <strong>lean</strong>
-            </td>
-            <td>
-              Verdict <code>simple</code>
-            </td>
-            <td>
-              … → <code>lean-track-implementation</code> → <code>validation</code> → <code>pr-creation</code> → …
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <strong>standard</strong>
-            </td>
-            <td>
-              Verdict <code>standard</code>
-            </td>
-            <td>
-              … → <code>design</code> → <code>verification</code> → <code>test-strategy</code> →{' '}
-              <code>implementation</code> → <code>self-review</code> → <code>validation</code> → … — skips design panel,{' '}
-              <code>design-review</code>, <code>code-review</code>, <code>permissions-check</code>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <strong>rigorous</strong>
-            </td>
-            <td>
-              Verdict <code>complex</code>
-            </td>
-            <td>
-              Full path including design panel, <code>design-review</code>, <code>code-review</code>,{' '}
-              <code>permissions-check</code>
-            </td>
-          </tr>
+          {TRACK_ROWS.map((row) => (
+            <tr key={row.track}>
+              <td>
+                <strong>{row.track}</strong>
+              </td>
+              <td>
+                <code>{row.verdict}</code>
+              </td>
+              <td>{row.shape}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <p>
-        Allowed edges depend on the active track. If <code>pipeline.track</code> is missing on legacy work, treat as{' '}
-        <strong>rigorous</strong> when interpreting transitions.
+        The canonical edges live in <code>state-machine.json</code> and in the fenced graph in the root policy;
+        CI checks that the two agree. If <code>pipeline.track</code> is missing on older work, treat it as{' '}
+        <strong>rigorous</strong>.
       </p>
 
-      <h3>Transition graph</h3>
+      <h2 id="gates">Gates and budgets</h2>
       <p>
-        The canonical directed edges are in the fenced block in the root Hypervisor policy and mirrored in{' '}
-        <code>{'${CLAUDE_PLUGIN_ROOT}/state-machine.json'}</code> (enforced by tests in the package repo). Before every state change, the
-        Hypervisor runs <code>/check transition</code> and <code>/check artifacts</code>.
+        The pipeline runs <em>up to</em> a gate, never through it. <code>ambiguity-wait</code> halts when the
+        task is underspecified and writes an ambiguity report instead of guessing.{' '}
+        <code>approval-wait</code> holds until a real PR is approved by a person.{' '}
+        <code>escalate-code</code> and <code>escalate-validation</code> surface exhausted loops or a blocked
+        environment. Every outcome is recorded in <code>state.json</code> history with an actor.
+      </p>
+      <p>
+        Budgets are per track and enforced before each phase. Review loops carry counters — lean review, design
+        review, implementation against code review, self-review, approval rejections, merge conflicts — and the
+        same failure twice escalates rather than burning the remaining budget. Rejections append to{' '}
+        <code>reflection-log.md</code>, which the receiving phase must read. Reference:{' '}
+        <Link to="/docs/check-commands">check commands</Link> ·{' '}
+        <Link to="/docs/policy-as-code">policy as code</Link>.
       </p>
 
-      <h3>Human gates and escalations</h3>
-      <ul>
-        <li>
-          <strong>ambiguity-wait</strong> — task unclear; needs human answers before continuing
-        </li>
-        <li>
-          <strong>approval-wait</strong> — PR exists; wait for real review/approval
-        </li>
-        <li>
-          <strong>escalate-code</strong> / <strong>escalate-validation</strong> — loops exhausted or environment blocked
-        </li>
-        <li>
-          <strong>pipeline-failed</strong> — hard stop from feasibility or verification failure
-        </li>
-      </ul>
-
-      <h3>Budgets and loops</h3>
+      <h2 id="memory">Memory and replay</h2>
       <p>
-        Design review, implementation vs code review, lean implementation review, self-review, approval rejection, and
-        merge-conflict cycles all have <strong>explicit caps</strong> documented in the Hypervisor policy. Counters live
-        in <code>state.json</code>. Non-converging loops (same root cause in consecutive rejections) should{' '}
-        <strong>escalate</strong> instead of burning budget.
+        A task is fingerprinted by the files it touches, its verification command, and its failure signature.
+        The runtime then answers at the cheapest tier that holds: <strong>L0</strong> replays a recorded
+        procedure with no model call, <strong>L1</strong> verifies a close procedure match,{' '}
+        <strong>L2</strong> uses memory-guided verification and repo-map test selection, and{' '}
+        <strong>L3</strong> is full frontier reasoning. New problems start at L3.
+      </p>
+      <p>
+        Procedures are captured from validated runs and must pass a golden evaluation before they can be used —
+        unevaluated procedures are never replayed. Promotion from L1 to L0 requires two successes or an explicit
+        human approval, and a procedure that stops working is demoted. Reference:{' '}
+        <Link to="/docs/durable-memory">durable memory</Link> ·{' '}
+        <Link to="/docs/context-packs">context packs</Link>.
       </p>
 
       <h2 id="commands">Commands</h2>
-      <p>
-        Slash commands live under <code>{'${CLAUDE_PLUGIN_ROOT}/commands/'}</code> after install. They are the{' '}
-        <strong>structured entry points</strong> the Hypervisor and phases invoke for work lifecycle, gates, and
-        utilities.
-      </p>
-
-      <h3>Core workflow</h3>
       <table>
         <thead>
           <tr>
             <th>Command</th>
-            <th>Purpose</th>
+            <th>Role</th>
           </tr>
         </thead>
         <tbody>
@@ -232,224 +226,118 @@ claude`}
             <td>
               <code>/work</code>
             </td>
-            <td>
-              Start a new work item or resume by id; creates <code>.worklogs/&lt;id&gt;/</code> and seeds{' '}
-              <code>state.json</code>
-            </td>
+            <td>Start a work item or resume one by id</td>
           </tr>
           <tr>
             <td>
-              <code>/plan-only</code>
+              <code>/goal</code>
             </td>
-            <td>Feasibility and design only — no implementation branch</td>
+            <td>Governed outer loop over an objective, stopping at the same gates</td>
           </tr>
           <tr>
             <td>
-              <code>/evaluate-work</code>
+              <code>/plan-only</code> · <code>/write-plan</code> · <code>/execute-plan</code>
             </td>
-            <td>Inspect a work item’s state and artifacts</td>
+            <td>Plan without implementing, refine the plan, then run it</td>
           </tr>
           <tr>
             <td>
-              <code>/install</code>
+              <code>/check budget</code> · <code>/check transition</code> · <code>/check artifacts</code>
             </td>
+            <td>The three enforcement steps around every phase and transition</td>
+          </tr>
+          <tr>
             <td>
-              Guided <code>CLAUDE.md</code> merge, <code>.worklogs/</code>, optional <code>.gitignore</code>
+              <code>/receipt</code>
             </td>
+            <td>Render the work item as a shareable audit summary</td>
+          </tr>
+          <tr>
+            <td>
+              <code>/doubt</code> · <code>/policy</code>
+            </td>
+            <td>Bounded adversarial verification; inspect or validate merged policy</td>
+          </tr>
+          <tr>
+            <td>
+              <code>/repo-scan</code> · <code>/test-runner</code> · <code>/lint</code>
+            </td>
+            <td>Evidence helpers the phases call when they need facts</td>
+          </tr>
+          <tr>
+            <td>
+              <code>/subagent</code>
+            </td>
+            <td>Browse or invoke a catalog specialist directly</td>
           </tr>
         </tbody>
       </table>
-
-      <h3>
-        Enforcement (<code>/check</code>)
-      </h3>
       <p>
-        Mandatory before expensive moves: <code>/check budget</code>, <code>/check transition</code>,{' '}
-        <code>/check artifacts</code>. Behavior and subcommands are documented in the{' '}
-        <Link to="/docs/check-commands">check commands reference</Link>.
+        Full list with arguments: <Link to="/docs/usage">usage</Link>.
       </p>
-
-      <h3>Discovery and specialists</h3>
-      <ul>
-        <li>
-          <code>/repo-scan</code> — structured snapshot of languages, tests, CI (feasibility input)
-        </li>
-        <li>
-          <code>/subagent</code> — browse and invoke specialist prompts from <code>{'${CLAUDE_PLUGIN_ROOT}/agents/subagents/'}</code>
-        </li>
-      </ul>
-
-      <h3>Utility skills</h3>
-      <p>Phases call these when evidence is needed:</p>
-      <ul>
-        <li>
-          <code>/test-runner [scope]</code>
-        </li>
-        <li>
-          <code>/lint [scope]</code>
-        </li>
-        <li>
-          <code>/diff-review [range]</code>
-        </li>
-        <li>
-          <code>/ci-status [PR|branch]</code>
-        </li>
-        <li>
-          <code>/conflict-resolver [command]</code>
-        </li>
-        <li>
-          <code>/security-scan [scope]</code>
-        </li>
-      </ul>
 
       <h2 id="agents">Agents</h2>
       <p>
-        Agents are <strong>markdown prompts</strong> under <code>{'${CLAUDE_PLUGIN_ROOT}/agents/'}</code>. The Hypervisor delegates bounded
-        work; it remains accountable for state, transitions, and synthesis.
+        Agents are markdown prompts. The Hypervisor delegates bounded work to them and remains accountable for
+        state, transitions, and synthesis. Three core agents cover implementation, git operations, and pull
+        requests. On the rigorous track a design panel — architect, security, adversarial — runs in parallel and
+        merges into one review artifact, with the Hypervisor resolving conflicts.
       </p>
-
-      <h3>Core agents</h3>
-      <ul>
-        <li>
-          <strong>developer-agent</strong> — implementation in a bounded scope (optional worktree isolation)
-        </li>
-        <li>
-          <strong>git-operations-agent</strong> — branches, sync, conflict resolution
-        </li>
-        <li>
-          <strong>pr-manager-agent</strong> — PR creation and management
-        </li>
-      </ul>
-
-      <h3>Design panel</h3>
+      <h3 id="subagent-selection">Subagent selection</h3>
       <p>
-        On the <strong>rigorous</strong> track, when complexity warrants it, three panel agents run in parallel:
-        architect, security, adversarial. Results merge into a <code>design-panel-review</code> artifact; the Hypervisor
-        resolves conflicts.
-      </p>
-
-      <h3 id="subagent-selection">Subagents ({CATALOG_TOTAL}+)</h3>
-      <p>
-        Specialists live under <code>{'${CLAUDE_PLUGIN_ROOT}/agents/subagents/<category>/'}</code> (core-development,
-        language-specialists, infrastructure, quality-security, data-ai, …). Use <code>/subagent</code> to discover them,
-        or rely on <strong>auto-selection</strong> during phases (see{' '}
-        <Link to="/guide#subagent-selection">subagent selection</Link> in the pack).
-      </p>
-      <p>
-        Feasibility writes a <strong>Subagent Signals</strong> section into the feasibility artifact; downstream phases
-        map signals to agents. When <code>budget_remaining</code> is low, auto-selection may be skipped.
-      </p>
-
-      <h3>Agent-to-agent</h3>
-      <p>
-        A core agent may spawn at most <strong>one</strong> subagent per phase when domain depth is needed. Spawns and
-        returns are logged in <code>audit.log</code> per the Hypervisor policy.
+        Feasibility writes a <strong>Subagent Signals</strong> section into its artifact; later phases map those
+        signals onto the {CATALOG_TOTAL}-agent catalog. A core agent may spawn at most one subagent per phase
+        when it needs domain depth, and every spawn and return is logged in <code>audit.log</code>. When
+        remaining budget is low, auto-selection may be skipped; <code>/subagent invoke</code> always works
+        manually. Reference: <Link to="/docs/catalog-routing">catalog routing</Link> ·{' '}
+        <Link to="/docs/subagent-catalog">subagent catalog</Link>.
       </p>
 
       <h2 id="platforms">Platforms</h2>
       <p>
-        Host comparison table and install pointers: <Link to="/docs/multi-platform-support">Multi-platform support</Link>{' '}
-        (dedicated doc).
-      </p>
-      <p>
-        agentic-swe is <strong>host-agnostic markdown</strong>: with the Claude Code plugin, the pack lives at the plugin
-        root (<code>commands/</code>, <code>phases/</code>, …) and resolves via <code>{'${CLAUDE_PLUGIN_ROOT}/'}</code>. The{' '}
-        <strong>Hypervisor</strong> is whichever session follows root <code>CLAUDE.md</code> policy.
-      </p>
-
-      <h3>Claude Code</h3>
-      <p>
-        First-class: native slash commands, hooks, and Agent tool align with the plugin layout this repo ships. Enable the
-        plugin, run <code>/install</code> in your project, then <code>/work</code>.
-      </p>
-
-      <h3>Cursor</h3>
-      <p>
-        Install the bundled <strong>.cursor-plugin</strong> from a checkout of this repository, merge <code>CLAUDE.md</code> in your target
-        repo, and use project rules so paths resolve to the pack (submodule paths work well). Slash-style shortcuts are host-dependent — open{' '}
-        <code>commands/*.md</code> or follow <Link to="/docs/cursor-plugin">Cursor plugin</Link>.
-      </p>
-
-      <h3>Google Antigravity</h3>
-      <p>
-        Use the same markdown pack and root <code>CLAUDE.md</code> merge pattern; host install steps live with Google — see{' '}
-        <Link to="/docs/antigravity">Antigravity</Link>.
-      </p>
-
-      <h3>Codex / other assistants</h3>
-      <p>
-        An <code>AGENTS</code> file in the repo root summarizes orchestration for tools that read it; full detail remains
-        in the Hypervisor policy.
-      </p>
-
-      <h3>CI and headless</h3>
-      <p>
-        This repository includes tests and smoke checks for layout and state-machine consistency; running the full pipeline
-        still expects an interactive host for human gates.
+        The pack is host-agnostic markdown. <strong>Claude Code</strong> is the primary path with native slash
+        commands, hooks, and the Agent tool. <strong>Cursor</strong> installs the bundled plugin via script and
+        merges the root policy. <strong>Codex</strong> and <strong>OpenCode</strong> read the pack through an{' '}
+        <code>AGENTS</code> file and their own plugin directory. <strong>Gemini CLI</strong> and{' '}
+        <strong>Antigravity</strong> use the same markdown with a host-specific manifest. Running the full
+        pipeline still expects an interactive host, because the human gates are real. Comparison table:{' '}
+        <Link to="/docs/multi-platform-support">multi-platform support</Link> ·{' '}
+        <Link to="/docs/host-support-tiers">host support tiers</Link>.
       </p>
 
       <h2 id="examples">Examples</h2>
-      <p>
-        These are <strong>illustrative</strong> transcripts. Full narrative versions are in the{' '}
-        <Link to="/docs/examples">examples collection</Link>.
-      </p>
-
-      <h3>Simple bug fix (lean track)</h3>
+      <p>These are illustrative shapes, not recorded transcripts.</p>
+      <h3>Bug fix, lean track</h3>
       <pre>/work Fix the off-by-one error in pagination logic in src/api/list.py</pre>
       <p>
-        Typical path: <code>initialized</code> → <code>feasibility</code> → <code>lean-track-check</code> (track{' '}
-        <strong>lean</strong>) → <code>lean-track-implementation</code> → <code>validation</code> →{' '}
-        <code>pr-creation</code> → <code>approval-wait</code>. After the real PR exists, resume with{' '}
-        <code>/work &lt;id&gt;</code> when review is done.
+        Runs <code>feasibility</code> → <code>lean-track-check</code> → <code>lean-track-implementation</code> →{' '}
+        <code>validation</code> → <code>pr-creation</code> → <code>approval-wait</code>. Resume with{' '}
+        <code>/work &lt;id&gt;</code> once the PR is reviewed.
       </p>
-
-      <h3>New feature (rigorous track)</h3>
+      <h3>New feature, rigorous track</h3>
       <pre>/work Add rate limiting middleware to the Express API with Redis backing</pre>
       <p>
-        Multi-file scope and new dependencies often yield track <strong>rigorous</strong>: design, optional design panel,{' '}
-        <code>design-review</code>, <code>verification</code>, <code>test-strategy</code>, <code>implementation</code>,{' '}
-        <code>self-review</code>, <code>code-review</code>, <code>permissions-check</code>, <code>validation</code>, PR.
+        Multi-file scope and a new dependency usually yield <strong>complex</strong>, which adds the design
+        panel, <code>design-review</code>, <code>code-review</code>, and <code>permissions-check</code>.
       </p>
-
-      <h3>Medium change (standard track)</h3>
-      <pre>/work Add an internal CSV export endpoint with unit tests</pre>
-      <p>
-        When feasibility verdict is <strong>standard</strong>, you get design + verification + tests + implementation +
-        self-review + validation, but <strong>not</strong> the full design panel / separate <code>code-review</code>{' '}
-        phase as in rigorous. Always confirm edges with <code>/check transition</code> for the active{' '}
-        <code>pipeline.track</code> in <code>state.json</code>.
-      </p>
-
-      <h3>Language specialist outside the pipeline</h3>
-      <pre>/subagent invoke python-pro Refactor src/processing/pipeline.py to async/await with typed errors</pre>
-      <p>
-        Manual subagent use is independent of <code>/work</code>; log delegation in <code>audit.log</code> if it affects
-        governed work.
-      </p>
-
-      <h3>Plan without implementing</h3>
+      <h3>Plan without building</h3>
       <pre>/plan-only Evaluate adding OAuth2 to the public API</pre>
-      <p>Stops after planning phases — no implementation branch unless you start a new <code>/work</code>.</p>
-
-      <h3>Resume a work item</h3>
-      <pre>/work abc123</pre>
       <p>
-        Reads <code>.worklogs/abc123/state.json</code> and continues from <code>current_state</code> per{' '}
-        <a href="#pipeline">Pipeline</a>.
+        Stops after the planning phases. No implementation branch is created unless you start a new{' '}
+        <code>/work</code>. More: <Link to="/docs/examples">examples collection</Link>.
       </p>
 
       <div className="doc-see-also">
         <strong>Canonical policy</strong> —{' '}
         <a href="https://github.com/agentic-swe/agentic-swe" target="_blank" rel="noopener noreferrer">
-          Source repository on GitHub
+          the source repository
         </a>{' '}
-        (clone or browse files; root <code>CLAUDE.md</code> is the Hypervisor policy)
+        (root <code>CLAUDE.md</code> is the Hypervisor policy)
         <br />
-        <strong>More</strong> — <Link to="/docs/subagent-catalog">Subagent catalog</Link> ·{' '}
-        <Link to="/docs/catalog-routing">Catalog routing</Link> · <Link to="/docs/usage">Usage</Link> ·{' '}
+        <strong>More</strong> — <Link to="/docs/usage">Usage</Link> ·{' '}
         <Link to="/docs/durable-memory">Durable memory</Link> ·{' '}
         <Link to="/docs/claude-code-plugin">Claude Code plugin</Link> ·{' '}
-        <Link to="/docs/multi-platform-support">Multi-platform support</Link>
+        <Link to="/support">Support</Link>
       </div>
     </main>
   )

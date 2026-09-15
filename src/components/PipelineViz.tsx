@@ -1,145 +1,128 @@
-import type { ReactNode } from 'react'
-import { motion } from 'framer-motion'
+type StepKind = 'phase' | 'review' | 'gate' | 'terminal'
 
-type PathDef = {
-  label: string
-  labelClass: 'fast' | 'medium' | 'full'
-  nodes: string[]
+type Step = {
+  name: string
+  kind: StepKind
 }
 
-const PATHS: PathDef[] = [
+type Track = {
+  id: 'lean' | 'standard' | 'rigorous'
+  name: string
+  when: string
+  steps: Step[]
+}
+
+/** Mirrors the canonical edges in `state-machine.json` / the fenced graph in the root Hypervisor policy. */
+const TRACKS: Track[] = [
   {
-    label: 'Lean track — simple tasks',
-    labelClass: 'fast',
-    nodes: [
-      'feasibility',
-      'lean-track-check',
-      'lean-track-implementation',
-      'validation',
-      'pr-creation',
-      'approval-wait',
-      'completed',
+    id: 'lean',
+    name: 'Lean',
+    when: 'Feasibility verdict: simple',
+    steps: [
+      { name: 'feasibility', kind: 'phase' },
+      { name: 'lean-track-check', kind: 'phase' },
+      { name: 'lean-track-implementation', kind: 'phase' },
+      { name: 'validation', kind: 'phase' },
+      { name: 'pr-creation', kind: 'phase' },
+      { name: 'approval-wait', kind: 'gate' },
+      { name: 'completed', kind: 'terminal' },
     ],
   },
   {
-    label: 'Standard track — medium tasks',
-    labelClass: 'medium',
-    nodes: [
-      'feasibility',
-      'lean-track-check',
-      'design',
-      'verification',
-      'test-strategy',
-      'implementation',
-      'self-review',
-      'validation',
-      'pr-creation',
-      'approval-wait',
-      'completed',
+    id: 'standard',
+    name: 'Standard',
+    when: 'Feasibility verdict: standard',
+    steps: [
+      { name: 'feasibility', kind: 'phase' },
+      { name: 'lean-track-check', kind: 'phase' },
+      { name: 'design', kind: 'phase' },
+      { name: 'verification', kind: 'phase' },
+      { name: 'test-strategy', kind: 'phase' },
+      { name: 'implementation', kind: 'phase' },
+      { name: 'self-review', kind: 'review' },
+      { name: 'validation', kind: 'phase' },
+      { name: 'pr-creation', kind: 'phase' },
+      { name: 'approval-wait', kind: 'gate' },
+      { name: 'completed', kind: 'terminal' },
     ],
   },
   {
-    label: 'Rigorous track — complex tasks',
-    labelClass: 'full',
-    nodes: [
-      'feasibility',
-      'lean-track-check',
-      'design',
-      'design-review',
-      'verification',
-      'test-strategy',
-      'implementation',
-      'self-review',
-      'code-review',
-      'permissions-check',
-      'validation',
-      'pr-creation',
-      'approval-wait',
-      'completed',
+    id: 'rigorous',
+    name: 'Rigorous',
+    when: 'Feasibility verdict: complex',
+    steps: [
+      { name: 'feasibility', kind: 'phase' },
+      { name: 'lean-track-check', kind: 'phase' },
+      { name: 'design', kind: 'phase' },
+      { name: 'design-review', kind: 'review' },
+      { name: 'verification', kind: 'phase' },
+      { name: 'test-strategy', kind: 'phase' },
+      { name: 'implementation', kind: 'phase' },
+      { name: 'self-review', kind: 'review' },
+      { name: 'code-review', kind: 'review' },
+      { name: 'permissions-check', kind: 'phase' },
+      { name: 'validation', kind: 'phase' },
+      { name: 'pr-creation', kind: 'phase' },
+      { name: 'approval-wait', kind: 'gate' },
+      { name: 'completed', kind: 'terminal' },
     ],
   },
 ]
 
-function humanGate(name: string) {
-  return name === 'approval-wait' || name === 'design-review'
-}
-
-const pathOuter = {
-  hidden: { opacity: 0, y: 20 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.45,
-      ease: 'easeOut' as const,
-      staggerChildren: 0.06,
-      delayChildren: 0.04,
-    },
-  },
-}
-
-const labelItem = {
-  hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
-}
-
-const nodesRow = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.028, delayChildren: 0.02 },
-  },
-}
-
-const nodePiece = {
-  hidden: { opacity: 0, scale: 0.93 },
-  show: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.26, ease: 'easeOut' as const },
-  },
+const STEP_TAG: Partial<Record<StepKind, string>> = {
+  review: 'review loop',
+  gate: 'human gate',
+  terminal: 'done',
 }
 
 export function PipelineViz() {
   return (
-    <div className="pipeline-viz">
-      {PATHS.map((path) => (
-        <motion.div
-          key={path.label}
-          className="pipeline-path"
-          variants={pathOuter}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-        >
-          <motion.div className={`pipeline-path-label ${path.labelClass}`} variants={labelItem}>
-            {path.label}
-          </motion.div>
-          <motion.div className="pipeline-nodes" variants={nodesRow}>
-            {path.nodes.flatMap((node, i) => {
-              const keyBase = `${path.label}-${node}-${i}`
-              const cells: ReactNode[] = [
-                <motion.span
-                  key={`${keyBase}-n`}
-                  className={`p-node${humanGate(node) ? ' human' : ''}`}
-                  variants={nodePiece}
-                  whileHover={{ scale: 1.04 }}
-                >
-                  {node}
-                </motion.span>,
-              ]
-              if (i < path.nodes.length - 1) {
-                cells.push(
-                  <motion.span key={`${keyBase}-a`} className="p-arrow" variants={nodePiece} aria-hidden>
-                    &rarr;
-                  </motion.span>,
-                )
-              }
-              return cells
-            })}
-          </motion.div>
-        </motion.div>
+    <div className="topology">
+      {TRACKS.map((track) => (
+        <article key={track.id} className={`topology__track topology__track--${track.id}`}>
+          <header className="topology__head">
+            <h3 className="topology__name">{track.name} track</h3>
+            <p className="topology__when">{track.when}</p>
+          </header>
+          <ol
+            className="topology__steps"
+            aria-label={`${track.name} track states, in order`}
+          >
+            {track.steps.map((step) => (
+              <li key={step.name} className={`topology__step topology__step--${step.kind}`}>
+                <span className="topology__step-name">{step.name}</span>
+                {STEP_TAG[step.kind] ? (
+                  <span className="topology__step-tag">{STEP_TAG[step.kind]}</span>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        </article>
       ))}
+
+      <dl className="topology__legend">
+        <div className="topology__legend-item topology__legend-item--gate">
+          <dt className="topology__legend-term">Human gate</dt>
+          <dd className="topology__legend-desc">
+            The pipeline stops and waits for a person. <code>approval-wait</code> holds until the PR is
+            actually approved; <code>ambiguity-wait</code> holds when the task is underspecified.
+          </dd>
+        </div>
+        <div className="topology__legend-item topology__legend-item--review">
+          <dt className="topology__legend-term">Review loop</dt>
+          <dd className="topology__legend-desc">
+            Bounded iteration with a counter in <code>state.json</code>. The same failure twice escalates
+            instead of burning budget.
+          </dd>
+        </div>
+        <div className="topology__legend-item topology__legend-item--source">
+          <dt className="topology__legend-term">Source of truth</dt>
+          <dd className="topology__legend-desc">
+            Allowed edges live in <code>state-machine.json</code> and the fenced graph in the root policy.
+            CI checks that the two agree.
+          </dd>
+        </div>
+      </dl>
     </div>
   )
 }

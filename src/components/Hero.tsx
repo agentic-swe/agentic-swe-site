@@ -1,6 +1,7 @@
-import { motion, useReducedMotionConfig } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { InstallPlatformModal, type InstallPlatformId } from './InstallPlatformModal'
+import { HeroMedia } from './HeroMedia'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 const INSTALL_DOC_PATHS: Record<InstallPlatformId, string> = {
@@ -22,123 +23,124 @@ const rawInstallDocs = import.meta.glob<string>(
   { query: '?raw', import: 'default', eager: true },
 )
 
-const PLATFORMS: { id: InstallPlatformId; label: string; hint?: string }[] = [
-  { id: 'claude', label: 'Claude', hint: 'Claude Code plugin' },
-  { id: 'cursor', label: 'Cursor', hint: 'Local plugin + merge' },
-  { id: 'codex', label: 'Codex', hint: 'AGENTS.md + symlink' },
-  { id: 'opencode', label: 'OpenCode', hint: '.opencode plugin' },
-  { id: 'antigravity', label: 'Antigravity', hint: 'Google IDE' },
+const PLATFORMS: { id: InstallPlatformId; label: string; hint: string }[] = [
+  { id: 'claude', label: 'Claude Code', hint: 'Plugin marketplace — primary path' },
+  { id: 'cursor', label: 'Cursor', hint: 'Install script + policy merge' },
+  { id: 'codex', label: 'Codex', hint: 'AGENTS.md + symlinked pack' },
+  { id: 'opencode', label: 'OpenCode', hint: '.opencode plugin directory' },
+  { id: 'antigravity', label: 'Antigravity', hint: 'Google IDE, same markdown pack' },
 ]
 
 function installMarkdown(id: InstallPlatformId): string {
-  const p = INSTALL_DOC_PATHS[id]
-  const v = rawInstallDocs[p]
-  if (typeof v !== 'string') {
-    throw new Error(`Missing install doc bundle for ${p}`)
+  const path = INSTALL_DOC_PATHS[id]
+  const raw = rawInstallDocs[path]
+  if (typeof raw !== 'string') {
+    throw new Error(`Missing install doc bundle for ${path}`)
   }
-  return v
+  return raw
 }
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.11, delayChildren: 0.08 },
-  },
-}
-
-const item = {
-  hidden: { opacity: 0, y: 28 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const },
-  },
-}
-
+/**
+ * Outcome-first hero. Actions are navigational only: the platform picker lives
+ * further down the page in the `#install` section.
+ */
 export function Hero() {
-  const hideOrbit = useReducedMotionConfig() === true
+  return (
+    <section className="hero" aria-labelledby="hero-title">
+      <div className="hero__inner">
+        <p className="hero__eyebrow">
+          <span className="hero__eyebrow-dot" aria-hidden />
+          Markdown pack · runs in your editor · no hosted runtime
+        </p>
+
+        <h1 id="hero-title" className="hero__title">
+          Engineering intelligence that{' '}
+          <span className="hero__title-accent">remembers how to ship</span>
+        </h1>
+
+        <p className="hero__lead">
+          Agentic SWE turns AI coding from a chat transcript into a governed pipeline. Every decision is
+          written into your repository as an artifact, every merge waits on a human, and validated work is
+          distilled into procedures the runtime can replay instead of re-reasoning.
+        </p>
+
+        <div className="hero__actions">
+          <a className="btn btn-primary" href="#install">
+            Install
+          </a>
+          <Link className="btn btn-ghost" to="/guide">
+            How it works
+          </Link>
+        </div>
+
+        <ul className="hero__proof">
+          <li className="hero__proof-item">
+            <span className="hero__proof-value">{CATALOG_TOTAL}</span>
+            <span className="hero__proof-label">specialist agents in the catalog</span>
+          </li>
+          <li className="hero__proof-item">
+            <span className="hero__proof-value">3</span>
+            <span className="hero__proof-label">tracks over one state machine</span>
+          </li>
+          <li className="hero__proof-item">
+            <span className="hero__proof-value">L0</span>
+            <span className="hero__proof-label">replay tier for proven procedures</span>
+          </li>
+        </ul>
+      </div>
+
+      <HeroMedia />
+    </section>
+  )
+}
+
+/**
+ * Platform picker + install instructions modal. Rendered below the first
+ * viewport by `HomePage`; also safe to reuse on other marketing pages.
+ */
+export function InstallPlatforms() {
   const [modalId, setModalId] = useState<InstallPlatformId | null>(null)
+
+  const close = useCallback(() => setModalId(null), [])
 
   const modalTitle = useMemo(() => {
     if (!modalId) return ''
-    const row = PLATFORMS.find((x) => x.id === modalId)
-    return row ? `Install · ${row.label}` : ''
+    const platform = PLATFORMS.find((p) => p.id === modalId)
+    return platform ? `Install · ${platform.label}` : ''
   }, [modalId])
 
-  const modalMarkdown = useMemo(() => {
-    if (!modalId) return ''
-    return installMarkdown(modalId)
-  }, [modalId])
+  const modalMarkdown = useMemo(() => (modalId ? installMarkdown(modalId) : ''), [modalId])
 
   return (
-    <section className="hero hero--motion">
-      {!hideOrbit && (
-        <div className="hero-orbit" aria-hidden>
-          <motion.span
-            className="hero-orbit__ring hero-orbit__ring--outer"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
-          />
-          <motion.span
-            className="hero-orbit__ring hero-orbit__ring--inner"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
-          />
-        </div>
-      )}
+    <div className="install-picker">
+      <ul className="install-picker__grid">
+        {PLATFORMS.map((platform) => (
+          <li key={platform.id} className="install-picker__cell">
+            <button
+              type="button"
+              className="install-picker__tile"
+              onClick={() => setModalId(platform.id)}
+              aria-haspopup="dialog"
+            >
+              <span className="install-picker__name">{platform.label}</span>
+              <span className="install-picker__hint">{platform.hint}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
 
-      <motion.div
-        className="hero-inner"
-        variants={container}
-        initial="hidden"
-        animate="show"
-      >
-        <motion.div className="hero-badge" variants={item}>
-          <span className="dot" />
-          Hypervisor policy · Pure markdown · No cloud runtime
-        </motion.div>
-        <motion.h1 variants={item} className="hero-headline">
-          <span className="hero-headline-primary">Autonomous</span>
-          <br />
-          <span className="gradient-text hero-headline-tagline">
-          policy-driven autonomous engineering
-          </span>
-        </motion.h1>
-        <motion.p variants={item} className="hero-lead">
-          A state-machine pipeline with <strong>three tracks</strong> (lean, standard, rigorous),{' '}
-          <strong>human gates</strong>, and evidence-backed artifacts. Your primary session follows the{' '}
-          <strong>Hypervisor</strong> policy in the repo root — plus <strong>{CATALOG_TOTAL}+</strong> auto-selected
-          specialists. Zero in-repo runtime: policies, phases, and agents are markdown.
-        </motion.p>
-
-        <motion.div className="hero-install" variants={item}>
-          <div className="section-label">// installation</div>
-          <div className="hero-install-grid" role="list">
-            {PLATFORMS.map((p) => (
-              <motion.button
-                key={p.id}
-                type="button"
-                className="hero-install-tile"
-                whileHover={{ y: -3 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setModalId(p.id)}
-                role="listitem"
-              >
-                <span className="hero-install-tile__name">{p.label}</span>
-                {p.hint ? <span className="hero-install-tile__hint">{p.hint}</span> : null}
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-      </motion.div>
+      <p className="install-picker__note">
+        Pick a host to read its exact steps. Every host runs the same markdown pack — see the{' '}
+        <Link to="/docs/installation">full installation guide</Link> or the{' '}
+        <Link to="/docs/golden-path">golden path</Link> for a ~15 minute first run.
+      </p>
 
       <InstallPlatformModal
         open={modalId !== null}
         title={modalTitle}
         markdown={modalMarkdown}
-        onClose={() => setModalId(null)}
+        onClose={close}
       />
-    </section>
+    </div>
   )
 }
