@@ -1,20 +1,37 @@
+import { lazy, Suspense } from 'react'
 import { MotionConfig } from 'framer-motion'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LEGACY_MD_TO_SLUG } from './docs/registry'
 import { PageShell } from './components/PageShell'
 import { ScrollToTop } from './components/ScrollToTop'
-import { CapabilitiesPage } from './pages/CapabilitiesPage'
-import { DocPage } from './pages/DocPage'
-import { InstallationGuidePage } from './pages/InstallationGuidePage'
-import { DocumentationPage } from './pages/DocumentationPage'
-import { GuidePage } from './pages/GuidePage'
-import { HomePage } from './pages/HomePage'
-import { ProductPage } from './pages/ProductPage'
-import { SupportPage } from './pages/SupportPage'
+
+const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })))
+const CapabilitiesPage = lazy(() =>
+  import('./pages/CapabilitiesPage').then((module) => ({ default: module.CapabilitiesPage })),
+)
+const DocumentationPage = lazy(() =>
+  import('./pages/DocumentationPage').then((module) => ({ default: module.DocumentationPage })),
+)
+const InstallationGuidePage = lazy(() =>
+  import('./pages/InstallationGuidePage').then((module) => ({ default: module.InstallationGuidePage })),
+)
+const DocPage = lazy(() => import('./pages/DocPage').then((module) => ({ default: module.DocPage })))
+const GuidePage = lazy(() => import('./pages/GuidePage').then((module) => ({ default: module.GuidePage })))
+const ProductPage = lazy(() => import('./pages/ProductPage').then((module) => ({ default: module.ProductPage })))
+const SupportPage = lazy(() => import('./pages/SupportPage').then((module) => ({ default: module.SupportPage })))
 
 /** Matches `base` in `vite.config.ts` (e.g. GitHub Pages subpath). Root deploy uses `undefined`. */
 const routerBasename =
   (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined
+
+function RouteLoading() {
+  return (
+    <main id="main-content" className="route-loading" aria-busy="true" aria-live="polite">
+      <span className="route-loading__signal" aria-hidden />
+      Loading interface
+    </main>
+  )
+}
 
 export default function App() {
   // Respect prefers-reduced-motion; with Reduce motion off in System Settings, motion runs at full strength.
@@ -31,14 +48,14 @@ export default function App() {
             />
           ))}
           <Route element={<PageShell />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/guide" element={<GuidePage />} />
-            <Route path="/documentation" element={<DocumentationPage />} />
-            <Route path="/docs/installation" element={<InstallationGuidePage />} />
-            <Route path="/docs/:slug" element={<DocPage />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/capabilities" element={<CapabilitiesPage />} />
-            <Route path="/product" element={<ProductPage />} />
+            <Route path="/" element={<Suspense fallback={<RouteLoading />}><HomePage /></Suspense>} />
+            <Route path="/guide" element={<Suspense fallback={<RouteLoading />}><GuidePage /></Suspense>} />
+            <Route path="/documentation" element={<Suspense fallback={<RouteLoading />}><DocumentationPage /></Suspense>} />
+            <Route path="/docs/installation" element={<Suspense fallback={<RouteLoading />}><InstallationGuidePage /></Suspense>} />
+            <Route path="/docs/:slug" element={<Suspense fallback={<RouteLoading />}><DocPage /></Suspense>} />
+            <Route path="/support" element={<Suspense fallback={<RouteLoading />}><SupportPage /></Suspense>} />
+            <Route path="/capabilities" element={<Suspense fallback={<RouteLoading />}><CapabilitiesPage /></Suspense>} />
+            <Route path="/product" element={<Suspense fallback={<RouteLoading />}><ProductPage /></Suspense>} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

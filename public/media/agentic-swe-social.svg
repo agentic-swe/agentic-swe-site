@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Agentic SWE &#8212; Engineering intelligence that remembers how to ship</title>
+  <desc id="desc">Mint execution paths converge through an amber human gate into reusable memory on an obsidian field.</desc>
+  <defs>
+    <radialGradient id="field" cx="76%" cy="42%" r="68%">
+      <stop offset="0" stop-color="#152720"/>
+      <stop offset=".44" stop-color="#0c1414"/>
+      <stop offset="1" stop-color="#070a0d"/>
+    </radialGradient>
+    <radialGradient id="gateGlow">
+      <stop offset="0" stop-color="#ffb15c" stop-opacity=".55"/>
+      <stop offset=".3" stop-color="#ffb15c" stop-opacity=".1"/>
+      <stop offset="1" stop-color="#ffb15c" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0V60" fill="none" stroke="#eaf5f1" stroke-opacity=".022"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#field)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <circle cx="930" cy="300" r="250" fill="none" stroke="#69dab8" stroke-opacity=".05"/>
+  <circle cx="930" cy="300" r="176" fill="none" stroke="#69dab8" stroke-opacity=".07"/>
+  <circle cx="930" cy="300" r="108" fill="none" stroke="#8c86ff" stroke-opacity=".075"/>
+  <circle cx="930" cy="300" r="132" fill="url(#gateGlow)" filter="url(#soft)"/>
+
+  <g fill="none" stroke-linecap="round">
+    <path d="M712 160C784 166 800 244 840 262S890 282 930 300" stroke="#69dab8" stroke-opacity=".26"/>
+    <path d="M700 300C772 300 800 300 844 300S894 300 930 300" stroke="#69dab8" stroke-opacity=".46" filter="url(#glow)"/>
+    <path d="M712 456C784 442 806 372 848 348S894 322 930 300" stroke="#69dab8" stroke-opacity=".2"/>
+    <path d="M930 300C996 300 1038 262 1090 212S1150 168 1196 172" stroke="#8c86ff" stroke-opacity=".17"/>
+    <path d="M930 300C1000 300 1058 300 1128 300S1166 300 1200 300" stroke="#69dab8" stroke-opacity=".3"/>
+    <path d="M930 300C1000 302 1050 350 1102 400S1156 458 1198 470" stroke="#8c86ff" stroke-opacity=".13"/>
+  </g>
+
+  <g fill="#69dab8">
+    <circle cx="712" cy="160" r="3.5" fill-opacity=".8"/>
+    <circle cx="700" cy="300" r="4.5"/>
+    <circle cx="712" cy="456" r="3.5" fill-opacity=".7"/>
+    <circle cx="840" cy="262" r="2.8" fill-opacity=".7"/>
+    <circle cx="844" cy="300" r="3.5"/>
+    <circle cx="848" cy="348" r="2.8" fill-opacity=".6"/>
+    <circle cx="1128" cy="300" r="3.5" fill-opacity=".8"/>
+  </g>
+
+  <circle cx="930" cy="300" r="7" fill="#ffb15c" filter="url(#glow)"/>
+  <circle cx="930" cy="300" r="19" fill="none" stroke="#ffb15c" stroke-opacity=".55"/>
+  <circle cx="930" cy="300" r="38" fill="none" stroke="#ffb15c" stroke-opacity=".12"/>
+
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <text x="80" y="250" fill="#eaf5f1" font-size="34" font-weight="700" letter-spacing="-0.5">agentic<tspan fill="#69dab8">SWE</tspan></text>
+    <text x="80" y="330" fill="#eaf5f1" font-size="52" font-weight="700" letter-spacing="-1.6">Engineering intelligence</text>
+    <text x="80" y="392" fill="#69dab8" font-size="52" font-weight="700" letter-spacing="-1.6">that remembers</text>
+    <text x="80" y="450" fill="#a9bcb8" font-size="22">Governed pipelines &#183; human gates &#183; receipts</text>
+  </g>
+
+  <g fill="#75898a" font-family="monospace" font-size="15" letter-spacing="2">
+    <text x="80" y="536">L0 REPLAY</text>
+    <text x="214" y="536">HUMAN GATE</text>
+    <text x="382" y="536">AUDIT RECEIPT</text>
+  </g>
+  <g>
+    <rect x="80" y="552" width="72" height="2" fill="#69dab8" fill-opacity=".7"/>
+    <rect x="214" y="552" width="90" height="2" fill="#ffb15c" fill-opacity=".7"/>
+    <rect x="382" y="552" width="112" height="2" fill="#8c86ff" fill-opacity=".7"/>
+  </g>
+</svg>
