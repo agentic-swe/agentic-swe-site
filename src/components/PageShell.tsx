@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import logoMarkSrc from '../assets/logo-mark.svg?url'
 import { AmbientBackground } from './AmbientBackground'
+import { SetupButton } from './SetupButton'
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? 'nav-active' : undefined
@@ -60,9 +61,10 @@ export function PageShell() {
               <NavLink to="/documentation" className={navClass}>
                 Docs
               </NavLink>
-              <NavLink to="/docs/installation" className={({ isActive }) => isActive ? 'nav-cta nav-active' : 'nav-cta'}>
-                Install
+              <NavLink to="/workspace" className={navClass}>
+                Workspace
               </NavLink>
+              <SetupButton className="nav-cta" />
             </div>
           </nav>
         </header>
