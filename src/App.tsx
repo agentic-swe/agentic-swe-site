@@ -18,6 +18,9 @@ const InstallationGuidePage = lazy(() =>
 const DocPage = lazy(() => import('./pages/DocPage').then((module) => ({ default: module.DocPage })))
 const GuidePage = lazy(() => import('./pages/GuidePage').then((module) => ({ default: module.GuidePage })))
 const ProductPage = lazy(() => import('./pages/ProductPage').then((module) => ({ default: module.ProductPage })))
+const WorkspacePage = lazy(() =>
+  import('./pages/WorkspacePage').then((module) => ({ default: module.WorkspacePage })),
+)
 const SupportPage = lazy(() => import('./pages/SupportPage').then((module) => ({ default: module.SupportPage })))
 
 /** Matches `base` in `vite.config.ts` (e.g. GitHub Pages subpath). Root deploy uses `undefined`. */
@@ -56,6 +59,7 @@ export default function App() {
             <Route path="/support" element={<Suspense fallback={<RouteLoading />}><SupportPage /></Suspense>} />
             <Route path="/capabilities" element={<Suspense fallback={<RouteLoading />}><CapabilitiesPage /></Suspense>} />
             <Route path="/product" element={<Suspense fallback={<RouteLoading />}><ProductPage /></Suspense>} />
+            <Route path="/workspace" element={<Suspense fallback={<RouteLoading />}><WorkspacePage /></Suspense>} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { MarkdownBody } from '../docs/MarkdownBody'
+import { SetupButton } from '../components/SetupButton'
 
 const TAB_IDS = ['overview', 'claude', 'cursor', 'codex', 'opencode', 'antigravity'] as const
 
@@ -122,6 +123,9 @@ export function InstallationGuidePage() {
         <p className="install-guide-intro">
           Prerequisites, migration, and uninstall are under <strong>Overview</strong>. Pick a runtime for full install
           steps, layout notes, and links to Usage and troubleshooting.
+        </p>
+        <p className="install-guide-setup">
+          <SetupButton />
         </p>
       </header>
 

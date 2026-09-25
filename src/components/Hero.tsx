@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { InstallPlatformModal, type InstallPlatformId } from './InstallPlatformModal'
 import { HeroMedia } from './HeroMedia'
+import { SetupButton } from './SetupButton'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 const INSTALL_DOC_PATHS: Record<InstallPlatformId, string> = {
@@ -65,9 +66,7 @@ export function Hero() {
         </p>
 
         <div className="hero__actions">
-          <a className="btn btn-primary" href="#install">
-            Install
-          </a>
+          <SetupButton />
           <Link className="btn btn-ghost" to="/guide">
             How it works
           </Link>
