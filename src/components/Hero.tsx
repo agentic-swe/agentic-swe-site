@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { InstallPlatformModal, type InstallPlatformId } from './InstallPlatformModal'
-import { HeroMedia } from './HeroMedia'
 import { SetupButton } from './SetupButton'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
@@ -87,8 +86,6 @@ export function Hero() {
           </li>
         </ul>
       </div>
-
-      <HeroMedia />
     </section>
   )
 }
