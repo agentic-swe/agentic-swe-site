@@ -583,6 +583,24 @@ hr {
   font-size: 1.02rem;
 }
 
+/* ── Showreel ─────────────────────────────────────────────────────────────── */
+
+.showreel {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-inset);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--line-synapse);
+}
+
+.showreel__video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
 
 .hero {
@@ -3090,7 +3108,8 @@ hr {
   .doc-toc,
   .doc-code__copy,
   .skip-link,
-  .hero-media {
+  .hero-media,
+  .showreel {
     display: none;
   }
 

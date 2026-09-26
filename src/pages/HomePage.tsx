@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Hero, InstallPlatforms } from '../components/Hero'
 import { PipelineViz } from '../components/PipelineViz'
+import { Showreel } from '../components/Showreel'
 import { CATALOG_COUNTS, CATALOG_TOTAL } from '../data/catalog-counts'
 
 /**
@@ -103,6 +104,8 @@ export function HomePage() {
   return (
     <main id="main-content">
       <Hero />
+
+      <Showreel />
 
       <section id="receipt" className="home-section home-section--receipt" aria-labelledby="receipt-title">
         <header className="home-section__head">

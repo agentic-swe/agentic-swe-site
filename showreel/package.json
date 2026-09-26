@@ -1,0 +1,14 @@
+{
+  "name": "agentic-swe-showreel",
+  "private": true,
+  "version": "1.0.0",
+  "description": "15-second motion-graphic showreel for the Agentic SWE site, rendered frame-by-frame from showreel.html.",
+  "scripts": {
+    "render": "node render.cjs",
+    "stills": "node render.cjs --stills"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.3.0",
+    "playwright-core": "^1.63.0"
+  }
+}
