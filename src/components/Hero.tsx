@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { InstallPlatformModal, type InstallPlatformId } from './InstallPlatformModal'
 import { SetupButton } from './SetupButton'
+import { Showreel } from './Showreel'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 const INSTALL_DOC_PATHS: Record<InstallPlatformId, string> = {
@@ -69,6 +70,10 @@ export function Hero() {
           <Link className="btn btn-ghost" to="/guide">
             How it works
           </Link>
+        </div>
+
+        <div className="hero__reel">
+          <Showreel />
         </div>
 
         <ul className="hero__proof">
