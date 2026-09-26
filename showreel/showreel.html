@@ -1,0 +1,486 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=block" rel="stylesheet" />
+<style>
+  :root {
+    --void: #070a0d; --graphite: #11171c; --raised: #161e24; --inset: #0b1014;
+    --frost: #eaf5f1; --body: #a9bcb8; --muted: #75898a; --faint: #4f6165;
+    --line: #1e2a31; --line-strong: #2b3a42;
+    --synapse: #69dab8; --gate: #ffb15c; --violet: #8c86ff;
+    --display: 'Sora', sans-serif; --sans: 'IBM Plex Sans', sans-serif; --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--void); color: var(--frost); font-family: var(--sans); }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
+  canvas#bg { position: absolute; inset: 0; }
+  .glow { position: absolute; width: 1100px; height: 1100px; border-radius: 50%; filter: blur(40px); opacity: .55; }
+  .scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; will-change: transform, opacity; }
+  .eyebrow { font-family: var(--mono); font-size: 22px; letter-spacing: .28em; text-transform: uppercase; color: var(--synapse); }
+  .h2 { font-family: var(--display); font-weight: 700; font-size: 64px; letter-spacing: -.02em; margin-top: 18px; text-align: center; }
+  .h2 em { font-style: normal; color: var(--synapse); }
+  .mono { font-family: var(--mono); }
+
+  /* A: terminal */
+  .term { width: 1080px; border-radius: 18px; background: rgba(17,23,28,.92); border: 1px solid var(--line-strong); box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(105,218,184,.08); overflow: hidden; }
+  .term__bar { height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 22px; border-bottom: 1px solid var(--line); background: var(--raised); }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--line-strong); }
+  .term__title { margin-left: 16px; font-family: var(--mono); color: var(--muted); font-size: 18px; }
+  .term__body { padding: 38px 44px; font-family: var(--mono); font-size: 34px; line-height: 1.7; min-height: 300px; }
+  .prompt { color: var(--synapse); }
+  .caret { display: inline-block; width: 18px; height: 38px; background: var(--synapse); vertical-align: -6px; margin-left: 4px; }
+  .tline { color: var(--body); font-size: 26px; opacity: 0; }
+  .tline b { color: var(--synapse); font-weight: 600; }
+  .tline .amber { color: var(--gate); }
+
+  /* B: title */
+  .brand-row { display: flex; align-items: center; gap: 28px; }
+  .mark { width: 120px; height: 120px; }
+  .title { font-family: var(--display); font-weight: 800; font-size: 150px; letter-spacing: -.045em; line-height: 1; }
+  .title span { display: inline-block; }
+  .tag { font-family: var(--display); font-weight: 600; font-size: 52px; letter-spacing: -.02em; margin-top: 36px; color: var(--body); }
+  .tag span { display: inline-block; }
+  .tag .acc { color: var(--synapse); }
+  .sub { margin-top: 30px; font-family: var(--mono); font-size: 22px; color: var(--muted); letter-spacing: .12em; }
+
+  /* C: pipeline */
+  .tracks { display: flex; gap: 16px; margin-top: 34px; }
+  .pill { font-family: var(--mono); font-size: 22px; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--muted); }
+  .pill.on { color: var(--void); background: var(--synapse); border-color: var(--synapse); }
+  .pipe { position: relative; width: 1680px; height: 340px; margin-top: 50px; }
+  .pipe__rail { position: absolute; left: 60px; right: 60px; top: 70px; height: 4px; background: var(--line-strong); border-radius: 4px; }
+  .pipe__fill { position: absolute; left: 60px; top: 70px; height: 4px; background: linear-gradient(90deg, var(--violet), var(--synapse)); border-radius: 4px; box-shadow: 0 0 24px var(--synapse); }
+  .pulse { position: absolute; top: 72px; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: #fff; box-shadow: 0 0 20px 8px var(--synapse), 0 0 60px 20px rgba(105,218,184,.4); }
+  .node { position: absolute; top: 72px; width: 200px; margin-left: -100px; display: flex; flex-direction: column; align-items: center; }
+  .node__dot { width: 44px; height: 44px; margin-top: -22px; border-radius: 50%; background: var(--inset); border: 3px solid var(--line-strong); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--void); }
+  .node__label { margin-top: 20px; font-family: var(--mono); font-size: 21px; color: var(--muted); white-space: nowrap; }
+  .node__art { margin-top: 18px; font-family: var(--mono); font-size: 17px; padding: 7px 12px; border-radius: 8px; background: rgba(105,218,184,.08); border: 1px solid rgba(105,218,184,.25); color: var(--synapse); white-space: nowrap; opacity: 0; }
+  .node.gate .node__art { background: rgba(255,177,92,.08); border-color: rgba(255,177,92,.35); color: var(--gate); }
+
+  /* D: specialists */
+  .spec { display: flex; align-items: center; gap: 110px; margin-top: 40px; }
+  .count { font-family: var(--display); font-weight: 800; font-size: 300px; line-height: .9; letter-spacing: -.06em; color: var(--frost); text-shadow: 0 0 80px rgba(105,218,184,.35); }
+  .count-label { font-family: var(--mono); font-size: 26px; color: var(--synapse); letter-spacing: .2em; text-transform: uppercase; margin-top: 18px; }
+  .cats { display: grid; grid-template-columns: repeat(2, 400px); gap: 16px 20px; }
+  .cat { display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-radius: 12px; background: rgba(22,30,36,.85); border: 1px solid var(--line-strong); font-size: 23px; color: var(--body); opacity: 0; }
+  .cat b { font-family: var(--mono); color: var(--synapse); font-weight: 700; }
+
+  /* E: ladder */
+  .ladder-wrap { display: flex; align-items: center; gap: 100px; margin-top: 50px; }
+  .ladder { display: flex; flex-direction: column; gap: 18px; width: 980px; }
+  .rung { position: relative; height: 104px; border-radius: 14px; border: 1px solid var(--line-strong); background: rgba(17,23,28,.85); display: flex; align-items: center; padding: 0 30px; gap: 28px; overflow: hidden; }
+  .rung__bar { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(140,134,255,.35), rgba(105,218,184,.25)); }
+  .rung__tier { position: relative; font-family: var(--mono); font-weight: 700; font-size: 38px; width: 70px; color: var(--muted); }
+  .rung__name { position: relative; font-family: var(--display); font-weight: 600; font-size: 34px; flex: 1; }
+  .rung__cost { position: relative; font-family: var(--mono); font-size: 26px; color: var(--body); }
+  .meter { width: 520px; text-align: left; }
+  .meter__num { font-family: var(--display); font-weight: 800; font-size: 128px; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .meter__unit { font-family: var(--mono); font-size: 28px; color: var(--muted); margin-top: 12px; letter-spacing: .14em; }
+  .meter__badge { display: inline-block; margin-top: 30px; font-family: var(--mono); font-size: 26px; font-weight: 700; padding: 12px 22px; border-radius: 10px; background: var(--synapse); color: var(--void); letter-spacing: .1em; }
+
+  /* F: governance */
+  .gov { display: flex; align-items: center; gap: 120px; margin-top: 60px; }
+  .checks { display: flex; flex-direction: column; gap: 22px; }
+  .check { display: flex; align-items: center; gap: 22px; font-family: var(--mono); font-size: 36px; padding: 22px 30px; border-radius: 14px; background: rgba(17,23,28,.9); border: 1px solid var(--line-strong); width: 620px; opacity: 0; }
+  .check__box { width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--line-strong); display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--void); font-weight: 700; }
+  .gatebox { position: relative; width: 560px; height: 400px; border-radius: 26px; border: 2px solid var(--gate); background: rgba(255,177,92,.06); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 80px rgba(255,177,92,.18); }
+  .gatebox__lbl { font-family: var(--mono); font-size: 24px; color: var(--gate); letter-spacing: .24em; text-transform: uppercase; }
+  .gatebox__name { font-family: var(--display); font-weight: 700; font-size: 58px; margin-top: 16px; }
+  .gatebox__who { font-family: var(--sans); font-size: 26px; color: var(--body); margin-top: 18px; }
+  .stamp { position: absolute; right: -40px; bottom: -34px; font-family: var(--display); font-weight: 800; font-size: 34px; letter-spacing: .08em; color: var(--void); background: var(--synapse); padding: 16px 28px; border-radius: 12px; transform: rotate(-6deg); box-shadow: 0 20px 60px rgba(105,218,184,.4); opacity: 0; }
+
+  /* G: receipt */
+  .receipt { width: 1180px; margin-top: 44px; border-radius: 20px; background: rgba(17,23,28,.95); border: 1px solid var(--line-strong); padding: 38px 48px; box-shadow: 0 40px 120px rgba(0,0,0,.55); }
+  .receipt__title { font-family: var(--mono); font-size: 26px; color: var(--synapse); }
+  .meta { display: flex; justify-content: space-between; gap: 32px; margin: 28px 0 24px; }
+  .meta div { opacity: 0; }
+  .meta dt { font-family: var(--mono); font-size: 16px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
+  .meta dd { font-family: var(--display); font-weight: 700; font-size: 34px; margin-top: 6px; }
+  .dec { display: grid; grid-template-columns: 1fr 110px; font-family: var(--mono); font-size: 21px; padding: 11px 0; border-top: 1px solid var(--line); color: var(--body); opacity: 0; }
+  .dec span:last-child { text-align: right; color: var(--frost); }
+  .dec.gate span:first-child { color: var(--gate); }
+
+  /* H: end card */
+  .end-title { font-family: var(--display); font-weight: 800; font-size: 132px; letter-spacing: -.045em; }
+  .hosts { display: flex; gap: 18px; margin-top: 48px; }
+  .host { font-family: var(--mono); font-size: 24px; padding: 12px 24px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(17,23,28,.8); color: var(--body); opacity: 0; }
+  .url { margin-top: 52px; font-family: var(--mono); font-size: 30px; color: var(--synapse); padding: 18px 34px; border-radius: 14px; border: 1px solid rgba(105,218,184,.4); background: rgba(105,218,184,.07); }
+
+  /* ribbon */
+  #ribbon { position: absolute; left: 120px; right: 120px; bottom: 56px; display: flex; gap: 14px; }
+  .chap { flex: 1; }
+  .chap__track { height: 4px; border-radius: 4px; background: var(--line-strong); overflow: hidden; }
+  .chap__fill { height: 100%; width: 0; background: var(--synapse); }
+  .chap__name { margin-top: 12px; font-family: var(--mono); font-size: 17px; letter-spacing: .2em; text-transform: uppercase; color: var(--faint); }
+  #wipe { position: absolute; top: -200px; bottom: -200px; width: 460px; background: linear-gradient(90deg, transparent, rgba(105,218,184,.0) 10%, rgba(105,218,184,.55) 50%, rgba(140,134,255,.0) 90%, transparent); transform: skewX(-18deg); mix-blend-mode: screen; opacity: 0; }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.65) 100%); pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow" id="g1" style="background: radial-gradient(circle, rgba(105,218,184,.28), transparent 60%)"></div>
+  <div class="glow" id="g2" style="background: radial-gradient(circle, rgba(140,134,255,.26), transparent 60%)"></div>
+  <canvas id="bg" width="1920" height="1080"></canvas>
+
+  <!-- A: one command -->
+  <section class="scene" id="sA">
+    <div class="term">
+      <div class="term__bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="term__title">claude — your-repo</span></div>
+      <div class="term__body">
+        <div><span class="prompt">›</span> <span id="typed"></span><span class="caret" id="caret"></span></div>
+        <div class="tline" id="tl1"><b>✓</b> feasibility.md written · track → <b>lean</b></div>
+        <div class="tline" id="tl2"><b>✓</b> 3 specialists routed · procedure match <b>L1</b></div>
+        <div class="tline" id="tl3"><span class="amber">◆</span> approval-wait · PR <b>example/repo#142</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B: title -->
+  <section class="scene" id="sB">
+    <div class="brand-row">
+      <svg class="mark" id="mark" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#2b3a42" stroke-width="3"/>
+        <circle id="markRing" cx="60" cy="60" r="54" fill="none" stroke="#69dab8" stroke-width="5" stroke-linecap="round" stroke-dasharray="340" stroke-dashoffset="340" transform="rotate(-90 60 60)"/>
+        <path d="M30 78 L50 44 L66 66 L90 34" fill="none" stroke="#eaf5f1" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="90" cy="34" r="8" fill="#69dab8"/>
+      </svg>
+      <div class="title" id="title"></div>
+    </div>
+    <div class="tag" id="tag"></div>
+    <div class="sub" id="subB">GOVERNED PIPELINE · DURABLE MEMORY · HUMAN GATES</div>
+  </section>
+
+  <!-- C: pipeline -->
+  <section class="scene" id="sC">
+    <div class="eyebrow">// the full lifecycle</div>
+    <div class="h2">One state machine. <em>Every phase on disk.</em></div>
+    <div class="tracks"><span class="pill" id="tr0">lean</span><span class="pill" id="tr1">standard</span><span class="pill" id="tr2">rigorous</span></div>
+    <div class="pipe" id="pipe">
+      <div class="pipe__rail"></div>
+      <div class="pipe__fill" id="pfill"></div>
+    </div>
+  </section>
+
+  <!-- D: specialists -->
+  <section class="scene" id="sD">
+    <div class="eyebrow">// specialists</div>
+    <div class="h2">Routed from <em>repo signals</em></div>
+    <div class="spec">
+      <div><div class="count" id="count">0</div><div class="count-label">specialist agents</div></div>
+      <div class="cats" id="cats"></div>
+    </div>
+  </section>
+
+  <!-- E: memory ladder -->
+  <section class="scene" id="sE">
+    <div class="eyebrow" style="color: var(--violet)">// muscle memory</div>
+    <div class="h2">Descends toward <em>zero tokens</em></div>
+    <div class="ladder-wrap">
+      <div class="ladder" id="ladder"></div>
+      <div class="meter">
+        <div class="meter__num" id="meterNum">200,000</div>
+        <div class="meter__unit">TOKENS PER TASK</div>
+        <div class="meter__badge" id="meterBadge">L3 · DELIBERATE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- F: governance -->
+  <section class="scene" id="sF">
+    <div class="eyebrow" style="color: var(--gate)">// governance</div>
+    <div class="h2">Nothing ships <em style="color: var(--gate)">without a person</em></div>
+    <div class="gov">
+      <div class="checks">
+        <div class="check" id="ck0"><span class="check__box">✓</span>/check budget</div>
+        <div class="check" id="ck1"><span class="check__box">✓</span>/check transition</div>
+        <div class="check" id="ck2"><span class="check__box">✓</span>/check artifacts</div>
+      </div>
+      <div class="gatebox" id="gatebox">
+        <div class="gatebox__lbl">human gate</div>
+        <div class="gatebox__name">approval-wait</div>
+        <div class="gatebox__who">pipeline holds until a person approves</div>
+        <div class="stamp" id="stamp">APPROVED</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- G: receipt -->
+  <section class="scene" id="sG">
+    <div class="eyebrow">// the outcome</div>
+    <div class="h2">A receipt, <em>not a transcript</em></div>
+    <div class="receipt">
+      <div class="receipt__title">/receipt · add-retry-logic — Add retry logic to the API client</div>
+      <dl class="meta" id="meta"></dl>
+      <div id="decs"></div>
+    </div>
+  </section>
+
+  <!-- H: end card -->
+  <section class="scene" id="sH">
+    <div class="brand-row">
+      <svg class="mark" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#69dab8" stroke-width="5"/>
+        <path d="M30 78 L50 44 L66 66 L90 34" fill="none" stroke="#eaf5f1" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="90" cy="34" r="8" fill="#69dab8"/>
+      </svg>
+      <div class="end-title">Agentic SWE</div>
+    </div>
+    <div class="tag" style="margin-top: 26px">Engineering intelligence that <span class="acc">remembers how to ship</span></div>
+    <div class="hosts" id="hosts"></div>
+    <div class="url" id="url">agentic-swe.github.io/agentic-swe-site</div>
+  </section>
+
+  <div id="wipe"></div>
+  <div id="ribbon"></div>
+  <div id="vignette"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, s, d) => clamp((t - s) / d);
+const outCubic = (x) => 1 - Math.pow(1 - x, 3);
+const outBack = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const inOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const lerp = (a, b, x) => a + (b - a) * x;
+
+// ---------- timeline (seconds) ----------
+const SCENES = {
+  sA: [0.0, 1.9], sB: [1.8, 3.5], sC: [3.4, 6.1], sD: [6.0, 8.0],
+  sE: [7.9, 10.3], sF: [10.2, 12.3], sG: [12.2, 13.8], sH: [13.7, 15.2],
+};
+const CHAPTERS = [
+  ['Intake', 0.0, 3.4], ['Pipeline', 3.4, 6.0], ['Specialists', 6.0, 7.9],
+  ['Memory', 7.9, 10.2], ['Governance', 10.2, 12.2], ['Receipt', 12.2, 13.7],
+];
+const WIPES = [1.85, 3.45, 6.05, 7.95, 10.25, 12.25, 13.75];
+
+// ---------- build DOM ----------
+const TITLE = 'Agentic SWE';
+$('title').innerHTML = [...TITLE].map((c) => `<span>${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+const TAG = ['Engineering', 'intelligence', 'that', 'remembers', 'how', 'to', 'ship'];
+$('tag').innerHTML = TAG.map((w, i) => `<span class="${i >= 3 ? 'acc' : ''}">${w}&nbsp;</span>`).join('');
+
+const NODES = [
+  ['feasibility', 'feasibility.md'], ['design', 'design.md'], ['implementation', 'implementation.md'],
+  ['code-review', 'review-pass.md'], ['validation', 'validation-results.md'], ['pr-creation', 'pr-link.txt'],
+  ['approval-wait', 'human approval', true], ['completed', 'receipt.md'],
+];
+const PIPE_W = 1680, P0 = 60, P1 = PIPE_W - 60;
+const nodeX = (i) => P0 + (P1 - P0) * (i / (NODES.length - 1));
+$('pipe').insertAdjacentHTML('beforeend', NODES.map(([n, a, g], i) =>
+  `<div class="node${g ? ' gate' : ''}" id="nd${i}" style="left:${nodeX(i)}px"><div class="node__dot" id="nd${i}d"></div><div class="node__label">${n}</div><div class="node__art" id="nd${i}a">${a}</div></div>`).join('') +
+  '<div class="pulse" id="pulse"></div>');
+
+const CATS = [
+  ['Language Specialists', 29], ['Infrastructure', 16], ['Specialized Domains', 15], ['Quality & Security', 14],
+  ['Data & AI', 13], ['Developer Experience', 13], ['Business & Product', 11], ['Core Development', 10],
+  ['Meta & Orchestration', 10], ['Research & Analysis', 7],
+];
+$('cats').innerHTML = CATS.map(([l, c], i) => `<div class="cat" id="cat${i}">${l}<b>${c}</b></div>`).join('');
+
+const LADDER = [
+  ['L3', 'Deliberate', '~200K tokens', 1.0], ['L2', 'Assist', '~8K tokens', 0.62],
+  ['L1', 'Recall', '~1.5K tokens', 0.42], ['L0', 'Reflex', '0 tokens', 0.16],
+];
+$('ladder').innerHTML = LADDER.map(([t, n, c], i) =>
+  `<div class="rung" id="rg${i}"><div class="rung__bar" id="rg${i}b"></div><div class="rung__tier" id="rg${i}t">${t}</div><div class="rung__name">${n}</div><div class="rung__cost">${c}</div></div>`).join('');
+
+const META = [['Track', 'lean'], ['Status', 'completed'], ['Duration', '47 min'], ['Cost', '$1.84'], ['PR', '#142'], ['Gates', '1 human']];
+$('meta').innerHTML = META.map(([k, v], i) => `<div id="mt${i}"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+const DECS = [
+  ['feasibility → lean-track-check', '$0.08'], ['lean-track-check → lean-track-implementation', '$0.04'],
+  ['lean-track-implementation → validation', '$1.33'], ['validation → pr-creation', '$0.21'],
+  ['pr-creation → approval-wait', '$0.18'], ['approval-wait → completed · human', '$0.00', true],
+];
+$('decs').innerHTML = DECS.map(([e, c, g], i) => `<div class="dec${g ? ' gate' : ''}" id="dc${i}"><span>${e}</span><span>${c}</span></div>`).join('');
+
+const HOSTS = ['Claude Code', 'Cursor', 'Codex', 'OpenCode', 'Antigravity'];
+$('hosts').innerHTML = HOSTS.map((h, i) => `<span class="host" id="hs${i}">${h}</span>`).join('');
+
+$('ribbon').innerHTML = CHAPTERS.map(([n], i) =>
+  `<div class="chap"><div class="chap__track"><div class="chap__fill" id="cf${i}"></div></div><div class="chap__name" id="cn${i}">${String(i + 1).padStart(2, '0')} ${n}</div></div>`).join('');
+
+// ---------- background particles (seeded) ----------
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const PARTS = Array.from({ length: 140 }, () => ({ x: rnd() * 1920, y: rnd() * 1080, z: 0.3 + rnd() * 0.7, p: rnd() * 6.28 }));
+const STARS = Array.from({ length: 138 }, (_, i) => {
+  const a = rnd() * Math.PI * 2, r = 380 + rnd() * 520;
+  return { x: 960 + Math.cos(a) * r * 1.3, y: 560 + Math.sin(a) * r * 0.62, d: rnd(), l: Math.floor(rnd() * i) };
+});
+const ctx = $('bg').getContext('2d');
+
+function drawBg(t) {
+  ctx.clearRect(0, 0, 1920, 1080);
+  // perspective grid
+  ctx.save();
+  ctx.strokeStyle = 'rgba(105,218,184,0.06)';
+  ctx.lineWidth = 1;
+  const off = (t * 60) % 80;
+  for (let x = -80 + off; x < 1960; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1080); ctx.stroke(); }
+  for (let y = -80 + off * 0.5; y < 1120; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1920, y); ctx.stroke(); }
+  ctx.restore();
+  // drifting particles
+  for (const p of PARTS) {
+    const x = (p.x + t * 40 * p.z) % 1920, y = p.y + Math.sin(t * 1.3 + p.p) * 14;
+    ctx.fillStyle = `rgba(234,245,241,${0.12 + 0.25 * p.z * (0.5 + 0.5 * Math.sin(t * 3 + p.p))})`;
+    ctx.beginPath(); ctx.arc(x, y, 1.2 + p.z * 1.6, 0, 6.283); ctx.fill();
+  }
+  // specialist constellation during scene D
+  const dv = vis(t, 'sD');
+  if (dv > 0) {
+    const k = outCubic(prog(t, 6.05, 1.3));
+    const n = Math.floor(k * STARS.length);
+    ctx.strokeStyle = `rgba(105,218,184,${0.14 * dv})`;
+    for (let i = 1; i < n; i++) {
+      const a = STARS[i], b = STARS[a.l];
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+    for (let i = 0; i < n; i++) {
+      const s = STARS[i];
+      ctx.fillStyle = s.d > 0.5 ? `rgba(105,218,184,${0.8 * dv})` : `rgba(140,134,255,${0.8 * dv})`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, 3 + s.d * 3, 0, 6.283); ctx.fill();
+    }
+  }
+}
+
+// ---------- scene visibility ----------
+function vis(t, id) {
+  const [s, e] = SCENES[id];
+  return Math.min(prog(t, s, 0.28), 1 - prog(t, e - 0.28, 0.28));
+}
+function placeScene(t, id) {
+  const el = $(id), [s, e] = SCENES[id];
+  const inK = outCubic(prog(t, s, 0.45)), outK = inOut(prog(t, e - 0.3, 0.3));
+  const v = vis(t, id);
+  el.style.opacity = v;
+  el.style.visibility = v <= 0.001 ? 'hidden' : 'visible';
+  const scale = lerp(1.06, 1, inK) * lerp(1, 0.94, outK);
+  const ty = lerp(40, 0, inK) + lerp(0, -30, outK);
+  el.style.transform = `translateY(${ty}px) scale(${scale})`;
+  el.style.filter = `blur(${(1 - inK) * 10 + outK * 8}px)`;
+}
+const show = (el, k, dy = 24) => { el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * dy}px)`; };
+
+// ---------- render ----------
+function render(t) {
+  drawBg(t);
+  const cam = 1 + 0.03 * Math.sin(t * 0.4);
+  $('stage').style.transform = `scale(${cam})`;
+  $('g1').style.transform = `translate(${-200 + Math.sin(t * 0.5) * 300}px, ${-300 + Math.cos(t * 0.4) * 160}px)`;
+  $('g2').style.transform = `translate(${1000 + Math.cos(t * 0.45) * 260}px, ${300 + Math.sin(t * 0.6) * 180}px)`;
+  for (const id of Object.keys(SCENES)) placeScene(t, id);
+
+  // A: typing
+  const CMD = '/work add-retry-logic';
+  const typed = Math.floor(prog(t, 0.15, 0.6) * CMD.length);
+  $('typed').textContent = CMD.slice(0, typed);
+  $('caret').style.opacity = (Math.floor(t * 4) % 2 === 0 || typed < CMD.length) ? 1 : 0;
+  ['tl1', 'tl2', 'tl3'].forEach((id, i) => show($(id), outCubic(prog(t, 0.85 + i * 0.22, 0.25)), 16));
+
+  // B: title stagger
+  [...$('title').children].forEach((el, i) => {
+    const k = outBack(prog(t, 1.95 + i * 0.035, 0.45));
+    el.style.opacity = clamp(k); el.style.transform = `translateY(${(1 - k) * 90}px) rotate(${(1 - k) * 8}deg)`;
+  });
+  [...$('tag').children].forEach((el, i) => show(el, outCubic(prog(t, 2.35 + i * 0.05, 0.35)), 30));
+  show($('subB'), outCubic(prog(t, 2.8, 0.4)), 12);
+  $('markRing').setAttribute('stroke-dashoffset', 340 * (1 - inOut(prog(t, 1.9, 0.9))));
+  $('mark').style.transform = `rotate(${(1 - outBack(prog(t, 1.85, 0.6))) * -120}deg) scale(${lerp(0.4, 1, outBack(prog(t, 1.85, 0.6)))})`;
+
+  // C: pipeline pulse
+  const pk = inOut(prog(t, 3.75, 1.9));
+  const px = lerp(P0, P1, pk);
+  $('pfill').style.width = `${px - P0}px`;
+  $('pulse').style.left = `${px}px`;
+  $('pulse').style.opacity = pk > 0 && pk < 1 ? 1 : pk >= 1 ? 0.0 : 0.6;
+  NODES.forEach(([, , g], i) => {
+    const hit = px >= nodeX(i) - 2;
+    const d = $(`nd${i}d`);
+    const col = g ? '#ffb15c' : '#69dab8';
+    const since = hit ? clamp((pk - (i / (NODES.length - 1))) * 8) : 0;
+    d.style.borderColor = hit ? col : '#2b3a42';
+    d.style.background = hit ? col : '#0b1014';
+    d.textContent = hit ? (g ? '◆' : '✓') : '';
+    d.style.transform = `scale(${hit ? 1 + 0.35 * Math.sin(since * Math.PI) : 1})`;
+    d.style.boxShadow = hit ? `0 0 ${30 * (1 - since * 0.5)}px ${col}` : 'none';
+    $(`nd${i}`).querySelector('.node__label').style.color = hit ? '#eaf5f1' : '#75898a';
+    show($(`nd${i}a`), outCubic(since), 18);
+  });
+  const trk = Math.floor(clamp((t - 3.5) / 0.55, 0, 2.999));
+  [0, 1, 2].forEach((i) => $(`tr${i}`).classList.toggle('on', t > 3.5 && ((t < 5.2 && i === trk) || (t >= 5.2 && i === 2))));
+
+  // D: specialists count
+  $('count').textContent = Math.round(outCubic(prog(t, 6.1, 1.2)) * 138);
+  CATS.forEach((_, i) => {
+    const k = outBack(prog(t, 6.25 + i * 0.07, 0.4));
+    const el = $(`cat${i}`); el.style.opacity = clamp(k); el.style.transform = `translateX(${(1 - k) * 80}px) scale(${lerp(0.9, 1, clamp(k))})`;
+  });
+
+  // E: ladder descent
+  const lk = prog(t, 8.3, 1.4);
+  const level = Math.min(3, Math.floor(lk * 4));
+  const TOK = [200000, 8000, 1500, 0];
+  const segK = inOut(clamp(lk * 4 - level));
+  const tokens = level === 0 && lk === 0 ? 200000 : Math.round(lerp(TOK[Math.max(0, level - 1)] ?? 200000, TOK[level], level === 0 ? 1 : segK));
+  $('meterNum').textContent = tokens.toLocaleString('en-US');
+  $('meterNum').style.color = level === 3 && segK > 0.9 ? '#69dab8' : '#eaf5f1';
+  $('meterBadge').textContent = `${LADDER[level][0]} · ${LADDER[level][1].toUpperCase()}`;
+  $('meterBadge').style.background = level === 3 ? '#69dab8' : level === 0 ? '#8c86ff' : '#eaf5f1';
+  LADDER.forEach(([, , , w], i) => {
+    const ek = outCubic(prog(t, 8.0 + i * 0.08, 0.4));
+    const rg = $(`rg${i}`);
+    rg.style.opacity = ek; rg.style.transform = `translateX(${(1 - ek) * -60}px)`;
+    $(`rg${i}b`).style.width = `${w * 100 * outCubic(prog(t, 8.1 + i * 0.08, 0.6))}%`;
+    const active = i === level && lk > 0;
+    rg.style.borderColor = active ? (i === 3 ? '#69dab8' : '#8c86ff') : '#2b3a42';
+    rg.style.boxShadow = active ? `0 0 40px ${i === 3 ? 'rgba(105,218,184,.35)' : 'rgba(140,134,255,.3)'}` : 'none';
+    $(`rg${i}t`).style.color = active ? (i === 3 ? '#69dab8' : '#8c86ff') : '#75898a';
+  });
+
+  // F: governance
+  [0, 1, 2].forEach((i) => {
+    const k = outCubic(prog(t, 10.4 + i * 0.22, 0.3));
+    const el = $(`ck${i}`); show(el, k, 20);
+    const on = t > 10.6 + i * 0.22;
+    const box = el.querySelector('.check__box');
+    box.style.background = on ? '#69dab8' : 'transparent';
+    box.style.borderColor = on ? '#69dab8' : '#2b3a42';
+    box.style.color = on ? '#070a0d' : 'transparent';
+  });
+  const gk = outCubic(prog(t, 10.45, 0.5));
+  $('gatebox').style.transform = `scale(${lerp(0.85, 1, gk)})`;
+  $('gatebox').style.boxShadow = `0 0 ${80 + 40 * Math.sin(t * 6)}px rgba(255,177,92,${0.15 + 0.1 * Math.sin(t * 6)})`;
+  const sk = prog(t, 11.35, 0.3);
+  $('stamp').style.opacity = clamp(sk * 3);
+  $('stamp').style.transform = `rotate(-6deg) scale(${lerp(2.2, 1, outBack(sk))})`;
+
+  // G: receipt
+  META.forEach((_, i) => show($(`mt${i}`), outCubic(prog(t, 12.45 + i * 0.06, 0.3)), 16));
+  DECS.forEach((_, i) => show($(`dc${i}`), outCubic(prog(t, 12.6 + i * 0.08, 0.22)), 12));
+
+  // H: end card
+  HOSTS.forEach((_, i) => show($(`hs${i}`), outBack(prog(t, 14.05 + i * 0.07, 0.35)), 20));
+  $('url').style.boxShadow = `0 0 ${30 + 20 * Math.sin(t * 5)}px rgba(105,218,184,.25)`;
+
+  // ribbon + wipes
+  const rv = 1 - prog(t, 13.6, 0.3);
+  $('ribbon').style.opacity = rv * prog(t, 0.2, 0.4);
+  CHAPTERS.forEach(([, s, e], i) => {
+    $(`cf${i}`).style.width = `${prog(t, s, e - s) * 100}%`;
+    $(`cn${i}`).style.color = t >= s && t < e ? '#69dab8' : t >= e ? '#75898a' : '#4f6165';
+  });
+  let w = null;
+  for (const wt of WIPES) if (t >= wt - 0.2 && t <= wt + 0.25) w = prog(t, wt - 0.2, 0.45);
+  $('wipe').style.opacity = w === null ? 0 : Math.sin(w * Math.PI);
+  $('wipe').style.left = w === null ? '-600px' : `${lerp(-600, 2100, inOut(w))}px`;
+}
+window.render = render;
+render(0);
+</script>
+</body>
+</html>
