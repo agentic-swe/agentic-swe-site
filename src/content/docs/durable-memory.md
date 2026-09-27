@@ -4,30 +4,44 @@ The pack can index **local** project context into **`.agentic-swe/memory.sqlite`
 
 **Canonical spec (repo):** [memory-graph.md](https://github.com/agentic-swe/agentic-swe/blob/main/docs/specs/memory-graph.md) — config schema, SQLite tables, retrieval modes, and implementation paths.
 
-## What you run
+## What runs automatically
 
-| NPM script | Purpose |
-|------------|---------|
-| **`npm run memory-index`** | Refresh the deterministic **project graph** + **markdown chunks** (and **embeddings** when enabled). Run from a checkout with deps installed, or invoke **`node ${CLAUDE_PLUGIN_ROOT}/scripts/memory-index.cjs`** against a target **`--project-root`**. |
-| **`npm run memory-prime`** | Print a bounded digest (graph stats + optional chunk hits). Use **`--query "…"`** or env **`AGENTIC_SWE_MEMORY_PRIME_QUERY`**. Optional **`--work-id`** scopes paths under **`.worklogs/<id>/`**. |
-| **`npm run memory-compact`** | Write **`context-compact.md`** under a work item: **`--work-dir /abs/path/.worklogs/<id>`** (deterministic merge of key markdown; no LLM). |
-| **`npm run memory-import`** | Merge a validated **JSON bundle** (nodes + edges) into **`memory.sqlite`**. Requires **`import_adapter.enabled`** in config or **`--force`**. See [memory-import-bundle schema](https://github.com/agentic-swe/agentic-swe/blob/main/schemas/memory-import-bundle.schema.json). |
-| **`npm run memory-sliding-summary`** | Build **`sliding-summary.md`** from a Claude Code **JSONL transcript**: older turns compressed (bullets), recent turns verbatim; optional **`--llm`** (OpenAI) for the older block. |
+On Claude Code, Cursor, and OpenCode, session start and session stop:
+
+- index markdown that changed since the last session
+- refresh **`.agentic-swe/lessons.json`** and the style profile
+- capture and score transcript evidence
+- quarantine malformed or duplicate procedures
+- write **`.agentic-swe/hook-receipts.jsonl`**, and inject **`.agentic-swe/hook-notice.md`** when a step fails
+
+Opt out of that maintenance with **`AGENTIC_SWE_HOOK_LIFECYCLE=0`**. **Memory prime** still runs by default. Opt out of prime with **`AGENTIC_SWE_MEMORY_PRIME=0`**.
+
+## Bootstrap, diagnostics, and recovery
+
+These commands are not part of normal task flow.
+
+| NPM script | When to run it |
+|------------|----------------|
+| **`npm run memory-index`** | Rebuild the full project graph and markdown chunks after a corrupted index, or before using embeddings. |
+| **`npm run memory-prime`** | Print the same bounded digest the session hook injects. |
+| **`npm run memory-reflect`** | Rebuild lessons outside a session when a hook receipt says reflection failed. |
+| **`npm run memory-compact`** | Write **`context-compact.md`** under a work item: **`--work-dir /abs/path/.worklogs/<id>`**. |
+| **`npm run memory-import`** | Merge a validated **JSON bundle** into **`memory.sqlite`**. Requires **`import_adapter.enabled`** or **`--force`**. |
+| **`npm run memory-sliding-summary`** | Build **`sliding-summary.md`** from a Claude Code JSONL transcript. |
 
 Config merges **`config/memory.default.json`** → **`AGENTIC_SWE_MEMORY_CONFIG`** (path) → **`.agentic-swe/memory.json`** in the **target project**. Sliding options live under **`sliding.*`** (recent turn count, caps, output filename, LLM toggle).
 
-## Session start (Claude Code & Cursor)
-
-**Memory prime runs by default** at session start (same output as **`npm run memory-prime`**). **Opt out:** set **`AGENTIC_SWE_MEMORY_PRIME=0`** (or **`false`**, **`no`**, **`off`**).
+## Session start (Claude Code, Cursor, and OpenCode)
 
 | Variable | Role |
 |----------|------|
+| **`AGENTIC_SWE_HOOK_LIFECYCLE=0`** | Disable automatic indexing, reflection, and hygiene |
 | **`AGENTIC_SWE_MEMORY_PRIME=0`** | Disable memory prime injection |
 | **`AGENTIC_SWE_PROJECT_ROOT`** | Project root for indexing / prime (else hook **`cwd`**, else shell **`pwd`**) |
 | **`AGENTIC_SWE_MEMORY_PRIME_QUERY`** | Default **`--query`** when not passed on the CLI |
 | **`AGENTIC_SWE_WORK_DIR`** | If set to **`.worklogs/<id>`**, passes **`--work-id`** (basename) |
 
-**Cursor** ships **`hooks/hooks-cursor.json`** session-start only (same script). **Claude Code** uses **`hooks/hooks.json`**.
+**Claude Code** uses **`hooks/hooks.json`**. **Cursor** uses **`hooks/hooks-cursor.json`** for both session start and stop. **OpenCode** runs the same maintenance from its plugin. VS Code and Codex include the hook scripts but do not execute them. Antigravity loads **`GEMINI.md`** only.
 
 ## Retrieval and embeddings
 
