@@ -1,6 +1,6 @@
 # Golden path: first success in about 15 minutes (Claude Code)
 
-This page is the **canonical “try it now”** path: install the pack, run one small task end-to-end, see **`.worklogs/<id>/`**, and stop at a **human gate** before anything merges. For other hosts, see **[Host support tiers](host-support-tiers.md)** (Tier B happy paths for OpenCode and Antigravity).
+This page is the **try it now** path on Claude Code: install the pack, run one small task, see **`.worklogs/<id>/`**, and stop at a **human gate** before anything merges. Other hosts use the same worklogs after **`agentic-swe setup --host <host>`**. Limits are on **[Host capabilities](host-support-tiers.md)**.
 
 ## Prerequisites (about 2 minutes)
 
@@ -8,22 +8,24 @@ This page is the **canonical “try it now”** path: install the pack, run one 
 - A **git checkout** of a real project you can modify (empty repo is fine; a tiny app is better for tests).
 - Optional: **`gh`** authenticated if you want PR creation without friction.
 
-## Step 1 — Install the plugin (about 3 minutes)
+## Step 1 — Install (about 3 minutes)
 
-In Claude Code, from your **target project** root:
+From the **target project** root, with Node.js 18+ and the Claude CLI on `PATH`:
+
+```bash
+agentic-swe setup --host claude-code
+```
+
+That merges **`CLAUDE.md`**, can gitignore **`.worklogs/`**, and installs the marketplace plugin. Confirm with **`agentic-swe doctor`**.
+
+If you are already inside Claude Code and the CLI is not available to setup, the marketplace commands are the recovery path:
 
 ```text
 /plugin marketplace add agentic-swe/agentic-swe
 /plugin install agentic-swe@agentic-swe-catalog
 ```
 
-For local pack development instead:
-
-```bash
-claude --plugin-dir /path/to/agentic-swe
-```
-
-Then run **`/install`** in the target project if you have not merged policy yet. That walkthrough covers **`CLAUDE.md`** merge and optional **`.gitignore`** for **`.worklogs/`**.
+**`/install`** only finishes a missed policy merge. Local pack development can use **`claude --plugin-dir /path/to/agentic-swe`**.
 
 **Pass criteria:** Slash commands such as **`/work`** and **`/check transition`** appear when you type **`/`**.
 
@@ -71,9 +73,9 @@ Open:
 
 Use **`/evaluate-work <id>`** for a health-style summary if your session supports it.
 
-## What “done” means for socialization
+## What “done” means
 
-You are successful when you can **show someone else** the folder tree under **`.worklogs/`** and explain **one** gate you did not skip. You do **not** need CI, a headless harness, or multi-IDE parity for that story — those are [Roadmap](https://github.com/agentic-swe/agentic-swe/blob/main/docs/roadmap.md) items.
+You are successful when you can show the folder tree under **`.worklogs/`** and explain one gate you did not skip. You do not need a green CI run for that story. Other editors are a separate check: [Host capabilities](host-support-tiers.md).
 
 ## Repeatable demo kit
 
@@ -84,4 +86,4 @@ You are successful when you can **show someone else** the folder tree under **`.
 
 - [Usage](usage.md) — commands, tracks, resume.
 - [/check commands](check-commands.md) — budget and transition discipline.
-- [Host support tiers](host-support-tiers.md) — honest scope for OpenCode and Antigravity vs Claude Code.
+- [Host capabilities](host-support-tiers.md) — what each host runs after setup.

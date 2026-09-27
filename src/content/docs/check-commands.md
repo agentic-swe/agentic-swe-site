@@ -39,9 +39,9 @@ Demo data for an empty repo (writes gitignored **`.worklogs/_demo-*`**):
 npm run seed-dashboard-demo
 ```
 
-## Pack CLIs: durable memory (optional)
+## Pack CLIs: durable memory recovery
 
-From a checkout of the pack (or with **`${CLAUDE_PLUGIN_ROOT}/scripts/`** on the path):
+Normal sessions already index, reflect, and inject memory prime. Set **`AGENTIC_SWE_MEMORY_PRIME=0`** to skip the digest. Set **`AGENTIC_SWE_HOOK_LIFECYCLE=0`** to skip maintenance. Use the commands below from a pack checkout (or with **`${CLAUDE_PLUGIN_ROOT}/scripts/`** available) when you are rebuilding or diagnosing, not after every task:
 
 ```bash
 npm run memory-index -- --project-root "$(pwd)"
@@ -51,7 +51,7 @@ npm run memory-import -- --project-root "$(pwd)" --file bundle.json --force
 npm run memory-sliding-summary -- --work-dir "$(pwd)/.worklogs/<id>" --transcript-path /path/to/transcript.jsonl
 ```
 
-**`hooks/session-start`** appends **memory-prime** by default; set **`AGENTIC_SWE_MEMORY_PRIME=0`** to disable. Full reference: [Durable memory](durable-memory.md) and the repo spec [memory-graph.md](https://github.com/agentic-swe/agentic-swe/blob/main/docs/specs/memory-graph.md).
+Full reference: [Durable memory](durable-memory.md) and the repo spec [memory-graph.md](https://github.com/agentic-swe/agentic-swe/blob/main/docs/specs/memory-graph.md).
 
 ## Pack CLIs: catalog lint and routing (Phase 3)
 

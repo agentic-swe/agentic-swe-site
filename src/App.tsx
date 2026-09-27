@@ -3,6 +3,7 @@ import { MotionConfig } from 'framer-motion'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LEGACY_MD_TO_SLUG } from './docs/registry'
 import { PageShell } from './components/PageShell'
+import { RouteMeta } from './components/RouteMeta'
 import { ScrollToTop } from './components/ScrollToTop'
 
 const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })))
@@ -22,6 +23,7 @@ const WorkspacePage = lazy(() =>
   import('./pages/WorkspacePage').then((module) => ({ default: module.WorkspacePage })),
 )
 const SupportPage = lazy(() => import('./pages/SupportPage').then((module) => ({ default: module.SupportPage })))
+const EvaluatePage = lazy(() => import('./pages/EvaluatePage').then((module) => ({ default: module.EvaluatePage })))
 
 /** Matches `base` in `vite.config.ts` (e.g. GitHub Pages subpath). Root deploy uses `undefined`. */
 const routerBasename =
@@ -42,6 +44,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <BrowserRouter basename={routerBasename}>
         <ScrollToTop />
+        <RouteMeta />
         <Routes>
           {Object.entries(LEGACY_MD_TO_SLUG).map(([legacyPath, slug]) => (
             <Route
@@ -60,6 +63,7 @@ export default function App() {
             <Route path="/capabilities" element={<Suspense fallback={<RouteLoading />}><CapabilitiesPage /></Suspense>} />
             <Route path="/product" element={<Suspense fallback={<RouteLoading />}><ProductPage /></Suspense>} />
             <Route path="/workspace" element={<Suspense fallback={<RouteLoading />}><WorkspacePage /></Suspense>} />
+            <Route path="/evaluate" element={<Suspense fallback={<RouteLoading />}><EvaluatePage /></Suspense>} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

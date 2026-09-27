@@ -1,6 +1,6 @@
 # Subagent Catalog
 
-<!-- catalog-counts:start kind=total-line -->138+ specialized subagents<!-- catalog-counts:end --> organized into 10 categories. Each agent has a recommended model (opus for deep reasoning, sonnet for everyday coding, haiku for quick tasks).
+<!-- catalog-counts:start kind=total-line -->138 specialized subagents<!-- catalog-counts:end --> organized into 10 categories. Each agent has a recommended model (opus for deep reasoning, sonnet for everyday coding, haiku for quick tasks).
 
 **Quick reference:**
 - Browse: `/subagent`

@@ -1,79 +1,49 @@
 # OpenCode
 
-OpenCode loads an **ESM plugin** under **`.opencode/plugins/agentic-swe.js`**. The plugin registers pack directories and prepends **`CLAUDE.md`** policy into chat. Use a **Git checkout** of this repository as the pack source.
-
-## Prerequisites
-
-- **OpenCode** with plugin support enabled
-- **Node.js ≥ 18** (for the ESM plugin)
-- A **checkout** of **agentic-swe**
-
-## Workspace layout
-
-The plugin resolves paths from the **agentic-swe repository root** (parent of **`.opencode/`**). Either:
-
-- Open the **agentic-swe** checkout as your workspace, **or**
-- Point the plugin at a clone (see **`repoRoot`** logic inside **`.opencode/plugins/agentic-swe.js`**).
-
-## Add the plugin to `opencode.json`
-
-In the repo you open in OpenCode:
-
-```json
-{
-  "plugins": [
-    {
-      "name": "agentic-swe",
-      "entry": ".opencode/plugins/agentic-swe.js"
-    }
-  ]
-}
-```
-
-## Install the plugin file
+Primary install, from the root of the repository you want to change:
 
 ```bash
-mkdir -p /path/to/your-repo/.opencode/plugins
-ln -s /path/to/agentic-swe/.opencode/plugins/agentic-swe.js \
-      /path/to/your-repo/.opencode/plugins/agentic-swe.js
+agentic-swe setup --host opencode
 ```
 
-If **`repoRoot`** must differ from defaults, adjust the plugin source or run OpenCode from the pack checkout.
+Setup installs the portable pack under **`.agentic-swe/`**, merges **`CLAUDE.md`**, and creates or updates **`opencode.json`** so the plugin entry is **`.agentic-swe/.opencode/plugins/agentic-swe.js`**. Existing **`opencode.json`** plugin entries are merged. Setup does not replace a non-JSON config.
 
-## Merge policy and worklogs
+You need **OpenCode** with plugins enabled and **Node.js 18 or newer**.
 
-Merge root **`CLAUDE.md`** into your project per **`commands/install.md`**. Use **`.worklogs/<id>/`** in the **target** repo for **`state.json`** and artifacts.
+The plugin runs the shared lifecycle on normal chat turns: maintenance, transcript capture, and evolution. See [Durable memory](../durable-memory.md).
+
+## Check the install
+
+```bash
+agentic-swe doctor
+agentic-swe host-parity
+```
+
+OpenCode is **stable** when the plugin loads and those turns run. Open the repository, start a chat, and run **`/work`** with a small task. Confirm **`.worklogs/<id>/state.json`** updates and the session stops at **`approval-wait`** before you merge.
 
 ## What the plugin does
 
-- **`config` hook** — registers **`commands/`**, **`phases/`**, **`agents/`**, **`templates/`**, **`references/`** from the pack root so OpenCode can discover them.
-- **`experimental.chat.messages.transform`** — prepends the orchestration policy from **`CLAUDE.md`** as a system message so sessions follow the state machine.
+- Registers **`commands/`**, **`phases/`**, **`agents/`**, **`templates/`**, and **`references/`** from the pack root.
+- Prepends Hypervisor policy from **`CLAUDE.md`** into chat.
+- Calls the same lifecycle maintenance Claude Code and Cursor run at session boundaries.
 
-## Verify
+There is no Anthropic **`/plugin install`** step. Discovery is **`opencode.json`** plus the ESM plugin.
 
-Open the repo in OpenCode, start a chat, and run **`/work <task>`**. If commands are missing, confirm **`commands/*.md`** exists on the pack root and paths are wired correctly.
+## Advanced and recovery
 
-## Tier B happy path (~15 minutes)
+If you must wire a checkout yourself, point **`opencode.json`** at the plugin file and merge policy with **`node scripts/merge-claude-policy.js`**. A hand-made symlink to **`.opencode/plugins/agentic-swe.js`** is recovery. Setup’s **`opencode.json`** entry is the supported path.
 
-This tab is an **official Tier B** path: same policy spine as Claude Code, **not** identical packaging. See **[Host support tiers](../host-support-tiers.md)** for definitions.
+Pack notes: **`.opencode/INSTALL.md`**.
 
-1. **Checkout** this repository and wire **`opencode.json`** + symlink **`agentic-swe.js`** (sections above).
-2. **Merge `CLAUDE.md`** into your app repo; use **`.worklogs/<id>/`** in the **target** repo.
-3. Open the **target** repo in OpenCode; start a session and run **`/work Fix a trivial typo in README`** (or use files from **`examples/golden-path-demo`** in the pack).
-4. Confirm **`.worklogs/<id>/state.json`** updates and the session respects **approval-wait** before you merge.
-
-**Command mapping (vs Claude Code reference):** there is no Anthropic **`/plugin install`** here — discovery is **`opencode.json`** + the ESM plugin. Policy injection uses **`experimental.chat.messages.transform`** instead of Claude Code’s plugin root resolution in all setups.
-
-## Tool mapping (conceptual)
+## Tool names
 
 | Pack concept | OpenCode surface |
 |--------------|------------------|
-| Subagent spawn | `opencode.agent.spawn` (when available) |
+| Subagent spawn | `opencode.agent.spawn` when the host exposes it |
 | Shell | `opencode.shell.exec` |
 | File tools | `opencode.file.*` |
-| Web | `opencode.web.*` (when available) |
 
-## Related in-site docs
+## Related
 
-- **[OpenCode quick reference](../README.opencode.md)** (home tile).
-- **[Overview tab](/docs/installation#overview)** · **[Multi-platform support](../multi-platform-support.md)** · **[Troubleshooting](../troubleshooting.md)**
+- **[OpenCode](../README.opencode.md)**
+- **[Overview](/docs/installation#overview)** · **[Host capabilities](../host-support-tiers.md)** · **[Troubleshooting](../troubleshooting.md)**

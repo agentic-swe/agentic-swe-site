@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import logoMarkSrc from '../assets/logo-mark.svg?url'
+import { DOCS_REVIEWED_LABEL, SOURCE_REPO, SOURCE_VERSION } from '../data/project-status'
 import { AmbientBackground } from './AmbientBackground'
 import { SetupButton } from './SetupButton'
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? 'nav-active' : undefined
+
+const sitemapHref = `${import.meta.env.BASE_URL ?? '/'}sitemap.xml`
 
 export function PageShell() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -52,6 +55,9 @@ export function PageShell() {
               <NavLink to="/product" className={navClass}>
                 Product
               </NavLink>
+              <NavLink to="/evaluate" className={navClass}>
+                Evaluate
+              </NavLink>
               <NavLink to="/capabilities" className={navClass}>
                 Capabilities
               </NavLink>
@@ -74,16 +80,30 @@ export function PageShell() {
         <footer className="site-footer">
           <div>
             <Link to="/" className="footer-brand">Agentic SWE</Link>
-            <p>Engineering intelligence that remembers how to ship.</p>
+            <p>A local workflow for engineering work you can review. No hosted runtime.</p>
           </div>
-          <nav aria-label="Footer navigation">
-            <Link to="/documentation">Documentation</Link>
-            <Link to="/support">Support</Link>
-            <a href="https://github.com/agentic-swe/agentic-swe" target="_blank" rel="noopener noreferrer">
-              GitHub
-            </a>
-          </nav>
-          <p className="footer-meta">Open source · MIT · Suraj Gupta</p>
+          <div className="footer-navs">
+            <nav aria-label="Evaluate the project">
+              <p className="footer-nav-label">Evaluate</p>
+              <Link to="/evaluate">Project status</Link>
+              <Link to="/product">Product</Link>
+              <Link to="/documentation">Documentation</Link>
+              <Link to="/support">Support</Link>
+              <a href={sitemapHref}>Sitemap</a>
+            </nav>
+            <nav aria-label="Maintainer documentation">
+              <p className="footer-nav-label">Maintainers</p>
+              <Link to="/docs/release-checklist">Release checklist</Link>
+              <Link to="/docs/distribution">Distribution</Link>
+              <a href={SOURCE_REPO} target="_blank" rel="noopener noreferrer">
+                Source
+              </a>
+            </nav>
+          </div>
+          <p className="footer-meta">
+            Open source · MIT · Suraj Gupta · source v{SOURCE_VERSION} · docs reviewed {DOCS_REVIEWED_LABEL} ·{' '}
+            <Link to="/evaluate">Project status</Link>
+          </p>
         </footer>
       </div>
     </>

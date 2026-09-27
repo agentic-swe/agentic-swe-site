@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   WORKSPACE_CURRENT_PHASE_ID,
   WORKSPACE_DEMO,
@@ -87,6 +88,22 @@ export function WorkspacePage() {
           <ApprovalGate {...WORKSPACE_DEMO.approval} />
         </div>
       </div>
+
+      <section className="workspace-next" aria-labelledby="workspace-next-title">
+        <h2 id="workspace-next-title">Run this shape of work locally</h2>
+        <p>
+          The panels above are sample data. The next step is to install the pack and start a work item, or to read
+          how <code>approval-wait</code> continues after a person approves.
+        </p>
+        <div className="product-cta">
+          <Link className="btn btn-primary" to="/docs/installation">
+            Install the pack
+          </Link>
+          <Link className="btn btn-ghost" to="/guide#gates">
+            How approval continues
+          </Link>
+        </div>
+      </section>
     </main>
   )
 }

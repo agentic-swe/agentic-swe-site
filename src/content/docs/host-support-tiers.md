@@ -1,46 +1,58 @@
-# Host support tiers
+# Host capabilities
 
-Not every “supported” host gets the **same** integration. This page defines what we mean by support so expectations stay aligned with what ships today versus what lives on the [Roadmap](https://github.com/agentic-swe/agentic-swe/blob/main/docs/roadmap.md).
+Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71) (merge commit `3d9788d`). npm still listed **3.3.0**, which does not include the new adapters.
 
-## Tier summary
+Support means what the host adapter actually runs today. Run **`agentic-swe host-parity`** on your machine. It prints one status per adapter in **`config/host-adapters.json`**.
 
-| Tier | You get | Cost to maintain | agentic-swe today |
-| :--- | :--- | :--- | :--- |
-| **A — Portable policy** | Markdown policy, artifact layout, evidence habits (**`CLAUDE.md`**, **`.worklogs/`**) | Low | Any editor if you paste or sync policy |
-| **B — Documented happy path** | Install surface + **command mapping** + known limitations | Medium (docs per host) | **Official for OpenCode and Antigravity** (this release cycle) |
-| **C — Packaged integration** | Native plugin / hooks validated in CI | High per host | **Claude Code** (marketplace plugin, **`${CLAUDE_PLUGIN_ROOT}`**), **Cursor** (`.cursor-plugin/`), Codex/OpenCode/Gemini bundles in-repo |
-| **D — Protocol + harness** | Same state machine in CI and IDE, enforced transitions | Highest | [Roadmap Phase 1](https://github.com/agentic-swe/agentic-swe/blob/main/docs/roadmap.md) — not claimed as shipped |
+| Status | Meaning |
+|--------|---------|
+| **stable** | Session start and stop both run, and the host exposes the transcript lifecycle the adapter expects |
+| **partial** | Maintenance runs, but transcript capture is missing or inconsistent |
+| **instruction-only** | No lifecycle API. You follow **`AGENTS.md`** and call tools yourself |
 
-## Canonical reference host: Claude Code
+## Automatic lifecycle
 
-The **best first experience** is Claude Code with the marketplace plugin: slash commands, phase prompts from the plugin root, and **`.worklogs/`** in your repo. Follow the **[Golden path](golden-path.md)**.
+These hosts run the shared lifecycle after **`agentic-swe setup --host <host>`**:
 
-## Tier B — Official secondaries (happy path docs)
+| Host | Parity | Boundary you must know |
+|------|--------|------------------------|
+| **Claude Code** | stable | Marketplace plugin hooks at session start and stop |
+| **Cursor** | stable | **`hooks/hooks-cursor.json`** session start and stop |
+| **OpenCode** | stable | Plugin runs maintenance on normal chat turns |
+| **Codex** | stable | Hooks run only after you trust them |
+| **Antigravity** | stable | **PreInvocation** maintains, **Stop** captures. Gemini CLI is not this hook contract |
+| **Windsurf** | stable | Cascade hooks run only when Restricted Mode is **disabled** |
+| **Kiro** | stable | Kiro **v1** SessionStart and Stop |
+| **GitHub Copilot** | partial | CLI and coding-agent hooks run. IDE chat transcripts are not consistently available |
+| **VS Code** | partial | Extension maintains memory on entry, change, and exit. It does not capture an agent transcript |
 
-These hosts use the **same Hypervisor policy** (`CLAUDE.md`, phases, templates) but ** differ** in how commands are discovered and how the pack is wired. We document a **15-minute style** path for each; we do **not** claim slash-command parity with Claude Code unless stated.
+Install commands and file paths: [Installation](/docs/installation#overview).
 
-### OpenCode
+## Instruction-only hosts
 
-| Claude Code (reference) | OpenCode (Tier B) |
-| :--- | :--- |
-| **`/plugin install …`** | **`opencode.json`** plugin entry + symlink **`agentic-swe.js`** per [OpenCode install tab](/docs/installation#opencode) |
-| **`/work …`** | Same command **when** OpenCode exposes pack **`commands/`**; prepended policy via plugin transform — see [OpenCode](README.opencode.md) and [install-guide/opencode](https://github.com/agentic-swe/agentic-swe/blob/main/site/src/content/docs/install-guide/opencode.md) |
+**Cline, Roo Code, Continue, Junie, and Zed** do not have this lifecycle adapter. Use them like this:
 
-**Non-goals today:** identical SessionStart hooks as Claude Code; CI-driven OpenCode UI tests in GitHub-hosted runners.
+1. Keep the generated root **`AGENTS.md`** as the project rule. Copy it into a host rules directory only when that host does not read **`AGENTS.md`**.
+2. If the editor is VS Code-compatible, **`agentic-swe setup --host vscode`** still performs changed-file maintenance. That does not add transcript capture.
+3. Merge **`integrations/fallback/agentic-swe-memory.mcp.json`** into the host MCP config. Do not replace an existing MCP file wholesale.
 
-### Google Antigravity
+The server exposes **`agentic_swe_memory_refresh`**, **`agentic_swe_memory_prime`**, and **`agentic_swe_memory_status`**. Something must call those tools. MCP does not imply transcript access, automatic Stop capture, or evolution.
 
-| Claude Code (reference) | Antigravity (Tier B) |
-| :--- | :--- |
-| Plugin marketplace | Clone/submodule pack + **merge `CLAUDE.md`** into the app repo — [Antigravity install tab](/docs/installation#antigravity) |
-| **`/work …`** | User steers the session using pack commands where the product exposes them; otherwise follow phase prompts from the merged policy — [Antigravity](antigravity.md) |
+## Same engine, different command UI
 
-**Non-goals today:** Google-hosted pack marketplace identical to Claude’s; attested human gates.
+Every host above can follow the same policy and write **`.worklogs/<id>/`**. Slash-command chrome is not identical. Claude Code discovers **`commands/`** from the plugin root. Other hosts discover those files when their plugin or **`AGENTS.md`** path points at the pack. When a host has no slash UI, open the phase file and ask the session to follow it.
 
-## Other hosts (Cursor, Codex, Gemini CLI)
+**`work-engine`** rejects a transition that the active track does not allow, when **`/check transition`** or **`work-engine transition`** runs. The session is still expected to call that check. A chat that never calls it is not a harness.
 
-See **[Multi-platform support](multi-platform-support.md)** for the full table. Cursor and Codex often land in **Tier C** packaging in this repo (wiring validated in **`npm test`**) while **Tier B** narrative may be shorter than OpenCode/Antigravity depending on doc freshness — check each page’s install section.
+## Where to read next
 
-## When Tier B is not enough
+| Host | Page |
+|------|------|
+| Claude Code | [Claude Code plugin](claude-code-plugin.md) · [install tab](/docs/installation#claude) |
+| Cursor | [Cursor plugin](cursor-plugin.md) · [install tab](/docs/installation#cursor) |
+| OpenCode | [OpenCode](README.opencode.md) · [install tab](/docs/installation#opencode) |
+| Codex | [Codex](README.codex.md) · [install tab](/docs/installation#codex) |
+| Antigravity | [Antigravity](antigravity.md) · [install tab](/docs/installation#antigravity) |
+| VS Code, Windsurf, Kiro, Copilot | [Installation overview](/docs/installation#overview) |
 
-If you need **the same transition enforcement in CI** as in chat, that is **Tier D** and triggers [Phase 1 start criteria](https://github.com/agentic-swe/agentic-swe/blob/main/docs/roadmap.md#when-to-start-phase-1) on the roadmap — not “one more markdown page.”
+Comparison table: [Multi-platform support](multi-platform-support.md). Plain-language terms: [Glossary](glossary.md).

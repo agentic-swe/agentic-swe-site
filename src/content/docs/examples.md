@@ -1,6 +1,6 @@
 # Examples
 
-Practical examples showing how to use the pipeline and subagents in real scenarios. For a timed **first install → `/work` → `.worklogs/`** walkthrough, start with **[Golden path](golden-path.md)** and the tiny **[golden-path-demo](https://github.com/agentic-swe/agentic-swe/tree/main/examples/golden-path-demo)** tree in the repo.
+Practical examples showing how to use the pipeline and subagents. For a timed **first install → `/work` → `.worklogs/`** walkthrough, start with **[Golden path](golden-path.md)** and the tiny **[golden-path-demo](https://github.com/agentic-swe/agentic-swe/tree/main/examples/golden-path-demo)** tree in the repo. These prompts assume setup has already run and the host can invoke **`/work`**. Memory updates on the normal session lifecycle. See [Durable memory](durable-memory.md) and [Host capabilities](host-support-tiers.md).
 
 ---
 
@@ -17,7 +17,7 @@ Pipeline: initialized -> feasibility -> lean-track-check (lean track) -> lean-tr
 [Determines this is a simple, single-file fix -- routes to lean track]
 [Implements the fix, runs tests, creates PR]
 
-PR created: https://github.com/your-org/your-repo/pull/42
+PR created: example/repo#42
 Status: approval-wait -- review the PR and approve to merge.
 
 > /work fix-off-by-one
@@ -45,7 +45,7 @@ Pipeline: initialized -> feasibility -> lean-track-check (rigorous track) -> des
 [Code review passes, validation (tests + lint) passes]
 [Creates PR with full context]
 
-PR created: https://github.com/your-org/your-repo/pull/43
+PR created: example/repo#43
 Status: approval-wait
 ```
 

@@ -2,24 +2,25 @@
 
 **Quick install**
 
-1. In Claude Code, add this repo as a marketplace (use the published GitHub path you were given):
+From the root of the repository you are changing, with the Claude CLI on `PATH`:
 
-   ```text
-   /plugin marketplace add agentic-swe/agentic-swe
-   ```
+```bash
+agentic-swe setup --host claude-code
+```
 
-2. Install the pack:
+Setup adds the marketplace, installs **`agentic-swe@agentic-swe-catalog`**, and merges root **`CLAUDE.md`**. Commands, phases, agents, and hooks load from **`${CLAUDE_PLUGIN_ROOT}/`**. You do not copy the tree into **`project/.claude/`**.
 
-   ```text
-   /plugin install agentic-swe@agentic-swe-catalog
-   ```
+Recovery, if you are already inside Claude Code:
 
-3. Open your **target project** (the repo you are changing) and run **`/install`** once so root **`CLAUDE.md`** gets the Hypervisor block and **`.worklogs/`** is set up.
+```text
+/plugin marketplace add agentic-swe/agentic-swe
+/plugin install agentic-swe@agentic-swe-catalog
+```
 
-That’s it: commands, phases, agents, and hooks load from **`${CLAUDE_PLUGIN_ROOT}/`** — you do **not** copy the tree into **`project/.claude/`** for the default layout.
+**`/install`** finishes a missed policy merge and **`.worklogs/`** setup. It is not required after a successful setup.
 
 **Official docs:** [Plugins](https://code.claude.com/docs/en/plugins) · [Plugins reference](https://code.claude.com/docs/en/plugins-reference)
 
-**Hooks:** **`hooks/hooks.json`** runs **`session-start`** (routing hint; optional **memory prime** when **`AGENTIC_SWE_MEMORY_PRIME=1`**), **`Stop`** → cost sync, and async helpers for **`/brainstorm`** / **`/swe-dashboard`**. See [Durable memory](durable-memory.md).
+**Hooks:** **`hooks/hooks.json`** runs **`session-start`** (routing hint and memory prime by default; opt out with **`AGENTIC_SWE_MEMORY_PRIME=0`**), **`Stop`** for cost sync and transcript capture, and async helpers for **`/brainstorm`** / **`/swe-dashboard`**. See [Durable memory](durable-memory.md).
 
 **More detail:** [Installation](installation.md) · [Usage](usage.md) · [Durable memory](durable-memory.md) · [Troubleshooting](troubleshooting.md)

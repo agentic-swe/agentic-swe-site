@@ -8,8 +8,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/emit-route-pages.mjs",
     "lint": "eslint .",
+    "test": "node --test test/*.test.mjs",
+    "audit": "node scripts/audit-site.mjs",
     "preview": "vite preview",
     "sync:counts": "node scripts/sync-catalog-counts.mjs",
     "sync:counts:check": "node scripts/sync-catalog-counts.mjs --check"

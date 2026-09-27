@@ -1,41 +1,61 @@
-# Plugin privacy (agentic-swe)
+# Privacy
 
-This page describes how the **agentic-swe** Claude Code plugin relates to personal data and third-party services. It is provided for transparency (for example, when listing the plugin in a public directory). **It is not legal advice.**
+This page says what the pack reads and writes on your machine, and what it does not operate. **It is not legal advice.**
 
-## What agentic-swe is
+Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71).
 
-**agentic-swe** is an open-source **markdown workflow pack** (commands, phases, agents, templates, hooks, and related files) that runs **inside [Claude Code](https://docs.anthropic.com/en/docs/claude-code)** on **your machine** in **your** git projects. There is **no separate cloud service or backend** operated by this project that receives your code or conversations.
+## No project backend
 
-## Data processing when you use Claude Code
+agentic-swe does not run a hosted service for your code, chats, or memory. There is no project telemetry pipeline in this repository. Files stay on disk until **you** commit them, copy them, or point a tool at them.
 
-When you use Claude Code with this plugin enabled, **Anthropic** processes prompts, tool use, and model outputs according to **your Claude / Anthropic plan and product terms**. That processing is governed by **Anthropic’s policies**, not by this repository. See Anthropic’s legal pages for details, for example:
+Your **coding host** still sends prompts, tool calls, and model output to that host’s provider under that product’s terms. Examples include Anthropic (Claude Code), Cursor, OpenAI (Codex), Google (Antigravity and Gemini), Windsurf, Kiro, GitHub Copilot, and OpenCode’s configured model provider. Those requests are governed by the host, not by this repository.
 
-- [Anthropic — Legal](https://www.anthropic.com/legal)
+## Local transcript scoring
 
-The plugin does **not** add its own telemetry product beyond what the host (Claude Code) already does.
+On hosts with a transcript lifecycle, session stop reads the host transcript, redacts strings that match a small set of secret patterns, and **scores** the text. A chunk is stored only when evidence converges: a decision, a lesson, or a well-formed command together with a path or an outcome. Ordinary prose is dropped. Malformed commands lower the score and can be quarantined.
 
-## Source code and hosting
+That redaction is best-effort. Do not rely on it as a secrets filter. Avoid pasting credentials into agent chats.
 
-The **source repository** is hosted on **GitHub** (`agentic-swe/agentic-swe`). Access to the repo, stars, issues, and your GitHub account are subject to **GitHub’s** privacy practices:
+Generic VS Code maintains files without reading an agent transcript. Copilot IDE chat may not provide one. Instruction-only hosts (Cline, Roo, Continue, Junie, Zed) capture nothing unless you call the MCP tools.
 
-- [GitHub Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement)
+## Files on disk
 
-## Files the plugin may write locally
+| Location | Contents |
+|----------|----------|
+| **`.worklogs/<id>/`** | Work state, progress, audit log, phase notes |
+| **`.agentic-swe/memory.sqlite`** | Project chunk and graph index |
+| **`~/.agentic-swe/memory.sqlite`** | Personal index, including style constraints |
+| **`.agentic-swe/lessons.json`** | Reflection lessons |
+| **`.agentic-swe/style-profile.json`** | Local style profile |
+| **`.agentic-swe/procedures.json`** | Learned procedures, including quarantined ones |
+| **`.agentic-swe/hook-receipts.jsonl`** | One JSON line per lifecycle run |
+| **`.agentic-swe/hook-notice.md`** | Last failure, injected into the next session |
+| **`.agentic-swe/memory.json`** | Your optional config overrides |
 
-The pipeline stores **per-work state** under **`.worklogs/<id>/`** in **your** project (and may suggest **`.gitignore`** entries). That data stays on your device unless **you** commit it to git or copy it elsewhere. **You** control what is shared.
+The project database is gitignored by a normal setup. **You** choose whether to commit worklogs or copy a memory database to another machine. Deleting these files deletes the local memory. The pack does not sync them to a project server.
+
+## Optional calls off the machine
+
+These stay off until you enable them:
+
+- **Embeddings** with provider **`openai`** send chunk text to OpenAI. **`ollama`** stays on a host you configure, defaulting to localhost.
+- **Sliding summary** with **`--llm`** or **`sliding.llm_enabled`** can call OpenAI to summarize older transcript turns.
+- **Cross-model review** runs a Codex or Gemini CLI, or a paste you do yourself, only when you ask for that pass. See [Cross-model review](cross-model-review.md).
+
+Catalog semantic index uses the same embedding switch.
 
 ## Hooks
 
-Optional **session hooks** (for example under **`hooks/`**) run in **your** environment as configured by Claude Code. Review the hook definitions in the repository if you need to know exactly what runs on your system.
+Lifecycle hooks are shell or Node commands in your environment. They write the receipt and notice files above. Review **`hooks/`** and the host adapter JSON that setup merged if you need the exact command line.
 
-## Changes to this page
+Opt out with **`AGENTIC_SWE_HOOK_LIFECYCLE=0`** and **`AGENTIC_SWE_MEMORY_PRIME=0`**.
 
-This document may be updated as the project or listing requirements change. The current version is published at **`/docs/privacy`** on the [project site](https://agentic-swe.github.io/agentic-swe-site/docs/privacy).
+## Source hosting
+
+The git repository is on GitHub (`agentic-swe/agentic-swe`). GitHub’s privacy statement covers access to that repo: [GitHub Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement).
 
 ## Contact
 
-Questions about **this open-source project** are best handled via [GitHub issues](https://github.com/agentic-swe/agentic-swe/issues). For **Claude Code or Anthropic accounts**, use Anthropic’s support channels.
+Questions about this project: [GitHub issues](https://github.com/agentic-swe/agentic-swe/issues). Questions about a host account belong to that host’s support.
 
----
-
-**Disclaimer:** This summary is for convenience only and may not cover every jurisdiction or use case. For compliance questions, consult a qualified professional.
+This summary can miss a jurisdiction or a future host. For a compliance decision, ask a qualified professional.

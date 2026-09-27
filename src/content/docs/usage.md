@@ -2,7 +2,9 @@
 
 ## Getting Started
 
-No separate eval, audit, or setup steps are required. The pipeline is self-bootstrapping once the **agentic-swe** Claude Code plugin is enabled — give it a task and it handles the rest. If install or slash commands fail, see [troubleshooting.md](troubleshooting.md), run **`/install`** in the target project for **`CLAUDE.md`** / **`.worklogs/`** setup, and see [installation.md](installation.md). From a checkout of this repo you can run **`claude plugin validate /path/to/agentic-swe`** (repo root) to verify the marketplace manifest.
+Install from the repository root with **`agentic-swe setup --host <host>`**. See [installation.md](installation.md) and [Host capabilities](host-support-tiers.md). After that, open the host in that repository and give it a task. Memory maintenance runs on the normal session lifecycle. You do not run npm memory commands after each task.
+
+If slash commands are missing, see [troubleshooting.md](troubleshooting.md). **`/install`** is a Claude Code recovery step for merging **`CLAUDE.md`** and preparing **`.worklogs/`**. It is not the setup path for other hosts. From a pack checkout, **`claude plugin validate /path/to/agentic-swe`** checks the marketplace manifest.
 
 **See all work items locally:** use slash **`/swe-dashboard`** or **`npm run swe-dashboard -- --cwd "$(pwd)"`** for a browser dashboard (metrics, filters, export). Empty tree? Run **`npm run seed-dashboard-demo`** then refresh. Details: [check-commands.md](check-commands.md) and the pack’s **`commands/swe-dashboard.md`**.
 
@@ -82,7 +84,7 @@ To resume paused work:
 
 ## Using Specialized Subagents
 
-<!-- catalog-counts:start kind=total-line -->138+ specialized subagents<!-- catalog-counts:end --> are available for domain-specific tasks. You can use them in three ways:
+<!-- catalog-counts:start kind=total-line -->138 specialized subagents<!-- catalog-counts:end --> are available for domain-specific tasks. You can use them in three ways:
 
 ### Way 1: Via the `/subagent` command
 
@@ -171,7 +173,7 @@ This shows:
 | `/work <id>` | Resume an existing work item by ID |
 | `/plan-only <task>` | Plan without implementing (stops after design) |
 | `/evaluate-work <id>` | Inspect work item health and status |
-| `/install` | Merge `CLAUDE.md`, set up `.worklogs/`, optional `.gitignore` (plugin-first) |
+| `/install` | Claude Code recovery: merge `CLAUDE.md` and set up `.worklogs/` when setup did not finish that step |
 
 ### Enforcement Commands (automatic during pipeline)
 
@@ -204,6 +206,8 @@ This shows:
 
 ---
 
-## Durable memory (optional)
+## Durable memory
 
-Local graph + chunk index under **`.agentic-swe/memory.sqlite`** (`npm run memory-index`), bounded **memory prime** (`npm run memory-prime`), **graph import** (`npm run memory-import`), **transcript sliding summary** (`npm run memory-sliding-summary`), optional **embeddings** / **hybrid** retrieval. Session start **injects memory prime by default** (disable with **`AGENTIC_SWE_MEMORY_PRIME=0`**). Does not replace **`state.json`**. See [Durable memory](durable-memory.md).
+Session start and stop maintain a local index under **`.agentic-swe/memory.sqlite`**, refresh lessons and style, score transcripts when the host provides them, and inject **memory prime** by default. Disable prime with **`AGENTIC_SWE_MEMORY_PRIME=0`**. Disable maintenance with **`AGENTIC_SWE_HOOK_LIFECYCLE=0`**. The digest does not replace **`state.json`**.
+
+**`npm run memory-index`**, **`memory-prime`**, **`memory-import`**, and **`memory-sliding-summary`** are bootstrap, diagnostic, and recovery commands. Embeddings and hybrid retrieval stay off until you enable them. Host limits, including Codex trust, Windsurf Restricted Mode, Copilot IDE transcripts, and VS Code without capture, are in [Durable memory](durable-memory.md).

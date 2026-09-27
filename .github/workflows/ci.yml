@@ -35,5 +35,16 @@ jobs:
       - name: Lint (ESLint + TypeScript-aware rules)
         run: npm run lint
 
+      - name: Test route, link, setup, and viewport contracts
+        run: npm test
+
+      - name: Verify generated catalog counts
+        run: |
+          git clone --depth 1 https://github.com/agentic-swe/agentic-swe.git "$RUNNER_TEMP/agentic-swe-pack"
+          AGENTIC_SWE_PACK="$RUNNER_TEMP/agentic-swe-pack" npm run sync:counts:check
+
       - name: Build (tsc + Vite)
         run: npm run build
+
+      - name: Audit generated site
+        run: npm run audit

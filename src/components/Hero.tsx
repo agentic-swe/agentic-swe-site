@@ -25,11 +25,11 @@ const rawInstallDocs = import.meta.glob<string>(
 )
 
 const PLATFORMS: { id: InstallPlatformId; label: string; hint: string }[] = [
-  { id: 'claude', label: 'Claude Code', hint: 'Plugin marketplace — primary path' },
-  { id: 'cursor', label: 'Cursor', hint: 'Install script + policy merge' },
-  { id: 'codex', label: 'Codex', hint: 'AGENTS.md + symlinked pack' },
-  { id: 'opencode', label: 'OpenCode', hint: '.opencode plugin directory' },
-  { id: 'antigravity', label: 'Antigravity', hint: 'Google IDE, same markdown pack' },
+  { id: 'claude', label: 'Claude Code', hint: 'Setup CLI + plugin lifecycle' },
+  { id: 'cursor', label: 'Cursor', hint: 'Setup CLI + session hooks' },
+  { id: 'codex', label: 'Codex', hint: 'Setup CLI; trust hooks to run' },
+  { id: 'opencode', label: 'OpenCode', hint: 'Setup CLI + chat-turn lifecycle' },
+  { id: 'antigravity', label: 'Antigravity', hint: 'PreInvocation + Stop lifecycle' },
 ]
 
 function installMarkdown(id: InstallPlatformId): string {
@@ -51,24 +51,28 @@ export function Hero() {
       <div className="hero__inner">
         <p className="hero__eyebrow">
           <span className="hero__eyebrow-dot" aria-hidden />
-          Markdown pack · runs in your editor · no hosted runtime
+          <span className="hero__eyebrow-text">Open source · local workflow · no hosted service</span>
         </p>
 
         <h1 id="hero-title" className="hero__title">
-          Engineering intelligence that{' '}
-          <span className="hero__title-accent">remembers how to ship</span>
+          AI coding that leaves a record{' '}
+          <span className="hero__title-accent">a person can review</span>
         </h1>
 
         <p className="hero__lead">
-          Agentic SWE turns AI coding from a chat transcript into a governed pipeline. Every decision is
-          written into your repository as an artifact, every merge waits on a human, and validated work is
-          distilled into procedures the runtime can replay instead of re-reasoning.
+          Agentic SWE is an open-source workflow you install beside your code. It writes down what the assistant
+          decided, stops for a person before that work counts as approved, and can reuse a procedure that already
+          passed. There is no hosted service. Underneath, it is a local state machine with three tracks, budget
+          checks, and {CATALOG_TOTAL} specialist prompts.
         </p>
 
         <div className="hero__actions">
           <SetupButton />
           <Link className="btn btn-ghost" to="/guide">
             How it works
+          </Link>
+          <Link className="btn btn-ghost" to="/evaluate">
+            Who it is for
           </Link>
         </div>
 
@@ -131,9 +135,10 @@ export function InstallPlatforms() {
       </ul>
 
       <p className="install-picker__note">
-        Pick a host to read its exact steps. Every host runs the same markdown pack — see the{' '}
-        <Link to="/docs/installation">full installation guide</Link> or the{' '}
-        <Link to="/docs/golden-path">golden path</Link> for a ~15 minute first run.
+        Pick a host to read its install notes. Windsurf, Kiro, GitHub Copilot, and generic VS Code are in the
+        setup menu — Copilot is partial, and VS Code does not capture transcripts. Every native
+        host runs the same local package. See the <Link to="/docs/installation">installation guide</Link>, the{' '}
+        <Link to="/docs/golden-path">golden path</Link>, or <Link to="/capabilities">host boundaries</Link>.
       </p>
 
       <InstallPlatformModal

@@ -2,9 +2,9 @@
 
 Use before tagging a release or after changing **`hooks/`**, **`.cursor-plugin/`**, **`.opencode/`**, **`GEMINI.md`**, **`.codex/`**, or **`package.json` `files`**.
 
-## First-run story (releases users can socialize)
+## First-run story
 
-A **tagged release** should stay aligned with the public **[Golden path](golden-path.md)**: a new user can install the plugin and reach **`.worklogs/<id>/`** with a trivial task in about **15 minutes**. Before you publish:
+A **tagged release** should stay aligned with the public **[Golden path](golden-path.md)**: a new user can run **`agentic-swe setup --host <host>`** and reach **`.worklogs/<id>/`** with a trivial task in about **15 minutes**. Before you publish, confirm **`npm view @agentic-swe/agentic-swe version`** before the docs call that version published. Source reviewed on 27 Sep 2026 was **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71); npm still listed **3.3.0**.
 
 1. Re-read **Golden path** for drift (commands, marketplace owner, paths). If you changed **memory** scripts, hooks, or config, re-read **[Durable memory](durable-memory.md)** and the repo **`docs/specs/memory-graph.md`** for drift.
 2. Run the **automated** bar below (`npm run ci` or equivalent) so wiring and the docs site still build.
@@ -52,11 +52,16 @@ GitHub-hosted CI cannot install Cursor, Codex, OpenCode, or Gemini for you. Use 
 
 | Platform | Minimal check | Pass criteria |
 |----------|----------------|---------------|
-| **Claude Code** | Marketplace or `--plugin-dir`; **`/install`** in target; trivial **`/work`** | Slash commands visible; **`CLAUDE.md`** merge / **`.worklogs/`** as expected |
-| **Cursor** | Install/configure **`.cursor-plugin/`** per current Cursor docs; open target project | Plugin or session hook loads; commands/agents discoverable per UI |
-| **Codex** | [`.codex/INSTALL.md`](../../.codex/INSTALL.md): **`AGENTS.md`**, merged **`CLAUDE.md`**, pack paths | Assistant follows orchestration / cites policy |
-| **OpenCode** | [`.opencode/INSTALL.md`](../../.opencode/INSTALL.md) + [OpenCode](README.opencode.md) | First turn includes Hypervisor / injected policy |
-| **Gemini CLI** | `gemini extensions install` from repo root (per current Gemini docs) | Extension loads; **`GEMINI.md`** context in session |
+| **Claude Code** | **`agentic-swe setup --host claude-code`**, or marketplace / `--plugin-dir`; trivial **`/work`**. **`/install`** only if policy merge was skipped | Slash commands visible; **`CLAUDE.md`** merge / **`.worklogs/`** as expected; a hook receipt after the session |
+| **Cursor** | **`agentic-swe setup --host cursor`**; reload; open the target project | Session start and stop run; commands discoverable per UI |
+| **Codex** | **`agentic-swe setup --host codex`**, then trust hooks | Receipt appears only after trust |
+| **OpenCode** | **`agentic-swe setup --host opencode`** | A chat turn runs maintenance; policy is in context |
+| **Antigravity** | **`agentic-swe setup --host antigravity`** | PreInvocation and Stop receipts |
+| **Windsurf** | **`agentic-swe setup --host windsurf`** with Restricted Mode off | Hooks do not run while Restricted Mode is on |
+| **Kiro** | **`agentic-swe setup --host kiro`** | v1 SessionStart and Stop receipts |
+| **Copilot** | **`agentic-swe setup --host copilot`** | CLI or coding-agent receipt. Do not require IDE chat capture |
+| **VS Code** | **`agentic-swe setup --host vscode`** | Maintenance receipt without agent transcript capture |
+| **Gemini CLI** | `gemini extensions install` from repo root (per current Gemini docs) | Extension loads; **`GEMINI.md`** context. This is not the Antigravity hook adapter |
 
 ## Record verification (optional but recommended)
 

@@ -1,4 +1,4 @@
-function setupPrompt(host: string, hostId: SetupHostId): string {
+function setupPrompt(host: string, hostId: SetupHostId, boundary?: string): string {
   const unixCommand =
     `curl -fsSL https://raw.githubusercontent.com/agentic-swe/agentic-swe/main/install.sh | bash && ` +
     `"$HOME/.local/bin/agentic-swe" setup --host ${hostId} --target "$PWD" --yes`
@@ -7,13 +7,25 @@ function setupPrompt(host: string, hostId: SetupHostId): string {
     `& "$HOME\\.local\\bin\\agentic-swe.cmd" setup --host ${hostId} --target "$PWD" --yes`
   return [
     `Set up Agentic SWE for ${host} in the current git repository.`,
+    boundary,
     `Run the command for this operating system from the repository root, stop and report if it fails, then summarize what changed.`,
     `macOS/Linux: ${unixCommand}`,
     `Windows PowerShell: ${windowsCommand}`,
-  ].join('\n')
+  ]
+    .filter((line): line is string => Boolean(line))
+    .join('\n')
 }
 
-export type SetupHostId = 'claude-code' | 'cursor' | 'vscode' | 'codex' | 'opencode' | 'antigravity'
+export type SetupHostId =
+  | 'claude-code'
+  | 'cursor'
+  | 'vscode'
+  | 'codex'
+  | 'opencode'
+  | 'antigravity'
+  | 'windsurf'
+  | 'kiro'
+  | 'copilot'
 
 export type SetupHost = {
   id: SetupHostId
@@ -38,14 +50,21 @@ export const SETUP_HOSTS: SetupHost[] = [
   },
   {
     id: 'vscode',
-    name: 'VS Code (Copilot)',
-    prompt: setupPrompt('GitHub Copilot in VS Code', 'vscode'),
-    link: (prompt) => `vscode://GitHub.Copilot-Chat/chat?prompt=${encodeURIComponent(prompt)}`,
+    name: 'VS Code',
+    prompt: setupPrompt(
+      'VS Code',
+      'vscode',
+      'VS Code support is generic memory maintenance when files change. It does not capture session transcripts.',
+    ),
   },
   {
     id: 'codex',
     name: 'Codex',
-    prompt: setupPrompt('Codex', 'codex'),
+    prompt: setupPrompt(
+      'Codex',
+      'codex',
+      'Codex will not run repository hooks until you trust them. Approve the hooks, then start a new session.',
+    ),
   },
   {
     id: 'opencode',
@@ -56,6 +75,29 @@ export const SETUP_HOSTS: SetupHost[] = [
     id: 'antigravity',
     name: 'Antigravity',
     prompt: setupPrompt('Google Antigravity', 'antigravity'),
+  },
+  {
+    id: 'windsurf',
+    name: 'Windsurf',
+    prompt: setupPrompt(
+      'Windsurf',
+      'windsurf',
+      'Windsurf Cascade hooks run only when Restricted Mode is disabled for this workspace.',
+    ),
+  },
+  {
+    id: 'kiro',
+    name: 'Kiro',
+    prompt: setupPrompt('Kiro', 'kiro'),
+  },
+  {
+    id: 'copilot',
+    name: 'GitHub Copilot',
+    prompt: setupPrompt(
+      'GitHub Copilot',
+      'copilot',
+      'Copilot coverage is partial across CLI, editor, and coding-agent surfaces. Do not assume transcript capture on every surface.',
+    ),
   },
 ]
 

@@ -24,56 +24,89 @@ const GROUPS: Group[] = [
         fix: (
           <>
             <p>
-              The plugin is not enabled for the project you have open. Add the marketplace and install it, then
-              reopen your assistant in <strong>that</strong> project directory — commands resolve from the
-              pack’s <code>commands/</code> directory relative to the enabled plugin.
+              Install from the root of the repository you have open, then reopen the assistant in that same
+              directory:
+            </p>
+            <pre>{`agentic-swe setup --host claude-code`}</pre>
+            <p>
+              On Claude Code, commands resolve from the enabled plugin. If you are already inside Claude Code and
+              setup cannot call the CLI, add the marketplace and install the plugin. <code>/install</code> only
+              finishes a missed policy merge. It is not the setup step for other hosts.
             </p>
             <pre>
               {`/plugin marketplace add agentic-swe/agentic-swe
 /plugin install agentic-swe@agentic-swe-catalog`}
             </pre>
             <p>
-              Reference: <Link to="/docs/claude-code-plugin">Claude Code plugin</Link> ·{' '}
-              <Link to="/docs/installation">installation guide</Link>.
+              Reference: <Link to="/docs/installation">installation guide</Link> ·{' '}
+              <Link to="/docs/claude-code-plugin">Claude Code plugin</Link>.
             </p>
           </>
         ),
       },
       {
-        symptom: 'I use Cursor, not Claude Code',
+        symptom: 'I use Cursor, Codex, OpenCode, Antigravity, Windsurf, Kiro, Copilot, or VS Code',
         fix: (
           <>
-            <p>One command, then reload the window:</p>
-            <pre>
-              {`curl -fsSL https://raw.githubusercontent.com/agentic-swe/agentic-swe/main/scripts/install-cursor-plugin.sh | bash`}
-            </pre>
+            <p>One command from the repository root, then reload the editor if it was already open:</p>
+            <pre>{`agentic-swe setup --host <host>`}</pre>
             <p>
-              Prefix the same line with <code>AGENTIC_SWE_TARGET_REPO=/path/to/your-app</code> (and optionally{' '}
-              <code>AGENTIC_SWE_AUTO_GITIGNORE=1</code>) to merge the root policy automatically. That path needs{' '}
-              <code>node</code> available. Reference: <Link to="/docs/cursor-plugin">Cursor plugin</Link>.
+              Host ids: <code>cursor</code>, <code>codex</code>, <code>opencode</code>, <code>antigravity</code>,{' '}
+              <code>windsurf</code>, <code>kiro</code>, <code>copilot</code>, <code>vscode</code>. Then run{' '}
+              <code>agentic-swe doctor</code>. Codex does nothing until you trust its hooks. Windsurf does nothing
+              while Restricted Mode is on. Copilot IDE chat may not provide a transcript. Generic VS Code maintains
+              files and does not capture an agent transcript.
+            </p>
+            <p>
+              Reference: <Link to="/docs/host-support-tiers">host capabilities</Link> ·{' '}
+              <Link to="/docs/multi-platform-support">multi-platform support</Link>.
             </p>
           </>
         ),
       },
       {
-        symptom: 'Another host — Codex, OpenCode, Gemini CLI, Antigravity',
+        symptom: 'Doctor, host parity, or a hook receipt looks wrong',
+        fix: (
+          <>
+            <p>From the repository root:</p>
+            <pre>
+              {`agentic-swe doctor
+agentic-swe host-parity`}
+            </pre>
+            <p>
+              The latest lifecycle run is the last line of <code>.agentic-swe/hook-receipts.jsonl</code>. A failed
+              step is also written to <code>.agentic-swe/hook-notice.md</code> and shown on the next session. Drifted
+              owned files can be restored with <code>agentic-swe repair</code>. Repeat{' '}
+              <code>agentic-swe setup --host &lt;host&gt;</code> before you rebuild hooks by hand.
+            </p>
+            <p>
+              Reference: <Link to="/docs/troubleshooting">troubleshooting</Link> ·{' '}
+              <Link to="/docs/durable-memory">durable memory</Link>.
+            </p>
+          </>
+        ),
+      },
+      {
+        symptom: 'Cline, Roo, Continue, Junie, or Zed',
         fix: (
           <p>
-            All of them run the same markdown pack through a host-specific entry point. Start with{' '}
-            <Link to="/docs/multi-platform-support">multi-platform support</Link> for the comparison table, and{' '}
-            <Link to="/docs/host-support-tiers">host support tiers</Link> for what is first-class versus
-            best-effort.
+            These hosts have no lifecycle adapter. Keep <code>AGENTS.md</code> and call the memory MCP tools
+            yourself (<code>agentic_swe_memory_refresh</code>, <code>agentic_swe_memory_prime</code>,{' '}
+            <code>agentic_swe_memory_status</code>). A VS Code-compatible editor can still run{' '}
+            <code>agentic-swe setup --host vscode</code> for changed-file maintenance. That does not capture the
+            agent transcript. Reference: <Link to="/docs/host-support-tiers">host capabilities</Link>.
           </p>
         ),
       },
       {
-        symptom: 'The plugin installed but there is no policy or .worklogs directory',
+        symptom: 'I switched hosts and the old work item looks empty',
         fix: (
           <p>
-            Run <code>/install</code> inside the target repository. It merges the policy block into{' '}
-            <code>CLAUDE.md</code> and configures <code>.worklogs/</code>. Re-running it is safe and is also how
-            you refresh the merged block after an upgrade. Reference:{' '}
-            <Link to="/docs/installation">installation guide</Link>.
+            Work state stays in <code>.worklogs/</code> and the project index stays in{' '}
+            <code>.agentic-swe/memory.sqlite</code>. Run <code>agentic-swe setup --host &lt;new-host&gt;</code>, then{' '}
+            <code>agentic-swe doctor</code>. Read the new hook receipt after one session. Use{' '}
+            <code>agentic-swe repair</code> for drifted owned files. Do not delete the sqlite file unless you mean
+            to drop the index. Reference: <Link to="/docs/troubleshooting">troubleshooting</Link>.
           </p>
         ),
       },
@@ -218,9 +251,10 @@ node scripts/migrate-work-state.js --apply`}
         symptom: 'What data leaves my machine?',
         fix: (
           <p>
-            The pack itself is markdown and has no hosted runtime; what your assistant transmits is governed by
-            that host. Optional cross-model review invokes an external CLI under sandbox-read-only safety and
-            only when you authorise it. Reference: <Link to="/docs/privacy">privacy</Link> ·{' '}
+            The pack has no project telemetry backend. Lifecycle hooks score transcripts locally and write{' '}
+            <code>.agentic-swe/memory.sqlite</code>, lessons, style, procedures, and hook receipts on your machine.
+            Your coding host still sends prompts to its own model provider. Embeddings and cross-model review call
+            out only when you enable them. Reference: <Link to="/docs/privacy">privacy</Link> ·{' '}
             <Link to="/docs/cross-model-review">cross-model review</Link>.
           </p>
         ),
@@ -271,9 +305,9 @@ export function SupportPage() {
       <section className="support-escalate" aria-labelledby="support-escalate-title">
         <h2 id="support-escalate-title">Still stuck</h2>
         <p>
-          Include the output of <code>/check budget</code>, the relevant{' '}
-          <code>.worklogs/&lt;id&gt;/state.json</code>, and your host and pack versions — that is usually enough
-          to diagnose a run without a reproduction.
+          Include <code>agentic-swe doctor</code>, the last line of <code>.agentic-swe/hook-receipts.jsonl</code>,{' '}
+          <code>agentic-swe version</code>, and the host you used. <code>/check budget</code> and{' '}
+          <code>.worklogs/&lt;id&gt;/state.json</code> still help when a work item is the problem.
         </p>
         <div className="support-escalate__actions">
           <a

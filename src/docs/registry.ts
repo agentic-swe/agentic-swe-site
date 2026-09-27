@@ -33,6 +33,7 @@ export const DOC_SLUGS = [
   'policy-as-code',
   'adaptive-track-router',
   'runtime-facade',
+  'glossary',
 ] as const
 
 export type DocSlug = (typeof DOC_SLUGS)[number]
@@ -75,27 +76,31 @@ export const MARKDOWN_FILE_TO_SLUG: Record<string, DocSlug> = {
   'policy-as-code.md': 'policy-as-code',
   'adaptive-track-router.md': 'adaptive-track-router',
   'runtime-facade.md': 'runtime-facade',
+  'glossary.md': 'glossary',
 }
 
 export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
   installation: {
     title: 'Installation Guide',
-    description: 'Tabbed install: Overview, Claude Code, Cursor, Codex, OpenCode, Antigravity.',
+    description:
+      'Primary path: agentic-swe setup --host. Claude Code, Cursor, Codex, OpenCode, Antigravity, VS Code, Windsurf, Kiro, and Copilot.',
     globKey: '../content/docs/installation.md',
   },
   'golden-path': {
     title: 'Golden path (15 minutes)',
-    description: 'Claude Code: install → /work → .worklogs → gate; lean and standard examples.',
+    description: 'Claude Code: setup → /work → .worklogs → gate; lean and standard examples.',
     globKey: '../content/docs/golden-path.md',
   },
   'host-support-tiers': {
-    title: 'Host support tiers',
-    description: 'What “support” means per IDE; Tier B paths for OpenCode and Antigravity.',
+    title: 'Host capabilities',
+    description:
+      'Stable, partial, and instruction-only hosts: lifecycle adapters, hook trust, Restricted Mode, and MCP fallback.',
     globKey: '../content/docs/host-support-tiers.md',
   },
   'multi-platform-support': {
     title: 'Multi-platform support',
-    description: 'Claude Code, Cursor, Codex, OpenCode, Gemini CLI — one pack, host-specific install notes.',
+    description:
+      'One pack across coding hosts. Setup command, hook files, and what each lifecycle actually runs.',
     globKey: '../content/docs/multi-platform-support.md',
   },
   usage: {
@@ -105,7 +110,8 @@ export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
   },
   'durable-memory': {
     title: 'Durable memory',
-    description: 'Optional local index (memory-index, memory-prime), session hook, embeddings.',
+    description:
+      'Automatic local memory on the normal session lifecycle. npm commands are bootstrap, diagnosis, and recovery.',
     globKey: '../content/docs/durable-memory.md',
   },
   'catalog-routing': {
@@ -115,7 +121,7 @@ export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
   },
   troubleshooting: {
     title: 'Troubleshooting',
-    description: 'Common failures, checks, and validation.',
+    description: 'Setup, doctor, host parity, hook receipts, trust, Restricted Mode, and MCP fallback.',
     globKey: '../content/docs/troubleshooting.md',
   },
   'claude-code-plugin': {
@@ -125,7 +131,7 @@ export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
   },
   'cursor-plugin': {
     title: 'Cursor plugin',
-    description: 'Install the .cursor-plugin manifest, hooks, target CLAUDE.md merge, and daily use.',
+    description: 'Setup installs the local plugin, session start and stop hooks, and the target CLAUDE.md merge.',
     globKey: '../content/docs/cursor-plugin.md',
   },
   'check-commands': {
@@ -140,7 +146,7 @@ export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
   },
   distribution: {
     title: 'Distribution',
-    description: 'Marketplace, site hosting, and channels.',
+    description: 'Current ways to get the pack: setup, marketplace, source checkout, this site, and npm.',
     globKey: '../content/docs/distribution.md',
   },
   'release-checklist': {
@@ -154,38 +160,39 @@ export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
     globKey: '../content/docs/subagent-catalog.md',
   },
   'product-positioning': {
-    title: 'Product positioning',
-    description: 'What the pack is (and is not).',
+    title: 'Product fit',
+    description: 'When the local workflow pack fits, and when it does not.',
     globKey: '../content/docs/product-positioning.md',
   },
   'adoption-one-pager': {
     title: 'Who this is for',
-    description: 'Short fit matrix for socializing; aligns with North Star without overclaiming.',
+    description: 'A short evaluation sheet: what a pilot includes and what this repository does not ship.',
     globKey: '../content/docs/adoption-one-pager.md',
   },
   licensing: {
     title: 'Licensing',
-    description: 'MIT license and how it applies to the pack.',
+    description: 'MIT terms for using and redistributing the pack. Not legal advice.',
     globKey: '../content/docs/licensing.md',
   },
   privacy: {
-    title: 'Plugin privacy',
-    description: 'How the plugin relates to data, Claude Code, and GitHub (directory listings).',
+    title: 'Privacy',
+    description:
+      'Local transcripts, memory files, hook receipts, host model processing, and optional off-machine calls.',
     globKey: '../content/docs/privacy.md',
   },
   opencode: {
     title: 'OpenCode',
-    description: 'Using the pack with OpenCode.',
+    description: 'Setup, chat-turn lifecycle, and where work state lives.',
     globKey: '../content/docs/README.opencode.md',
   },
   codex: {
     title: 'Codex',
-    description: 'Using the pack with Codex.',
+    description: 'Setup, hook trust, and automatic memory after you approve hooks.',
     globKey: '../content/docs/README.codex.md',
   },
   antigravity: {
     title: 'Google Antigravity',
-    description: 'Using the pack with Google Antigravity: CLAUDE.md merge and pack paths.',
+    description: 'Setup, PreInvocation and Stop hooks, and how that differs from Gemini CLI.',
     globKey: '../content/docs/antigravity.md',
   },
   'doubt-driven-verification': {
@@ -220,8 +227,14 @@ export const DOC_REGISTRY: Record<DocSlug, DocMeta> = {
   },
   'runtime-facade': {
     title: 'Runtime facade',
-    description: 'Host-agnostic typed actions with adapters for Claude Code, Codex, and Gemini.',
+    description:
+      'Typed actions with adapters for Claude Code, Cursor, Codex, OpenCode, and Gemini CLI.',
     globKey: '../content/docs/runtime-facade.md',
+  },
+  glossary: {
+    title: 'Glossary',
+    description: 'Plain-language definitions: lifecycle, gates, receipts, Restricted Mode, and advisory memory.',
+    globKey: '../content/docs/glossary.md',
   },
 }
 
@@ -259,4 +272,5 @@ export const LEGACY_MD_TO_SLUG: Record<string, DocSlug> = {
   '/policy-as-code.md': 'policy-as-code',
   '/adaptive-track-router.md': 'adaptive-track-router',
   '/runtime-facade.md': 'runtime-facade',
+  '/glossary.md': 'glossary',
 }

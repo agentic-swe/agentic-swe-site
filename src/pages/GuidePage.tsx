@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { HOST_BOUNDARIES, STABLE_LIFECYCLE_HOSTS } from '../data/host-coverage'
+import { CROSS_HOST_PR, DOCS_REVIEWED_LABEL } from '../data/project-status'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 const LAYERS: ReadonlyArray<{ name: string; role: string; where: string }> = [
@@ -24,7 +26,7 @@ const LAYERS: ReadonlyArray<{ name: string; role: string; where: string }> = [
   },
   {
     name: 'Work state',
-    role: 'Everything a run produces, written to disk so the work can be resumed, audited, replayed, or rendered as a receipt.',
+    role: 'Everything a run produces, written to disk so the work can be resumed, audited, replayed, or rendered as a receipt. Commit the directory, or leave it gitignored.',
     where: '.worklogs/<id>/ in your repository',
   },
 ]
@@ -53,7 +55,7 @@ export function GuidePage() {
       <p className="section-label">// how it works</p>
       <h1>How it works</h1>
       <p className="guide-lede">
-        Agentic SWE is a finite state machine written in markdown. Your assistant session reads the policy,
+        Agentic SWE is a governed workflow backed by a finite state machine. Your assistant session reads the policy,
         moves through explicit states, writes an artifact at every step, and stops at the points where a person
         should decide. This page is the short version; each section links to the reference behind it.
       </p>
@@ -75,6 +77,9 @@ export function GuidePage() {
           </li>
           <li>
             <a href="#memory">Memory and replay</a>
+          </li>
+          <li>
+            <a href="#lifecycle">Lifecycle adapters</a>
           </li>
           <li>
             <a href="#commands">Commands</a>
@@ -110,22 +115,27 @@ export function GuidePage() {
 
       <h2 id="install">Install and first run</h2>
       <p>
-        Install the pack globally, then point your host at it. In Claude Code you can instead add the plugin
-        marketplace; other hosts have their own one-line route.
+        The setup CLI configures a host in the target repository. It installs the local package adapters and, by
+        default, appends <code>.worklogs/</code> to <code>.gitignore</code>. Pass <code>--no-gitignore</code> when
+        those work records should be committed.
       </p>
       <pre>
-        {`npm install -g @agentic-swe/agentic-swe
-claude --plugin-dir "$(agentic-swe path)"`}
+        {`curl -fsSL https://raw.githubusercontent.com/agentic-swe/agentic-swe/main/install.sh | bash
+"$HOME/.local/bin/agentic-swe" setup --host claude-code --target "$PWD" --yes`}
       </pre>
       <p>
-        In your target repository, run <code>/install</code> once. It merges the policy block into{' '}
-        <code>CLAUDE.md</code> and sets up <code>.worklogs/</code> with an optional{' '}
-        <code>.gitignore</code> entry. Then start work:
+        <code>--host</code> accepts <code>claude-code</code>, <code>cursor</code>, <code>opencode</code>,{' '}
+        <code>codex</code>, <code>antigravity</code>, <code>windsurf</code>, <code>kiro</code>,{' '}
+        <code>copilot</code>, and <code>vscode</code>. Repeat the flag or pass <code>all</code>. Copilot is partial
+        across its surfaces. <code>vscode</code> is generic maintenance and does not capture transcripts. In a
+        Claude Code session, <code>/install</code> still merges policy and asks whether to gitignore{' '}
+        <code>.worklogs/</code>. Then start work:
       </p>
       <pre>{`/work Add retry logic to the API client`}</pre>
       <p>
-        When the run reaches <code>approval-wait</code>, review the PR. After it merges, run{' '}
-        <code>/receipt</code> for the shareable summary. Full detail:{' '}
+        When the run reaches <code>approval-wait</code>, a person reviews the PR. Approval, changes, or rejection
+        are recorded. After approval the workflow can continue to <code>completed</code> and proceed to merge.
+        Then run <code>/receipt</code> for the shareable summary. Full detail:{' '}
         <Link to="/docs/installation">installation guide</Link> ·{' '}
         <Link to="/docs/golden-path">golden path</Link> (about fifteen minutes).
       </p>
@@ -152,28 +162,30 @@ claude --plugin-dir "$(agentic-swe path)"`}
         After <code>feasibility</code>, the <code>lean-track-check</code> phase writes{' '}
         <code>pipeline.track</code>, and that value decides which edges are legal for the rest of the run.
       </p>
-      <table>
-        <thead>
-          <tr>
-            <th>Track</th>
-            <th>Feasibility verdict</th>
-            <th>Shape, abbreviated</th>
-          </tr>
-        </thead>
-        <tbody>
-          {TRACK_ROWS.map((row) => (
-            <tr key={row.track}>
-              <td>
-                <strong>{row.track}</strong>
-              </td>
-              <td>
-                <code>{row.verdict}</code>
-              </td>
-              <td>{row.shape}</td>
+      <div className="doc-table" role="region" aria-label="Pipeline tracks" tabIndex={0}>
+        <table>
+          <thead>
+            <tr>
+              <th>Track</th>
+              <th>Feasibility verdict</th>
+              <th>Shape, abbreviated</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {TRACK_ROWS.map((row) => (
+              <tr key={row.track}>
+                <td>
+                  <strong>{row.track}</strong>
+                </td>
+                <td>
+                  <code>{row.verdict}</code>
+                </td>
+                <td>{row.shape}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <p>
         The canonical edges live in <code>state-machine.json</code> and in the fenced graph in the root policy;
         CI checks that the two agree. If <code>pipeline.track</code> is missing on older work, treat it as{' '}
@@ -213,65 +225,83 @@ claude --plugin-dir "$(agentic-swe path)"`}
         <Link to="/docs/context-packs">context packs</Link>.
       </p>
 
+      <h2 id="lifecycle">Lifecycle adapters</h2>
+      <p>
+        Memory maintenance is host-specific. Stable native lifecycle adapters cover{' '}
+        {STABLE_LIFECYCLE_HOSTS.join(', ')}. The cross-host runtime landed in source through{' '}
+        <a href={CROSS_HOST_PR}>pull request 71</a> on {DOCS_REVIEWED_LABEL}. The published npm package still
+        trails that source; this is a capability statement, not an adoption number.
+      </p>
+      <dl className="host-boundaries">
+        {HOST_BOUNDARIES.map((boundary) => (
+          <div key={boundary.id}>
+            <dt>{boundary.title}</dt>
+            <dd>{boundary.body}</dd>
+          </div>
+        ))}
+      </dl>
+
       <h2 id="commands">Commands</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Command</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <code>/work</code>
-            </td>
-            <td>Start a work item or resume one by id</td>
-          </tr>
-          <tr>
-            <td>
-              <code>/goal</code>
-            </td>
-            <td>Governed outer loop over an objective, stopping at the same gates</td>
-          </tr>
-          <tr>
-            <td>
-              <code>/plan-only</code> · <code>/write-plan</code> · <code>/execute-plan</code>
-            </td>
-            <td>Plan without implementing, refine the plan, then run it</td>
-          </tr>
-          <tr>
-            <td>
-              <code>/check budget</code> · <code>/check transition</code> · <code>/check artifacts</code>
-            </td>
-            <td>The three enforcement steps around every phase and transition</td>
-          </tr>
-          <tr>
-            <td>
-              <code>/receipt</code>
-            </td>
-            <td>Render the work item as a shareable audit summary</td>
-          </tr>
-          <tr>
-            <td>
-              <code>/doubt</code> · <code>/policy</code>
-            </td>
-            <td>Bounded adversarial verification; inspect or validate merged policy</td>
-          </tr>
-          <tr>
-            <td>
-              <code>/repo-scan</code> · <code>/test-runner</code> · <code>/lint</code>
-            </td>
-            <td>Evidence helpers the phases call when they need facts</td>
-          </tr>
-          <tr>
-            <td>
-              <code>/subagent</code>
-            </td>
-            <td>Browse or invoke a catalog specialist directly</td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="doc-table" role="region" aria-label="Command reference" tabIndex={0}>
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>/work</code>
+              </td>
+              <td>Start a work item or resume one by id</td>
+            </tr>
+            <tr>
+              <td>
+                <code>/goal</code>
+              </td>
+              <td>Governed outer loop over an objective, stopping at the same gates</td>
+            </tr>
+            <tr>
+              <td>
+                <code>/plan-only</code> · <code>/write-plan</code> · <code>/execute-plan</code>
+              </td>
+              <td>Plan without implementing, refine the plan, then run it</td>
+            </tr>
+            <tr>
+              <td>
+                <code>/check budget</code> · <code>/check transition</code> · <code>/check artifacts</code>
+              </td>
+              <td>The three enforcement steps around every phase and transition</td>
+            </tr>
+            <tr>
+              <td>
+                <code>/receipt</code>
+              </td>
+              <td>Render the work item as a shareable audit summary</td>
+            </tr>
+            <tr>
+              <td>
+                <code>/doubt</code> · <code>/policy</code>
+              </td>
+              <td>Bounded adversarial verification; inspect or validate merged policy</td>
+            </tr>
+            <tr>
+              <td>
+                <code>/repo-scan</code> · <code>/test-runner</code> · <code>/lint</code>
+              </td>
+              <td>Evidence helpers the phases call when they need facts</td>
+            </tr>
+            <tr>
+              <td>
+                <code>/subagent</code>
+              </td>
+              <td>Browse or invoke a catalog specialist directly</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p>
         Full list with arguments: <Link to="/docs/usage">usage</Link>.
       </p>
@@ -295,14 +325,14 @@ claude --plugin-dir "$(agentic-swe path)"`}
 
       <h2 id="platforms">Platforms</h2>
       <p>
-        The pack is host-agnostic markdown. <strong>Claude Code</strong> is the primary path with native slash
-        commands, hooks, and the Agent tool. <strong>Cursor</strong> installs the bundled plugin via script and
-        merges the root policy. <strong>Codex</strong> and <strong>OpenCode</strong> read the pack through an{' '}
-        <code>AGENTS</code> file and their own plugin directory. <strong>Gemini CLI</strong> and{' '}
-        <strong>Antigravity</strong> use the same markdown with a host-specific manifest. Running the full
-        pipeline still expects an interactive host, because the human gates are real. Comparison table:{' '}
+        The policy files travel with the repo. Lifecycle coverage does not. Native adapters are stable for{' '}
+        {STABLE_LIFECYCLE_HOSTS.join(', ')}. GitHub Copilot stays partial because transcript hooks are not on every
+        Copilot surface. Generic VS Code maintains memory from file changes and does not capture transcripts. Other
+        editors can read <code>AGENTS.md</code> or call the memory MCP server; that fallback is explicit and does
+        not imply transcript capture. Human gates still need a person at an interactive host. Comparison:{' '}
         <Link to="/docs/multi-platform-support">multi-platform support</Link> ·{' '}
-        <Link to="/docs/host-support-tiers">host support tiers</Link>.
+        <Link to="/docs/host-support-tiers">host support tiers</Link> ·{' '}
+        <a href={CROSS_HOST_PR}>cross-host runtime pull request</a>.
       </p>
 
       <h2 id="examples">Examples</h2>

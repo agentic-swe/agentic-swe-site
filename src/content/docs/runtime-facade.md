@@ -1,6 +1,6 @@
 # Runtime facade
 
-Phases use a **host-agnostic action vocabulary** that runtime adapters translate into host-specific commands. Write pipeline logic once; run it on Claude Code, Codex, Gemini CLI, or any future host.
+Phases use a **host-agnostic action vocabulary** that runtime adapters translate into host-specific tool names. The adapters below are the ones implemented under **`scripts/lib/runtime/`**. Lifecycle hooks for Windsurf, Kiro, Copilot, and VS Code are a separate map. See [Host capabilities](host-support-tiers.md).
 
 ## Typed actions
 
@@ -26,8 +26,12 @@ Each host has an adapter under `scripts/lib/runtime/`:
 | Adapter | Host | Translation example |
 |---|---|---|
 | `claude-code.cjs` | Claude Code | `READ_FILE` → `Read` tool, `RUN` → `Bash` tool |
+| `cursor.cjs` | Cursor | `READ_FILE` → `Read`, `RUN` → `Shell` |
 | `codex.cjs` | Codex | `READ_FILE` → `read_file`, `RUN` → `shell` |
+| `opencode.cjs` | OpenCode | `READ_FILE` → `opencode.file.read`, `RUN` → `opencode.shell.exec` |
 | `gemini.cjs` | Gemini CLI | `READ_FILE` → `read_file`, `RUN` → `run_shell_command` |
+
+**`scripts/lib/runtime/hosts.cjs`** registers those five. Windsurf, Kiro, Copilot, and the VS Code extension are lifecycle adapters in **`config/host-adapters.json`**. They do not have a typed-action file in this table.
 
 ## How phases use it
 

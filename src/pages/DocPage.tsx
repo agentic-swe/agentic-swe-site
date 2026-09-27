@@ -43,15 +43,6 @@ export function DocPage() {
   const [failedSlug, setFailedSlug] = useState<DocSlug | null>(null)
 
   useEffect(() => {
-    if (meta) {
-      document.title = `${meta.title} · Agentic SWE`
-    }
-    return () => {
-      document.title = 'Agentic SWE — Autonomous Software Engineering Pipeline'
-    }
-  }, [meta])
-
-  useEffect(() => {
     if (!loader || !docSlug) return
     let cancelled = false
     void loader()
