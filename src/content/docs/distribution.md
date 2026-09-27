@@ -1,31 +1,28 @@
-# Distribution model
+# Distribution
 
-How users get **agentic-swe**, and how that relates to **source hosting** (e.g. GitHub).
+How people get the pack today. Publishing mechanics for maintainers are on the [Release checklist](release-checklist.md).
 
-## Channels
+Reviewed 27 Sep 2026. Runtime source **3.3.1** includes [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). The npm registry still listed `@agentic-swe/agentic-swe` at **3.3.0**; install from the current source tree when you need the merged adapters.
 
-| Channel | Role |
-|---------|------|
-| **Claude Code plugin marketplace** | **Primary.** Git-hosted catalog ([`.claude-plugin/marketplace.json`](../../.claude-plugin/marketplace.json)); users add the repo then **`/plugin install`** — see [claude-code-plugin.md](claude-code-plugin.md) |
-| **Cursor** | **Local:** [`scripts/install-cursor-plugin.sh`](../../scripts/install-cursor-plugin.sh) clones or symlinks into **`~/.cursor/plugins/local/agentic-swe`** (documented on [cursor-plugin.md](cursor-plugin.md)). **Marketplace:** submit the same Git repo at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish) for in-IDE discovery (Cursor reviews listings). |
-| **Source hosting** | Development, issues, contributions, and **`claude --plugin-dir`** local dev |
-| **Marketing / docs site** | Landing page and markdown docs on **[GitHub Pages](https://agentic-swe.github.io/agentic-swe-site/)**; describes plugin install |
-| **[Anthropic plugin directory](https://claude.com/plugins)** (optional) | Curated catalog; **separate** from the Git marketplace. Submit via Anthropic’s form; **track submissions:** [claude.ai — Settings → Plugins → Submissions](https://claude.ai/settings/plugins/submissions) |
+## Channels you can use
 
-## Marketing and documentation site
+| Channel | What you get |
+|---------|----------------|
+| **`agentic-swe setup --host <host>`** | The primary install, from a checkout of the reviewed source or from a CLI whose help lists that host. See [Installation](/docs/installation#overview). |
+| **Claude Code marketplace** | **`/plugin marketplace add agentic-swe/agentic-swe`** then **`/plugin install agentic-swe@agentic-swe-catalog`**. Setup runs these when the Claude CLI is available. |
+| **Cursor local plugin** | Setup writes **`~/.cursor/plugins/local/agentic-swe`**. |
+| **Source checkout** | Clone [agentic-swe/agentic-swe](https://github.com/agentic-swe/agentic-swe) to develop the pack or to run setup from that tree. |
+| **This site** | Guides and reference at [agentic-swe.github.io/agentic-swe-site](https://agentic-swe.github.io/agentic-swe-site/). |
+| **npm** | Package **`@agentic-swe/agentic-swe`**. At this review the published version was **3.3.0**. Check **`agentic-swe version`** before you rely on a host adapter. |
 
-- **GitHub Pages (public URL)** — [`.github/workflows/pages.yml`](../../.github/workflows/pages.yml): on push to **`main`**, build with **`VITE_BASE=/<repo>/`** and publish **`site/dist/`**. **Settings → Pages → Source: GitHub Actions**. Example: **`https://agentic-swe.github.io/agentic-swe-site/`** (adjust for forks). README and **`package.json` `homepage`** point here.
-- **Custom domain (optional)** — Configure a custom domain in the repository’s **GitHub Pages** settings and DNS per [GitHub’s custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
+Gemini CLI still loads **`gemini-extension.json`** and **`GEMINI.md`**. That context file is not the Antigravity hook adapter.
 
-## What gets deployed
+## Docs site
 
-**GitHub Actions** runs **`npm run build:site`** (Vite app in **`site/`**) and uploads **`site/dist/`** as the Pages artifact. Documentation pages are bundled from **`site/src/content/docs/*.md`** into the app (routes under **`/docs/*`**).
+The public site is GitHub Pages for **agentic-swe-site**. Documentation routes under **`/docs/*`** render the markdown in this site repository.
 
-## Alignment with product
+A custom domain, when one is configured, follows [GitHub’s custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
 
-- README and the public site describe install via the **Claude Code plugin** and link to the [installation](installation.md) doc.
-- Hero CTAs in **`site/src/`** should point users at **plugin marketplace** flows only.
+## Maintainers
 
-## Release verification (maintainers)
-
-Automated stub tests and manual per-host smoke before tags are on the [Release checklist](release-checklist.md) page.
+Release wiring, smoke, and the record you keep before a tag are on the [Release checklist](release-checklist.md). Do not describe an npm version as current until it is the version **`npm view`** returns.

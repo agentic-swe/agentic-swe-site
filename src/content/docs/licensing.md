@@ -1,32 +1,21 @@
-# Licensing strategy
+# Licensing
 
-## Open source (this repository)
+The pack is released under the **MIT License**. The [LICENSE](https://github.com/agentic-swe/agentic-swe/blob/main/LICENSE) file in the repository is the text that applies.
 
-The project is released under the **MIT License** — see [LICENSE](../../LICENSE) in the repository root.
+**This page is not legal advice.**
 
-MIT allows use, modification, distribution, and sublicensing, including commercial use, subject to preserving the copyright and license notice.
+## What MIT allows
 
-## Product and commercial use
+You may use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the software. That includes commercial use inside your own products and internal tools. You must keep the copyright notice and this permission notice in copies or substantial portions of the software.
 
-- **Default:** Anyone may use Agentic SWE under MIT in their own projects and internal tooling.
-- **What you ship:** If you redistribute modified pipeline markdown, bundle it in a product, or offer services around it, you still need to comply with MIT (notice preservation, etc.). This repository does not ship a separate proprietary license for the core files.
+## If you redistribute
 
-## Enterprise and custom terms
+If you ship modified pipeline markdown, bundle the pack in a product, or offer services around it, you still have to satisfy MIT. This repository does not add a second license for the core files.
 
-Some organizations need **written agreements** for support levels, liability, or customized phase packs. Those are **outside** the generic MIT text. Arrange that with your own counsel or counterparties; the open project does not provide bespoke contracts through this repo.
+## Agreements this repo does not provide
 
-**Disclaimer:** This document is not legal advice. For dual licensing, copyleft alternatives, or custom enterprise terms, consult a qualified attorney.
-
-## Optional future: dual licensing
-
-If you later publish **proprietary** templates or binaries, you can:
-
-- Keep the **core** MIT-licensed in a public repo, and  
-- Offer **commercial-only** artifacts under a separate license, or  
-- Adopt a **Business Source License** or similar after legal review.
-
-Until then, the single source of truth for open content is **MIT + LICENSE file**.
+Support levels, liability terms, and custom contracts are not in the MIT text and are not offered from this repository. Those are agreements between you and your own counterparties.
 
 ## Privacy
 
-For a short note on data, Claude Code, and GitHub hosting (useful for plugin directory listings), see [Plugin privacy](privacy.md).
+For what stays on your machine, see [Privacy](privacy.md).

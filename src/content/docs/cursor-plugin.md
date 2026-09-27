@@ -2,26 +2,18 @@
 
 **Quick install**
 
-1. Run the install script (needs **bash**; **node** optional for auto-merge below), then **restart Cursor** or **Developer: Reload Window**:
+From the root of the repository you are changing:
 
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/agentic-swe/agentic-swe/main/scripts/install-cursor-plugin.sh | bash
-   ```
+```bash
+agentic-swe setup --host cursor
+```
 
-   From a clone of this repo you can use: `bash scripts/install-cursor-plugin.sh`
+Reload the window. Setup installs **`~/.cursor/plugins/local/agentic-swe`**, merges **`CLAUDE.md`**, and can gitignore **`.worklogs/`**. Policy and work state live in that project.
 
-2. **Merge policy into the app you’re editing** (recommended — same rules as Claude Code **`/install`**):
+The curl script **`scripts/install-cursor-plugin.sh`** is a recovery path when setup cannot run. **`AGENTIC_SWE_TARGET_REPO`** and **`AGENTIC_SWE_AUTO_GITIGNORE=1`** are flags for that script, not the default install.
 
-   ```bash
-   AGENTIC_SWE_TARGET_REPO=/path/to/your-app curl -fsSL https://raw.githubusercontent.com/agentic-swe/agentic-swe/main/scripts/install-cursor-plugin.sh | bash
-   ```
+**Work dashboard:** Cursor’s **`hooks/hooks-cursor.json`** runs session start and stop. It does not include the Claude **`UserPromptSubmit`** hook that auto-starts the dashboard. In Cursor, start the dashboard yourself from the project root, for example **`npm run swe-dashboard`** (or **`node …/scripts/swe-dashboard-server.cjs --cwd .`**) and open the printed **`http://127.0.0.1:47822/`** URL. See the pack’s **[swe-dashboard command](https://github.com/agentic-swe/agentic-swe/blob/main/commands/swe-dashboard.md)**.
 
-   Optional: **`AGENTIC_SWE_AUTO_GITIGNORE=1`** adds **`.worklogs/`** to the target **`.gitignore`**.
-
-3. Open the **target project** in Cursor. Use your build’s command UI to open pack **`commands/*.md`** (same prompts as Claude Code). Policy and work state live in that project’s **`CLAUDE.md`** and **`.worklogs/<id>/`**.
-
-**Work dashboard:** Cursor’s **`hooks/hooks-cursor.json`** in this pack only wires **`sessionStart`** (no **`UserPromptSubmit`** hook is assumed). The **local `/swe-dashboard`** server is therefore **Claude Code–first** when using **`hooks/dashboard-on-prompt.sh`** there. In Cursor, start the dashboard yourself from the project root, for example **`npm run swe-dashboard`** (or **`node …/scripts/swe-dashboard-server.cjs --cwd .`**) and open the printed **`http://127.0.0.1:47822/`** URL. See the pack’s **[swe-dashboard command](https://github.com/agentic-swe/agentic-swe/blob/main/commands/swe-dashboard.md)** (`commands/swe-dashboard.md` in the repo).
-
-**Session start:** Same **`hooks/session-start`** as Claude Code — optional **memory prime** when **`AGENTIC_SWE_MEMORY_PRIME=1`**. See [Durable memory](durable-memory.md).
+**Session start and stop:** **`hooks/hooks-cursor.json`** runs **`hooks/session-start`** and **`hooks/session-stop`**. Memory prime is on by default. Set **`AGENTIC_SWE_MEMORY_PRIME=0`** to skip it. Stop captures the transcript. See [Durable memory](durable-memory.md).
 
 **More detail:** [Installation](installation.md) · [Multi-platform support](multi-platform-support.md) · [Durable memory](durable-memory.md) · [Troubleshooting](troubleshooting.md)

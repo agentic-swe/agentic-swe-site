@@ -1,35 +1,38 @@
 # Codex
 
-Treat this **Git repository** as the **source of truth** for markdown: plugin root **`commands/`**, **`phases/`**, **`agents/`** (including **`agents/plugin-runtime/`**), **`templates/`**, **`references/`**, and **`state-machine.json`**.
+Primary install, from the root of the repository you want to change:
 
-## Prerequisites
+```bash
+agentic-swe setup --host codex
+```
 
-- A **checkout** of **agentic-swe** (clone or submodule)
-- A **target git repository** where you want pipeline artifacts
+Setup merges **`CLAUDE.md`**, copies **`AGENTS.md`** only when that file is missing, installs the portable pack under **`.agentic-swe/`**, and merges lifecycle hooks into **`.codex/hooks.json`**.
 
-## Quick setup
+## Trust the hooks
 
-1. Copy **`AGENTS.md`** from the pack into your **target repo root** (or merge with an existing **`AGENTS.md`**).
+Codex does not run those hooks until you approve them. Session start refreshes memory. Stop captures the transcript, evolves evidence-backed procedures, and writes **`.agentic-swe/hook-receipts.jsonl`**. Until you trust the hooks, that lifecycle does not run. Approve the repository or plugin hooks, then start a new session.
 
-2. Merge **`CLAUDE.md`** into the target repo using the delimiter rules in **`commands/install.md`** (same idea as Claude Code **`/install`**).
+Check:
 
-3. Make pack markdown visible to Codex — pick one:
-   - **Symlink** the directories you need from the checkout into the target repo (keep paths consistent with **`AGENTS.md`**), or
-   - **Open both** the pack checkout and the target repo in one workspace if your tooling resolves cross-folder reads.
+```bash
+agentic-swe doctor
+agentic-swe host-parity
+```
 
-4. Use **`.worklogs/<id>/`** in the **target repo root** for per-work state (not **`.claude/.work/`**).
+Codex is **stable** when the trusted hooks run at SessionStart and Stop. Untrusted hooks are a configuration gap, not a missing adapter.
 
-5. Optional: enable **multi-agent** mode in Codex if your environment supports it (some flows use delegation).
+## What the hooks call
 
-## Symlink example (local dev)
+Both events run **`node .agentic-swe/scripts/host-lifecycle.cjs --host codex`** with **`--event start`** or **`--event stop`**. Node.js 18 or newer must be on `PATH`.
 
-Adjust paths to match your machine:
+## Advanced and recovery
+
+Use a checkout and symlinks only when setup cannot write the portable pack:
 
 ```bash
 PACK=/path/to/agentic-swe
 TARGET=/path/to/your-repo
 cp "$PACK/AGENTS.md" "$TARGET/"
-# Merge CLAUDE.md manually or follow commands/install.md in the pack
 mkdir -p "$TARGET/.agentic-swe"
 for d in commands phases agents templates references tools; do
   ln -sf "$PACK/$d" "$TARGET/.agentic-swe/$d"
@@ -37,13 +40,11 @@ done
 ln -sf "$PACK/state-machine.json" "$TARGET/.agentic-swe/state-machine.json"
 ```
 
-Point **`AGENTS.md`** (or Codex config) at those paths so **`/work`** and phase files resolve.
+Prefer **`agentic-swe repair`** or a fresh **`setup --host codex`** before rebuilding that layout by hand. Pack notes also live in **`.codex/INSTALL.md`**.
 
 ## Usage
 
-Start or resume with **`/work <task description>`** (or open the matching file under **`commands/`** if your host maps commands that way). The pipeline uses **feasibility → … → validation → PR** with **human gates** at ambiguity and approval.
-
-### Common commands
+Start or resume with **`/work`** when Codex exposes pack commands. Otherwise open the matching file under **`.agentic-swe/commands/`**. State stays in **`.worklogs/<id>/`** in this repository.
 
 | Command | Purpose |
 |---------|---------|
@@ -51,24 +52,8 @@ Start or resume with **`/work <task description>`** (or open the matching file u
 | **`/check budget`** | Before phases |
 | **`/check transition`** | Before **`state.json`** changes |
 | **`/check artifacts`** | Required files for the next state |
-| **`/plan-only`** | Feasibility + design without implementation |
-| **`/repo-scan`** | Structured codebase snapshot |
-| **`/test-runner`** / **`/lint`** | Validation helpers |
 
-## Tool mapping (conceptual)
+## Related
 
-| Pack concept | Typical Codex equivalent |
-|--------------|-------------------------|
-| Agent / subagent spawn | Multi-agent / dispatch (if enabled) |
-| Shell / bash | Codex shell execution |
-| Read / write / edit | File tools |
-| Tasks / todos | Task tracking (if available) |
-
-## Pipeline state
-
-Under **`.worklogs/<id>/`**: **`state.json`**, **`progress.md`**, **`audit.log`**, plus phase artifacts per **`CLAUDE.md`**.
-
-## Related in-site docs
-
-- **[Codex quick reference](../README.codex.md)** (home tile).
-- **[Usage](../usage.md)** · **[Multi-platform support](../multi-platform-support.md)** · **[Troubleshooting](../troubleshooting.md)**
+- **[Codex](../README.codex.md)**
+- **[Usage](../usage.md)** · **[Host capabilities](../host-support-tiers.md)** · **[Troubleshooting](../troubleshooting.md)**

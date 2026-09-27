@@ -14,20 +14,19 @@ const GROUPS: { label: string; slugs: DocSlug[]; extraCards?: HubExtraCard[] }[]
       'host-support-tiers',
       'multi-platform-support',
       'usage',
+      'durable-memory',
       'claude-code-plugin',
       'troubleshooting',
+      'glossary',
     ],
   },
   {
     label: 'Reference',
     slugs: [
       'check-commands',
-      'durable-memory',
       'catalog-routing',
       'examples',
       'subagent-catalog',
-      'distribution',
-      'release-checklist',
     ],
   },
   {
@@ -43,13 +42,17 @@ const GROUPS: { label: string; slugs: DocSlug[]; extraCards?: HubExtraCard[] }[]
     ],
   },
   {
+    label: 'Maintainers',
+    slugs: ['distribution', 'release-checklist'],
+  },
+  {
     label: 'Product and legal',
     slugs: ['product-positioning', 'adoption-one-pager', 'licensing', 'privacy'],
     extraCards: [
       {
         to: '/support',
         title: 'Support',
-        description: 'Quick fixes, plugin validation, migrations, and where to get help.',
+        description: 'Setup, doctor, hook receipts, and where to get help.',
       },
     ],
   },
@@ -62,11 +65,11 @@ const GROUPS: { label: string; slugs: DocSlug[]; extraCards?: HubExtraCard[] }[]
 /** Ordered reading path for a first run; each step links into the same registry pages. */
 const BEGINNER_PATH: { to: string; title: string; note: string }[] = [
   { to: '/docs/golden-path', title: 'Golden path', note: 'First success in about 15 minutes' },
-  { to: '/docs/installation', title: 'Installation guide', note: 'Per-host setup and migration' },
+  { to: '/docs/installation', title: 'Installation guide', note: 'agentic-swe setup for your host' },
   { to: '/docs/usage', title: 'Usage', note: 'Run /work, tracks, and worklogs' },
-  { to: '/docs/durable-memory', title: 'Durable memory', note: 'Optional local index' },
-  { to: '/docs/catalog-routing', title: 'Catalog routing & CI', note: 'Route work to specialists' },
-  { to: '/docs/multi-platform-support', title: 'Multi-platform support', note: 'One pack, every host' },
+  { to: '/docs/durable-memory', title: 'Durable memory', note: 'Automatic local memory after setup' },
+  { to: '/docs/host-support-tiers', title: 'Host capabilities', note: 'What each host actually runs' },
+  { to: '/docs/glossary', title: 'Glossary', note: 'Plain-language definitions' },
 ]
 
 type HubEntry = {
@@ -139,8 +142,8 @@ export function DocumentationPage() {
       <p className="section-label doc-hub__eyebrow">// documentation</p>
       <h1 className="doc-hub__title">Documentation</h1>
       <p className="hub-intro">
-        Every page renders the same markdown that ships in the repo. New here? Follow the beginner path, or
-        search the full set below.
+        Every page renders the same markdown that ships in the repo. New here? Follow the beginner path. Unfamiliar
+        words are in the <Link to="/docs/glossary">glossary</Link>. Search the full set below.
       </p>
 
       <section className="doc-hub-path" aria-labelledby={pathTitleId}>

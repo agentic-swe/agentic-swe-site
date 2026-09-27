@@ -1,6 +1,8 @@
 import { useCallback, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { CapabilityModal, type CapabilityDetail } from '../components/CapabilityModal'
+import { HOST_BOUNDARIES, STABLE_LIFECYCLE_HOSTS } from '../data/host-coverage'
+import { CROSS_HOST_PR, DOCS_REVIEWED_LABEL } from '../data/project-status'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 type Card = CapabilityDetail & { body: ReactNode }
@@ -186,27 +188,27 @@ const GROUPS: Group[] = [
       {
         title: 'No hosted runtime',
         summary:
-          'The pipeline is markdown at the plugin root — phases, commands, agents, and the root policy. Your editor session, git, and CI are the runtime.',
+          'The pack is a local workflow and runtime: phase prompts, commands, engines, and agent definitions. Your editor session runs it. There is no hosted service.',
         benefits: [
           'Nothing to deploy or operate; the workflow lives beside your code.',
-          'Version control covers the whole workflow — diff, blame, and revert work on policy files.',
+          'Version control covers the policy files. .worklogs can be committed or gitignored.',
           'No third-party service sits between your repository and your changes.',
           'Optional local tools such as the dashboard and brainstorm server are opt-in, never required.',
         ],
-        body: <>Markdown in your repository, executed by the host you already run.</>,
+        body: <>A local package, executed by the host you already run.</>,
       },
       {
         title: 'Runs on the host you use',
         summary:
-          'Claude Code is the primary path. Cursor, Codex, OpenCode, Gemini CLI, and Antigravity run the same pack through their own install route.',
+          'Stable native lifecycle adapters cover Claude Code, Cursor, OpenCode, Codex, Antigravity, Windsurf, and Kiro. Copilot is partial. Generic VS Code maintains memory without transcript capture.',
         benefits: [
-          'One pack, installed once per repository, rather than a per-host reimplementation.',
-          'Host support tiers are documented, so you know what is first-class and what is best-effort.',
-          'Switching editors does not mean rewriting the workflow.',
-          'Per-host install steps are published and kept next to the pack.',
+          'One pack, installed with the setup CLI, rather than a per-host reimplementation of the state machine.',
+          'Host boundaries are explicit, so partial Copilot support is not described as native.',
+          'Editors without a native hook can call the memory MCP tools. That fallback does not imply transcripts.',
+          'Switching editors does not mean rewriting the policy files.',
         ],
         docSlug: 'multi-platform-support',
-        body: <>The same pipeline, whichever assistant your team standardised on.</>,
+        body: <>The same pipeline, with the coverage of the host you actually run.</>,
       },
       {
         title: 'Open work-item interchange',
@@ -235,9 +237,9 @@ export function CapabilitiesPage() {
       <section className="home-section home-section--capabilities" aria-labelledby="capabilities-title">
         <header className="home-section__head">
           <p className="section-label">// capabilities</p>
-          <h2 id="capabilities-title" className="home-section__title">
+          <h1 id="capabilities-title" className="home-section__title">
             What the pack actually gives you
-          </h2>
+          </h1>
           <p className="home-section__lead">
             Grouped by the question each capability answers: how the run decides, how it stays reviewable, and
             how it stays yours. Open any card for the detail behind the claim.
@@ -255,9 +257,9 @@ export function CapabilitiesPage() {
                 <span className={`feature-icon ${group.iconClass}`} aria-hidden>
                   {group.symbol}
                 </span>
-                <h3 id={`group-${group.id}`} className="capability-group__title">
+                <h2 id={`group-${group.id}`} className="capability-group__title">
                   {group.title}
-                </h3>
+                </h2>
                 <p className="capability-group__desc">{group.desc}</p>
               </header>
 
@@ -275,7 +277,7 @@ export function CapabilitiesPage() {
                     <span className={`feature-icon ${group.iconClass}`} aria-hidden>
                       {group.symbol}
                     </span>
-                    <h4>{card.title}</h4>
+                    <h3>{card.title}</h3>
                     <p>{card.body}</p>
                     <span className="feature-card-hint">Open detail</span>
                   </button>
@@ -290,24 +292,32 @@ export function CapabilitiesPage() {
         <header className="home-section__head">
           <p className="section-label">// hosts</p>
           <h2 id="platforms-title" className="home-section__title">
-            Same pack, your editor or CLI
+            Host coverage and boundaries
           </h2>
           <p className="home-section__lead">
-            Install once into the repository; the root policy and the pipeline tree resolve the same way on every
-            host. Claude Code is the primary path — see{' '}
+            Native lifecycle adapters are stable for {STABLE_LIFECYCLE_HOSTS.join(', ')}. The cross-host runtime
+            landed in source through <a href={CROSS_HOST_PR}>pull request 71</a> on {DOCS_REVIEWED_LABEL}; the
+            published npm package still trails that source. See{' '}
             <Link to="/docs/multi-platform-support">multi-platform support</Link> and{' '}
-            <Link to="/docs/host-support-tiers">host support tiers</Link> for what each one covers.
+            <Link to="/docs/host-support-tiers">host support tiers</Link> for install detail.
           </p>
         </header>
 
         <ul className="platforms-list">
-          <li>Claude Code</li>
-          <li>Cursor</li>
-          <li>Codex</li>
-          <li>OpenCode</li>
-          <li>Gemini CLI</li>
-          <li>Antigravity</li>
+          {STABLE_LIFECYCLE_HOSTS.map((host) => (
+            <li key={host}>{host}</li>
+          ))}
+          <li>GitHub Copilot · partial</li>
+          <li>VS Code · maintenance</li>
         </ul>
+        <dl className="host-boundaries">
+          {HOST_BOUNDARIES.map((boundary) => (
+            <div key={boundary.id}>
+              <dt>{boundary.title}</dt>
+              <dd>{boundary.body}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <CapabilityModal open={activeCard !== null} detail={activeCard} onClose={handleClose} />

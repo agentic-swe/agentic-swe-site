@@ -2,18 +2,16 @@
 
 **Quick setup**
 
-1. Install **Antigravity** per Google: [Get started](https://antigravity.google/docs/get-started).
+1. Install Antigravity: [Get started](https://antigravity.google/docs/get-started).
 
-2. **Clone** this pack repo (or submodule it) so **`commands/`**, **`phases/`**, **`agents/`**, **`templates/`**, **`references/`**, and **`state-machine.json`** are on disk.
-
-3. In your **app repo**, merge the pack’s **`CLAUDE.md`** policy block (delimiter-safe). From a pack checkout you can run:
+2. From the root of the repository you want to change:
 
    ```bash
-   node scripts/merge-claude-policy.js --target /path/to/your-app
+   agentic-swe setup --host antigravity
    ```
 
-   Optional: **`--gitignore`** adds **`.worklogs/`** when missing.
+   Setup merges **`CLAUDE.md`**, copies **`GEMINI.md`** when it is missing, installs **`.agentic-swe/`**, and merges **`.agents/hooks.json`**. **PreInvocation** maintains memory. **Stop** captures the transcript.
 
-4. In Antigravity, keep **root `CLAUDE.md`** and the **pack path** in context. There is no separate runtime: the session follows the policy and writes under **`.worklogs/<id>/`**.
+3. Gemini CLI reads **`GEMINI.md`** and does not use those IDE hooks. A CLI session is not Stop capture.
 
-**More detail:** [Installation](installation.md) · [Multi-platform support](multi-platform-support.md) · [Durable memory](durable-memory.md)
+**More detail:** [Installation](/docs/installation#antigravity) · [Host capabilities](host-support-tiers.md) · [Durable memory](durable-memory.md)

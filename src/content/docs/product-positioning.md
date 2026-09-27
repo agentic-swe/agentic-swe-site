@@ -1,31 +1,35 @@
-# Product positioning
+# Product fit
 
-**Shareable short matrix:** [Who this is for (adoption one-pager)](adoption-one-pager.md) · **Try it:** [Golden path (15 minutes)](golden-path.md).
+Agentic SWE is a local workflow pack for coding agents. You install it into a repository you control. The session follows **`CLAUDE.md`**, writes evidence under **`.worklogs/<id>/`**, and stops at human gates. There is no hosted runner in this project.
 
-Agentic SWE is a **workflow pack for Claude Code**: installable markdown (policies, phases, agents, templates) that runs in the developer’s environment. There is **no hosted SaaS runtime** for this pipeline in this repository — the runtime is Claude Code (or your host) plus your repo; the **Hypervisor** is the primary session following `CLAUDE.md`.
+A short evaluation sheet is [Who this is for](adoption-one-pager.md). A first run is the [Golden path](golden-path.md).
 
-## Primary ICP (ideal customer profile)
+## When it fits
 
-**Engineering teams of roughly 2–20 developers** who already use (or are adopting) Claude Code and want:
+It fits people who already work in a coding agent and want:
 
-- Predictable phases instead of ad-hoc chats  
-- **Budgets and human gates** so agent work stops for ambiguity or approval  
-- **Evidence-backed artifacts** (`state.json`, phase outputs) for review and audit  
+- phased work instead of one unbounded chat
+- budgets and stops for ambiguity and approval
+- files a reviewer can open (**`state.json`**, phase notes, an audit log)
+- the same policy on more than one host, with the limits in [Host capabilities](host-support-tiers.md)
 
-**Secondary ICP:** Senior individual contributors who want the same structure for personal or small projects.
+That includes a team sharing one repository and a person using it on their own projects.
 
-## Hero use case (messaging)
+## When it does not fit
 
-**Ship AI-assisted changes with traceable state, iteration budgets, and human gates—not unbounded agent loops.**
+- You need a cloud service that clones repositories and ships changes without a local session.
+- You need the same slash-command interface on every editor this week. Command discovery differs by host.
+- You need an attested compliance product, ticket sync, or a multi-tenant control plane from this repository.
+- You need every chat transcript captured inside generic VS Code, or inside Copilot IDE chat. Those surfaces do not provide that lifecycle. See [Durable memory](durable-memory.md).
 
-Lead with: governance, safety rails, and review-friendly outputs—not “more agents.”
+## What you are choosing
 
-## Differentiators (go-to-market angles)
+You are choosing local governance: tracks, **`/check`** commands, and a work engine that rejects a transition the active track does not allow when that check runs. You are also choosing local memory that updates on the normal session lifecycle and stays advisory.
 
-1. **Failed refactors and runaway agents** — Position budgets, `ambiguity-wait` / `approval-wait`, and escalation paths as the answer to fear of uncontrolled automation.  
-2. **Dev workflow product** — Same mental bucket as editor rules and team conventions: buyers already pay for tools; you sell **workflow + safety** for Claude Code specifically.  
-3. **Future vertical packs** — Optional domain-specific subagent bundles or forks without changing the core architecture.
+You are not choosing a second model vendor. Prompts still go to the host you already use.
 
-## What not to claim
+## Next
 
-Do not promise a **multi-tenant SaaS** or “our cloud runs your pipeline” unless you ship that separately. In this repository, the product is the **markdown pack** (policies, phases, agents, templates) you install and run in your own environment.
+- [Installation](/docs/installation#overview)
+- [Privacy](privacy.md)
+- [Licensing](licensing.md)

@@ -1,10 +1,21 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { MarkdownBody } from '../docs/MarkdownBody'
 import { SetupButton } from '../components/SetupButton'
 
-const TAB_IDS = ['overview', 'claude', 'cursor', 'codex', 'opencode', 'antigravity'] as const
+const TAB_IDS = [
+  'overview',
+  'claude',
+  'cursor',
+  'codex',
+  'opencode',
+  'antigravity',
+  'windsurf',
+  'kiro',
+  'copilot',
+  'vscode',
+] as const
 
 type InstallGuideTabId = (typeof TAB_IDS)[number]
 
@@ -15,6 +26,10 @@ const TAB_LABELS: Record<InstallGuideTabId, string> = {
   codex: 'Codex',
   opencode: 'OpenCode',
   antigravity: 'Antigravity',
+  windsurf: 'Windsurf',
+  kiro: 'Kiro',
+  copilot: 'GitHub Copilot',
+  vscode: 'VS Code',
 }
 
 const TAB_PATH: Record<InstallGuideTabId, string> = {
@@ -24,6 +39,10 @@ const TAB_PATH: Record<InstallGuideTabId, string> = {
   codex: '../content/docs/install-guide/codex.md',
   opencode: '../content/docs/install-guide/opencode.md',
   antigravity: '../content/docs/install-guide/antigravity.md',
+  windsurf: '../content/docs/install-guide/windsurf.md',
+  kiro: '../content/docs/install-guide/kiro.md',
+  copilot: '../content/docs/install-guide/copilot.md',
+  vscode: '../content/docs/install-guide/vscode.md',
 }
 
 const rawInstallGuide = import.meta.glob<string>('../content/docs/install-guide/*.md', {
@@ -59,13 +78,6 @@ export function InstallationGuidePage() {
   const [lastSelected, setLastSelected] = useState<InstallGuideTabId>(hashTab ?? 'overview')
   const activeTab = hashTab ?? lastSelected
   const tabRefs = useRef<Partial<Record<InstallGuideTabId, HTMLButtonElement | null>>>({})
-
-  useEffect(() => {
-    document.title = 'Installation Guide · Agentic SWE'
-    return () => {
-      document.title = 'Agentic SWE — Autonomous Software Engineering Pipeline'
-    }
-  }, [])
 
   const selectTab = useCallback(
     (id: InstallGuideTabId) => {
@@ -121,7 +133,7 @@ export function InstallationGuidePage() {
         </nav>
         <h1 className="doc-article__title">Installation Guide</h1>
         <p className="install-guide-intro">
-          Prerequisites, migration, and uninstall are under <strong>Overview</strong>. Pick a runtime for full install
+          Prerequisites, migration, and uninstall are under <strong>Overview</strong>. Pick a host for full install
           steps, layout notes, and links to Usage and troubleshooting.
         </p>
         <p className="install-guide-setup">
@@ -133,7 +145,7 @@ export function InstallationGuidePage() {
         <div
           className="install-guide-tabs"
           role="tablist"
-          aria-label="Installation by runtime"
+          aria-label="Installation by host"
           aria-orientation="horizontal"
           onKeyDown={onTabKeyDown}
         >

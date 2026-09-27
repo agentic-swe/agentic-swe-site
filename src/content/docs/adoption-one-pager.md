@@ -1,39 +1,45 @@
-# Who this is for (adoption one-pager)
+# Who this is for
 
-A short, honest map for **socializing** agentic-swe. It aligns with the product pillars in **[The North Star](https://github.com/agentic-swe/agentic-swe/blob/main/docs/the-north-star.md)** without claiming features we have not shipped yet (no universal JSON API, no hosted sandbox, no attested enterprise gates in-repo).
+Use this page to decide whether a pilot is worth a week. It matches what the source does. It is not a sales sheet.
+
+Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). npm still listed **3.3.0**, which does not include the new adapters.
 
 ## In one sentence
 
-**Teams that already use Claude Code** and want **phased SWE workflows**, **`.worklogs/`** evidence, and **human gates** instead of one long ad-hoc chat thread.
+A local pack for coding-agent sessions that need phased work, **`.worklogs/`** evidence, human gates, and automatic local memory on hosts that expose a lifecycle.
 
-## Fit matrix
+## Fit
 
-| You are a… | Good fit if… | Poor fit if… |
-| :--- | :--- | :--- |
-| **Team lead / EM** | You want reviewable artifacts and explicit stop points (`approval-wait`, `ambiguity-wait`) | You need SOC2 attested clicks or Jira two-way sync **out of this repo** today |
-| **Senior IC** | You want `/work`, tracks, subagents, and `/check` as guardrails on real repos | You expect a **cloud runner** that clones and fixes issues without a local session |
-| **Security / platform** | You can accept **markdown policy + human gates** and optional ignore of **`.worklogs/`** | You require **hard state machine enforcement in code** for every transition **today** (that is [Roadmap Phase 1](https://github.com/agentic-swe/agentic-swe/blob/main/docs/roadmap.md)) |
-| **Multi-IDE shop** | You can start with **Claude Code** as reference, use **[Host support tiers](host-support-tiers.md)** for OpenCode / Antigravity | You need **identical slash UX** on every IDE next week |
+| You are | A pilot makes sense when | Look elsewhere when |
+|---------|--------------------------|---------------------|
+| **A team lead** | Reviewers need artifacts and explicit stops (`approval-wait`, `ambiguity-wait`) | You need attested compliance clicks or two-way ticket sync from this repo |
+| **An individual contributor** | You want **`/work`**, tracks, and **`/check`** on a real repository | You want a cloud runner with no local session |
+| **Security or platform** | Markdown policy plus a local work engine is enough | You need a vendor-attested gate product |
+| **A multi-editor group** | You can accept the capability table in [Host capabilities](host-support-tiers.md) | You need identical slash UX on every editor, including ones with no hook API |
 
-## What you get **today**
+## What a pilot includes
 
-- Installable **workflow pack** (policies, phases, **<!-- catalog-counts:start kind=total -->138+<!-- catalog-counts:end -->** subagent prompts, templates).
-- **State + artifacts** under **`.worklogs/<id>/`** when the Hypervisor follows **`CLAUDE.md`**.
-- **Slash commands** and plugin resolution on **Claude Code** (primary).
-- **Tier B** documented paths for **OpenCode** and **Antigravity**; other hosts per [Multi-platform support](multi-platform-support.md).
+- The workflow pack: policies, phases, templates, and <!-- catalog-counts:start kind=total-line -->138 specialized subagents<!-- catalog-counts:end --> in the catalog.
+- **`.worklogs/<id>/`** when the session follows **`CLAUDE.md`**.
+- **`agentic-swe setup --host <host>`** as the install.
+- Automatic memory on Claude Code, Cursor, OpenCode, Codex (after hook trust), Antigravity, Windsurf (Restricted Mode off), and Kiro.
+- Partial coverage for Copilot (CLI and coding agent; IDE chat varies) and generic VS Code (maintenance without transcript capture).
+- **`AGENTS.md`** plus explicit MCP for Cline, Roo, Continue, Junie, and Zed.
 
-## What is explicitly **not** promised here
+## What this repository does not include
 
-| North Star pillar (name) | Honest status in this repository |
-| :--- | :--- |
-| Universal protocol / any-IDE same API | **Roadmap** — session + markdown today |
-| Hard enforcement vs policy-only | **Roadmap Phase 1** — `/check` assists; engine does not reject invalid edges programmatically yet |
-| Sandboxed “run tests in our cloud” | **Not this product** — see [Product positioning](product-positioning.md) |
-| Real-time global cost metering | Budget fields are **policy**; live spend aggregation is **roadmap** |
-| Enterprise telemetry / compliance mappings | **Roadmap / separate product** |
+| Expectation | What is true here |
+|-------------|-------------------|
+| One JSON API that every IDE implements the same way | Host adapters share a lifecycle script. Command UI and transcript access differ |
+| Every chat refuses a bad transition by itself | **`/check transition`** and **`work-engine transition`** reject edges the track does not allow. A session that never calls them is not enforced |
+| Tests run in our cloud | Tests run where the session already runs commands |
+| A global billing meter | Per-work cost updates locally when the stop hook records it. There is no hosted meter |
+| Enterprise telemetry | No project telemetry backend. See [Privacy](privacy.md) |
 
-## First actions
+## How to evaluate
 
-1. **[Golden path (Claude Code)](golden-path.md)** — about 15 minutes to first **`.worklogs/`** story.
-2. **[Examples](examples.md)** — lean vs standard prompt shapes.
-3. **[Product positioning](product-positioning.md)** — deeper ICP and messaging.
+1. Run [Golden path](golden-path.md) on a scratch repository, or **`agentic-swe setup`** for your host and one small **`/work`** task.
+2. Open **`.worklogs/<id>/state.json`** and confirm the session stopped at a gate.
+3. Read **`.agentic-swe/hook-receipts.jsonl`** after the session. Codex should show a receipt only after hooks are trusted. Windsurf should show one only with Restricted Mode off.
+4. Read [Examples](examples.md) for lean and standard prompt shapes.
+5. Read [Product fit](product-positioning.md) if the pilot needs a written yes or no.

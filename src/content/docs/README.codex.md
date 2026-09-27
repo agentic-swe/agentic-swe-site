@@ -2,18 +2,18 @@
 
 **Quick setup**
 
-1. **Clone** this repo (or add it as a submodule) so **`commands/`**, **`phases/`**, **`agents/`**, **`templates/`**, and **`references/`** are on disk where Codex can read them.
+From the root of the repository you want to change:
 
-2. In your **target app repo** (the code you ship):
-   - Copy or merge **`AGENTS.md`** from the pack (or align yours with the same Hypervisor summary).
-   - Merge the pack’s **`CLAUDE.md`** block into your root **`CLAUDE.md`** (same idea as **`/install`** on Claude Code).
+```bash
+agentic-swe setup --host codex
+```
 
-3. **Expose the pack** to Codex: symlink or multi-root workspace so paths like **`commands/`** resolve from the pack root. Pipeline state always lives under **`.worklogs/<id>/`** in the target repo.
+Setup merges **`CLAUDE.md`**, leaves an existing **`AGENTS.md`** in place, installs the portable pack under **`.agentic-swe/`**, and merges **`.codex/hooks.json`**.
 
-4. Start work with **`/work <task>`** (or open the matching file under **`commands/`** if your host maps commands that way).
+**Trust the hooks** when Codex asks. Until you do, session start and stop do not run, and memory is not captured. After approval, start and stop maintain memory automatically. npm memory commands are for recovery. See [Durable memory](durable-memory.md).
 
-**Full Codex layout:** see **`.codex/INSTALL.md`** in the pack repo.
+Start work with **`/work`** when Codex exposes pack commands.
 
-**Optional durable memory:** pack **`scripts/`** CLIs — [Durable memory](durable-memory.md).
+**Recovery layout:** **`.codex/INSTALL.md`** in the pack, and the [Codex install tab](/docs/installation#codex).
 
-**More detail:** [Installation](installation.md) · [Usage](usage.md) · [Multi-platform support](multi-platform-support.md) · [Durable memory](durable-memory.md)
+**More detail:** [Installation](installation.md) · [Usage](usage.md) · [Host capabilities](host-support-tiers.md) · [Durable memory](durable-memory.md)

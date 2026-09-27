@@ -35,5 +35,14 @@ jobs:
       - name: Lint (ESLint + TypeScript-aware rules)
         run: npm run lint
 
+      - name: Test route, link, setup, and viewport contracts
+        run: npm test
+
+      - name: Verify generated catalog counts
+        run: npm run sync:counts:check
+
       - name: Build (tsc + Vite)
         run: npm run build
+
+      - name: Audit generated site
+        run: npm run audit

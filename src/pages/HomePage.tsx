@@ -3,6 +3,15 @@ import { Hero, InstallPlatforms } from '../components/Hero'
 import { PipelineViz } from '../components/PipelineViz'
 import { CATALOG_COUNTS, CATALOG_TOTAL } from '../data/catalog-counts'
 
+const AUDIENCE_PATHS: ReadonlyArray<{ id: string; title: string; note: string }> = [
+  { id: 'developers', title: 'Developers', note: 'Install it and run one work item' },
+  { id: 'managers', title: 'Engineering managers', note: 'Tracks, budgets, and review gates' },
+  { id: 'security', title: 'Security and compliance', note: 'Evidence, actors, and privacy limits' },
+  { id: 'stakeholders', title: 'Non-technical readers', note: 'What the record is, in plain language' },
+  { id: 'business', title: 'Business evaluators', note: 'Adoption cost, without invented ROI' },
+  { id: 'partners', title: 'Investors and partners', note: 'Project status, not a pitch deck' },
+]
+
 /**
  * Sample receipt values come from the checked-in fixture
  * `test/fixtures/receipt/lean-happy/` in the agentic-swe repository, so the
@@ -103,6 +112,29 @@ export function HomePage() {
   return (
     <main id="main-content">
       <Hero />
+
+      <section id="audiences" className="home-section home-section--audiences" aria-labelledby="audiences-title">
+        <header className="home-section__head">
+          <p className="section-label">// who is reading</p>
+          <h2 id="audiences-title" className="home-section__title">
+            Start from the question you have
+          </h2>
+          <p className="home-section__lead">
+            The same project reads differently for a developer, a reviewer, and someone deciding whether to try
+            it. These paths stay honest: open source, local only, no customer count hiding in the copy.
+          </p>
+        </header>
+        <ul className="audience-paths">
+          {AUDIENCE_PATHS.map((audience) => (
+            <li key={audience.id}>
+              <Link className="audience-path" to={`/evaluate#${audience.id}`}>
+                <span className="audience-path__title">{audience.title}</span>
+                <span className="audience-path__note">{audience.note}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <section id="receipt" className="home-section home-section--receipt" aria-labelledby="receipt-title">
         <header className="home-section__head">
@@ -298,9 +330,10 @@ export function HomePage() {
             Install once, where you already work
           </h2>
           <p className="home-section__lead">
-            Agentic SWE is markdown that lives in your repository — policies, phases, commands, and agents. There
-            is no service to provision and no code to run in production. Claude Code is the primary host; the
-            same pack works elsewhere.
+            Install the local package where you already work. Agentic SWE is a workflow and runtime for your
+            repository — engines, host adapters, and the policy your session reads — not a hosted product and not
+            only a set of markdown files. Setup gitignores <code>.worklogs/</code> unless you pass{' '}
+            <code>--no-gitignore</code>.
           </p>
         </header>
 

@@ -26,7 +26,7 @@ const OUTCOMES: ReadonlyArray<{ title: string; body: string }> = [
 
 const NOT_CLAIMS: ReadonlyArray<string> = [
   'It is not a hosted service. There is no multi-tenant cloud running your pipeline; your editor session, git, and CI are the runtime.',
-  'It does not merge for you. The pipeline runs up to the approval gate and stops there.',
+  'It does not approve its own merge. approval-wait stops until a person approves, requests changes, or rejects. After approval, the same governed workflow can continue to completed and proceed to merge.',
   'It is not a model. Agentic SWE governs whichever assistant you already pay for.',
   'It does not silently reuse memory. Unevaluated procedures are never replayed, and promotion needs two successes or a human approval.',
 ]
@@ -55,12 +55,13 @@ export function ProductPage() {
 
       <h2>How it is built</h2>
       <p>
-        Agentic SWE is a <strong>markdown workflow pack</strong>: policies, phases, commands, and{' '}
-        {CATALOG_TOTAL} specialist agent prompts that install into your repository. A single{' '}
+        Agentic SWE is a <strong>local workflow and runtime package</strong>: policy files, phase prompts,
+        commands, engines, host adapters, and {CATALOG_TOTAL} specialist agent prompts. A single{' '}
         <strong>Hypervisor</strong> session — the chat you are already in — reads the root policy, owns{' '}
         <code>state.json</code>, runs the enforcement checks before every transition, and delegates bounded work
-        to agents. Per-work state lives under <code>.worklogs/&lt;id&gt;/</code> and is committed like any other
-        file. Nothing needs to be provisioned.
+        to agents. Per-work state lives under <code>.worklogs/&lt;id&gt;/</code>. Setup adds that path to{' '}
+        <code>.gitignore</code> unless you pass <code>--no-gitignore</code>, so the files can be committed or
+        kept local. Nothing is hosted by this project.
       </p>
       <p>
         The detail is on <Link to="/guide">how it works</Link>, and the individual mechanisms are broken out on{' '}
@@ -70,7 +71,7 @@ export function ProductPage() {
       <h2>Who it is for</h2>
       <ul>
         <li>
-          <strong>Engineering teams of roughly 2–20</strong> already using an AI coding assistant who need
+          <strong>Engineering teams</strong> already using an AI coding assistant who need
           phased workflows, spend ceilings, and review gates before they can let it near the main branch.
         </li>
         <li>
@@ -83,7 +84,7 @@ export function ProductPage() {
         </li>
       </ul>
 
-      <h2>What we do not claim</h2>
+      <h2>Product boundaries</h2>
       <ul>
         {NOT_CLAIMS.map((claim) => (
           <li key={claim}>{claim}</li>
@@ -100,6 +101,9 @@ export function ProductPage() {
         </Link>
         <Link className="btn btn-ghost" to="/guide">
           How it works
+        </Link>
+        <Link className="btn btn-ghost" to="/evaluate">
+          Evaluate the project
         </Link>
       </div>
 

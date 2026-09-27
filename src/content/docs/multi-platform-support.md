@@ -1,26 +1,59 @@
 # Multi-platform support
 
-For a concise definition of **Tier A–D** support (portable policy vs documented happy path vs packaged plugin vs future harness), read **[Host support tiers](host-support-tiers.md)** first.
+Read [Host capabilities](host-support-tiers.md) for the current status of each adapter. This page is the install and hook map.
 
-agentic-swe runs the same markdown pipeline — driven by the **Hypervisor** session per root **`CLAUDE.md`** — across several AI coding hosts. The canonical pack layout is the **plugin root**: **`commands/`**, **`phases/`**, **`agents/`** (including **`agents/plugin-runtime/`** for bundled helpers such as the brainstorm server and subagent-catalog shell), **`templates/`**, **`references/`**, and **`state-machine.json`**, resolved via **`${CLAUDE_PLUGIN_ROOT}/`** when the Claude Code plugin is enabled.
+agentic-swe is one markdown pipeline. The Hypervisor session follows root **`CLAUDE.md`**. The pack layout is **`commands/`**, **`phases/`**, **`agents/`**, **`templates/`**, **`references/`**, and **`state-machine.json`**. Claude Code resolves that tree as **`${CLAUDE_PLUGIN_ROOT}/`**. Other hosts use the portable copy under **`.agentic-swe/`** after setup.
 
-**CI vs full verification:** **`npm test`** runs **`test/install-platform-stubs.test.js`**, which checks **each platform’s manifests, versions, hook targets, and (for OpenCode) loading the plugin module in Node** — plus **`claude plugin validate`** when the Claude CLI is on **`PATH`**. That replaces **manual** checks for **wiring only**. **Cursor, Codex, OpenCode, and Gemini** UIs are still not driven in GitHub-hosted CI; proving each **app** loads the pack needs **manual smoke** or **self-hosted runners** — see the [Release checklist](release-checklist.md).
+Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). npm still listed **3.3.0**, which does not include the new adapters.
 
-| Platform | Install method | Where to read more |
-|----------|----------------|-------------------|
-| **Claude Code** | Add the marketplace, then **`/plugin install agentic-swe@agentic-swe-catalog`** (or **`claude --plugin-dir /path/to/this/repo`** for dev) | [Claude Code plugin](claude-code-plugin.md), [Installation](installation.md) |
-| **Cursor** | **`scripts/install-cursor-plugin.sh`** (or Marketplace after publish); **`.cursor-plugin/`** + default **`commands/`** / **`agents/`**; **`hooks/hooks-cursor.json`** on session start | [Cursor plugin](cursor-plugin.md) — one-line **`curl \| bash`** install, **`CLAUDE.md`** merge in the target repo, optional **`.cursor/rules`** stub |
-| **Codex** | Clone / submodule this repo; symlink or copy pack dirs into the target project | [.codex/INSTALL.md](../../.codex/INSTALL.md), [Codex](README.codex.md) |
-| **OpenCode** | **`.opencode/`** plugin entry | [OpenCode](README.opencode.md) |
-| **Google Antigravity** | Same markdown pack + **`CLAUDE.md`** merge in the target repo | [Antigravity](antigravity.md) |
-| **Gemini CLI** | **`gemini-extension.json`** | Context from **`GEMINI.md`** at repo root |
+## Install
 
-Platform-specific **tool name** hints (when a host renames tools) live under **`${CLAUDE_PLUGIN_ROOT}/references/`** — e.g. **`codex-tools.md`**, **`opencode-tools.md`**, **`gemini-tools.md`**, **`copilot-tools.md`**.
+From the repository root:
 
-## Hooks and “skill-like” routing
+```bash
+agentic-swe setup --host <host>
+agentic-swe doctor
+agentic-swe host-parity
+```
 
-This pack does **not** rely on a separate Skill-tool registry. Session **hooks** (**`hooks/hooks.json`** for Claude Code, **`hooks/hooks-cursor.json`** for Cursor) run **`hooks/session-start`** so policy and routing hints load early. When **`AGENTIC_SWE_MEMORY_PRIME=1`**, session start can also append **memory prime** (same output as **`npm run memory-prime`**) — advisory retrieval from the local index; **`state.json`** still wins on conflict. See [Durable memory](durable-memory.md). Intent → command/phase nudges are also described in **`${CLAUDE_PLUGIN_ROOT}/references/implicit-routing.md`**. The **state machine and artifacts** in **`CLAUDE.md`** remain the source of truth.
+| Platform | Primary install | Lifecycle | Read more |
+|----------|-----------------|-----------|-----------|
+| **Claude Code** | `agentic-swe setup --host claude-code` | Stable. Session start and stop, with transcript capture | [Claude Code plugin](claude-code-plugin.md), [install tab](/docs/installation#claude) |
+| **Cursor** | `agentic-swe setup --host cursor` | Stable. Session start and stop | [Cursor plugin](cursor-plugin.md), [install tab](/docs/installation#cursor) |
+| **OpenCode** | `agentic-swe setup --host opencode` | Stable. Maintenance on normal chat turns | [OpenCode](README.opencode.md), [install tab](/docs/installation#opencode) |
+| **Codex** | `agentic-swe setup --host codex` | Stable after you trust hooks | [Codex](README.codex.md), [install tab](/docs/installation#codex) |
+| **Antigravity** | `agentic-swe setup --host antigravity` | Stable. PreInvocation and Stop. Gemini CLI does not use these hooks | [Antigravity](antigravity.md), [install tab](/docs/installation#antigravity) |
+| **Windsurf** | `agentic-swe setup --host windsurf` | Stable only when Restricted Mode is disabled | [Installation overview](/docs/installation#overview) |
+| **Kiro** | `agentic-swe setup --host kiro` | Stable on Kiro v1 SessionStart and Stop | [Installation overview](/docs/installation#overview) |
+| **GitHub Copilot** | `agentic-swe setup --host copilot` | Partial. CLI and coding-agent hooks; IDE transcripts vary | [Installation overview](/docs/installation#overview) |
+| **VS Code** | `agentic-swe setup --host vscode` | Partial. File maintenance without agent transcript capture | [Installation overview](/docs/installation#overview) |
+| **Gemini CLI** | **`gemini-extension.json`** plus **`GEMINI.md`** | Context file only. Not the Antigravity hook adapter | [Antigravity](antigravity.md) |
 
-## Walkthrough on this site
+**Cline, Roo Code, Continue, Junie, and Zed** use **`AGENTS.md`** plus the MCP fallback. Calls are explicit. Details are on [Host capabilities](host-support-tiers.md).
 
-For narrative context, command examples, and CI notes in one page, open the [Guide](/guide#platforms) and use the **Platforms** section (table of contents).
+Manual marketplace commands, curl installers, and symlink layouts remain on each install tab as recovery.
+
+## Hooks
+
+Session hooks load policy and run memory maintenance. Memory prime is on by default. Set **`AGENTIC_SWE_MEMORY_PRIME=0`** to skip the digest. Set **`AGENTIC_SWE_HOOK_LIFECYCLE=0`** to skip indexing, reflection, and hygiene. **`state.json`** still wins when memory and the work item disagree. See [Durable memory](durable-memory.md).
+
+| Host | Hook file |
+|------|-----------|
+| Claude Code | **`hooks/hooks.json`** |
+| Cursor | **`hooks/hooks-cursor.json`** |
+| Codex | **`.codex/hooks.json`** |
+| Antigravity | **`.agents/hooks.json`** |
+| Windsurf | **`.windsurf/hooks.json`** |
+| Kiro | **`.kiro/hooks/agentic-swe-memory.json`** |
+| Copilot | **`.github/hooks/agentic-swe-memory.json`** |
+| OpenCode | plugin under **`.agentic-swe/.opencode/`** |
+
+Intent hints also live in **`${CLAUDE_PLUGIN_ROOT}/references/implicit-routing.md`** when the Claude plugin root is set. Otherwise read that file from the portable pack.
+
+Tool-name notes: **`references/codex-tools.md`**, **`references/opencode-tools.md`**, **`references/gemini-tools.md`**, **`references/copilot-tools.md`**.
+
+## What CI checks
+
+**`npm test`** includes wiring checks for manifests, hook targets, and loading the OpenCode plugin in Node, plus **`claude plugin validate`** when the Claude CLI is on `PATH`. Those tests do not drive host UIs. A green CI run does not prove Windsurf Restricted Mode is off or that Codex hooks are trusted. Maintainer smoke is on the [Release checklist](release-checklist.md).
+
+For a narrative walkthrough, open the [Guide](/guide#platforms).

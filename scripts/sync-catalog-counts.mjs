@@ -91,9 +91,9 @@ function renderInline(counts) {
   return `Across ${counts.categories.length} categories — ${parts.join(', ')}.`;
 }
 
-function renderShortTotal(counts) { return `${counts.total}+ subagents`; }
-function renderTotalLine(counts) { return `${counts.total}+ specialized subagents`; }
-function renderTotal(counts) { return `${counts.total}+`; }
+function renderShortTotal(counts) { return `${counts.total} subagents`; }
+function renderTotalLine(counts) { return `${counts.total} specialized subagents`; }
+function renderTotal(counts) { return `${counts.total}`; }
 function renderCategoryCount(counts, slug) {
   const cat = counts.categories.find((c) => c.slug === slug);
   if (!cat) throw new Error(`Unknown category slug: ${slug}`);
