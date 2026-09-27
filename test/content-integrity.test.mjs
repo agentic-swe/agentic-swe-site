@@ -72,6 +72,7 @@ test('public content rejects retired claims and the previously broken nested sou
     'docs reviewed',
     'Pack version reviewed',
     'Source reviewed on',
+    'agentic-swe.github.io/agentic-swe-site',
   ]
 
   for (const file of files) {

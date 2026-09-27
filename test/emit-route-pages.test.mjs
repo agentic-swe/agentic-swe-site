@@ -35,13 +35,13 @@ test('route html receives title, description, canonical, and social URLs', () =>
       title: 'Evaluate & review · Agentic SWE',
       description: 'Honest "status" for readers',
     },
-    'https://agentic-swe.github.io/agentic-swe-site/evaluate/',
+    'https://agentic-swe.github.io/agentic-swe/evaluate/',
   )
   assert.match(html, /<title>Evaluate &amp; review · Agentic SWE<\/title>/)
   assert.match(html, /name="description" content="Honest &quot;status&quot; for readers"/)
-  assert.match(html, /property="og:url" content="https:\/\/agentic-swe.github.io\/agentic-swe-site\/evaluate\/"/)
-  assert.match(html, /name="twitter:url" content="https:\/\/agentic-swe.github.io\/agentic-swe-site\/evaluate\/"/)
-  assert.match(html, /rel="canonical" href="https:\/\/agentic-swe.github.io\/agentic-swe-site\/evaluate\/"/)
+  assert.match(html, /property="og:url" content="https:\/\/agentic-swe.github.io\/agentic-swe\/evaluate\/"/)
+  assert.match(html, /name="twitter:url" content="https:\/\/agentic-swe.github.io\/agentic-swe\/evaluate\/"/)
+  assert.match(html, /rel="canonical" href="https:\/\/agentic-swe.github.io\/agentic-swe\/evaluate\/"/)
   assert.doesNotMatch(html, /old description/)
   assert.doesNotMatch(html, /Old title/)
 })
@@ -49,7 +49,7 @@ test('route html receives title, description, canonical, and social URLs', () =>
 test('every public route is emitted as a directory index plus sitemap and robots', () => {
   const distDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agentic-swe-site-'))
   const routes = publicRoutes(readRegistrySource())
-  const base = '/agentic-swe-site/'
+  const base = '/agentic-swe/'
   writeRoutePages({ distDir, indexHtml: shell, routes, base })
 
   for (const route of routes) {
@@ -60,26 +60,26 @@ test('every public route is emitted as a directory index plus sitemap and robots
     const escapedTitle = escapeHtml(route.title).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     assert.match(html, new RegExp(`<title>${escapedTitle}</title>`))
     assert.match(html, /rel="canonical"/)
-    assert.match(html, new RegExp(route.path === '/' ? '/agentic-swe-site/' : `${route.path}/`))
+    assert.match(html, new RegExp(route.path === '/' ? '/agentic-swe/' : `${route.path}/`))
     assert.match(
       html,
-      /property="og:image" content="https:\/\/agentic-swe\.github\.io\/agentic-swe-site\/media\/agentic-swe-social\.png"/,
+      /property="og:image" content="https:\/\/agentic-swe\.github\.io\/agentic-swe\/media\/agentic-swe-social\.png"/,
     )
     assert.match(
       html,
-      /rel="sitemap" type="application\/xml" href="https:\/\/agentic-swe\.github\.io\/agentic-swe-site\/sitemap\.xml"/,
+      /rel="sitemap" type="application\/xml" href="https:\/\/agentic-swe\.github\.io\/agentic-swe\/sitemap\.xml"/,
     )
     assert.match(html, /name="robots" content="index, follow"/)
   }
 
   const sitemap = fs.readFileSync(path.join(distDir, 'sitemap.xml'), 'utf8')
   assert.equal(sitemap, renderSitemap(routes, base))
-  assert.match(sitemap, /\/agentic-swe-site\/evaluate\/</)
+  assert.match(sitemap, /\/agentic-swe\/evaluate\/</)
   assert.match(sitemap, /\/docs\/installation\/</)
   assert.equal(sitemap.match(/<loc>/g).length, routes.length)
 
   const robots = fs.readFileSync(path.join(distDir, 'robots.txt'), 'utf8')
   assert.equal(robots, renderRobots(base))
-  assert.match(robots, /^Sitemap: https:\/\/agentic-swe.github.io\/agentic-swe-site\/sitemap.xml$/m)
+  assert.match(robots, /^Sitemap: https:\/\/agentic-swe.github.io\/agentic-swe\/sitemap.xml$/m)
   assert.equal(fs.existsSync(path.join(distDir, '404.html')), true)
 })

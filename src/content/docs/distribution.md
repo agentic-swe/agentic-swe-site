@@ -12,14 +12,14 @@ Current pack **3.3.1** includes [merged pull request #71](https://github.com/age
 | **Claude Code marketplace** | **`/plugin marketplace add agentic-swe/agentic-swe`** then **`/plugin install agentic-swe@agentic-swe-catalog`**. Setup runs these when the Claude CLI is available. |
 | **Cursor local plugin** | Setup writes **`~/.cursor/plugins/local/agentic-swe`**. |
 | **Source checkout** | Clone [agentic-swe/agentic-swe](https://github.com/agentic-swe/agentic-swe) to develop the pack or to run setup from that tree. |
-| **This site** | Guides and reference at [agentic-swe.github.io/agentic-swe-site](https://agentic-swe.github.io/agentic-swe-site/). |
+| **This site** | Guides and reference at [agentic-swe.github.io/agentic-swe](https://agentic-swe.github.io/agentic-swe/). |
 | **npm** | Package **`@agentic-swe/agentic-swe`**. Use it when **`npm view @agentic-swe/agentic-swe version`** reports **3.3.1**. Until then, use the GitHub installer. |
 
 Gemini CLI still loads **`gemini-extension.json`** and **`GEMINI.md`**. That context file is not the Antigravity hook adapter.
 
 ## Docs site
 
-The public site is GitHub Pages for **agentic-swe-site**. Documentation routes under **`/docs/*`** render the markdown in this site repository.
+The public site is GitHub Pages for **agentic-swe**, built from the **agentic-swe-site** repository. Documentation routes under **`/docs/*`** render the markdown in that site repository. Old **`/agentic-swe-site/`** links redirect to the same page.
 
 A custom domain, when one is configured, follows [GitHub’s custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
 
