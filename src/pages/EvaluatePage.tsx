@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { HOST_BOUNDARIES, STABLE_LIFECYCLE_HOSTS } from '../data/host-coverage'
-import { CROSS_HOST_PR, DOCS_REVIEWED_LABEL, SOURCE_REPO, SOURCE_VERSION } from '../data/project-status'
+import { CROSS_HOST_PR, SOURCE_REPO, SOURCE_VERSION } from '../data/project-status'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 const AUDIENCES: ReadonlyArray<{
@@ -103,9 +103,9 @@ export function EvaluatePage() {
 
       <h2 id="evidence">Project evidence</h2>
       <p>
-        Reviewed {DOCS_REVIEWED_LABEL}. Confirm anything version-sensitive on the source repository before you
-        depend on it. Maintainer material — the release checklist and distribution notes — is linked from the
-        footer, separate from this evaluation.
+        Confirm anything version-sensitive on the source repository before you depend on it. Maintainer
+        material — the release checklist and distribution notes — is linked from the footer, separate from
+        this evaluation.
       </p>
       <dl className="evaluate-evidence">
         <div>
@@ -117,10 +117,9 @@ export function EvaluatePage() {
           <dd>MIT. Source and copyright: Suraj Gupta.</dd>
         </div>
         <div>
-          <dt>Pack version reviewed</dt>
+          <dt>Pack version</dt>
           <dd>
-            {SOURCE_VERSION}. This is the package version in the source tree used for this page, not a measure of
-            adoption.
+            {SOURCE_VERSION}. This is the package version in the source tree, not a measure of adoption.
           </dd>
         </div>
         <div>
@@ -153,8 +152,8 @@ export function EvaluatePage() {
         <div>
           <dt>Cross-host runtime</dt>
           <dd>
-            <a href={CROSS_HOST_PR}>Pull request 71</a> merged on {DOCS_REVIEWED_LABEL}. It is the cross-host
-            lifecycle source change; npm 3.3.0 does not include it yet, and a merged change is not an adoption metric.
+            <a href={CROSS_HOST_PR}>Pull request 71</a> is merged in version {SOURCE_VERSION}. It is the
+            cross-host lifecycle change. A merged change is not an adoption metric.
           </dd>
         </div>
         <div>

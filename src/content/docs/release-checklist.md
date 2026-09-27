@@ -4,7 +4,7 @@ Use before tagging a release or after changing **`hooks/`**, **`.cursor-plugin/`
 
 ## First-run story
 
-A **tagged release** should stay aligned with the public **[Golden path](golden-path.md)**: a new user can run **`agentic-swe setup --host <host>`** and reach **`.worklogs/<id>/`** with a trivial task in about **15 minutes**. Before you publish, confirm **`npm view @agentic-swe/agentic-swe version`** before the docs call that version published. Source reviewed on 27 Sep 2026 was **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71); npm still listed **3.3.0**.
+A **tagged release** should stay aligned with the public **[Golden path](golden-path.md)**: a new user can run **`agentic-swe setup --host <host>`** and reach **`.worklogs/<id>/`** with a trivial task in about **15 minutes**. Before you publish, confirm **`npm view @agentic-swe/agentic-swe version`** before the docs call that version published. Current pack **3.3.1** includes [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71).
 
 1. Re-read **Golden path** for drift (commands, marketplace owner, paths). If you changed **memory** scripts, hooks, or config, re-read **[Durable memory](durable-memory.md)** and the repo **`docs/specs/memory-graph.md`** for drift.
 2. Run the **automated** bar below (`npm run ci` or equivalent) so wiring and the docs site still build.

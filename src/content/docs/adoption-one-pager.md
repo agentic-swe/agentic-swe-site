@@ -2,8 +2,6 @@
 
 Use this page to decide whether a pilot is worth a week. It matches what the source does. It is not a sales sheet.
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). npm still listed **3.3.0**, which does not include the new adapters.
-
 ## In one sentence
 
 A local pack for coding-agent sessions that need phased work, **`.worklogs/`** evidence, human gates, and automatic local memory on hosts that expose a lifecycle.

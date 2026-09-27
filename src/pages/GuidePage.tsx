@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { HOST_BOUNDARIES, STABLE_LIFECYCLE_HOSTS } from '../data/host-coverage'
-import { CROSS_HOST_PR, DOCS_REVIEWED_LABEL } from '../data/project-status'
+import { CROSS_HOST_PR, SOURCE_VERSION } from '../data/project-status'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 const LAYERS: ReadonlyArray<{ name: string; role: string; where: string }> = [
@@ -228,9 +228,8 @@ export function GuidePage() {
       <h2 id="lifecycle">Lifecycle adapters</h2>
       <p>
         Memory maintenance is host-specific. Stable native lifecycle adapters cover{' '}
-        {STABLE_LIFECYCLE_HOSTS.join(', ')}. The cross-host runtime landed in source through{' '}
-        <a href={CROSS_HOST_PR}>pull request 71</a> on {DOCS_REVIEWED_LABEL}. The published npm package still
-        trails that source; this is a capability statement, not an adoption number.
+        {STABLE_LIFECYCLE_HOSTS.join(', ')}. The cross-host runtime is in version {SOURCE_VERSION} through{' '}
+        <a href={CROSS_HOST_PR}>pull request 71</a>. This is a capability statement, not an adoption number.
       </p>
       <dl className="host-boundaries">
         {HOST_BOUNDARIES.map((boundary) => (

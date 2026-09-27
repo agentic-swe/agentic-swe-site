@@ -2,7 +2,7 @@ import { useCallback, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { CapabilityModal, type CapabilityDetail } from '../components/CapabilityModal'
 import { HOST_BOUNDARIES, STABLE_LIFECYCLE_HOSTS } from '../data/host-coverage'
-import { CROSS_HOST_PR, DOCS_REVIEWED_LABEL } from '../data/project-status'
+import { CROSS_HOST_PR, SOURCE_VERSION } from '../data/project-status'
 import { CATALOG_TOTAL } from '../data/catalog-counts'
 
 type Card = CapabilityDetail & { body: ReactNode }
@@ -296,8 +296,7 @@ export function CapabilitiesPage() {
           </h2>
           <p className="home-section__lead">
             Native lifecycle adapters are stable for {STABLE_LIFECYCLE_HOSTS.join(', ')}. The cross-host runtime
-            landed in source through <a href={CROSS_HOST_PR}>pull request 71</a> on {DOCS_REVIEWED_LABEL}; the
-            published npm package still trails that source. See{' '}
+            is in version {SOURCE_VERSION} through <a href={CROSS_HOST_PR}>pull request 71</a>. See{' '}
             <Link to="/docs/multi-platform-support">multi-platform support</Link> and{' '}
             <Link to="/docs/host-support-tiers">host support tiers</Link> for install detail.
           </p>

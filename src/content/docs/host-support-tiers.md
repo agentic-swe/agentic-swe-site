@@ -1,6 +1,6 @@
 # Host capabilities
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71) (merge commit `3d9788d`). npm still listed **3.3.0**, which does not include the new adapters.
+Runtime **3.3.1** includes [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71).
 
 Support means what the host adapter actually runs today. Run **`agentic-swe host-parity`** on your machine. It prints one status per adapter in **`config/host-adapters.json`**.
 

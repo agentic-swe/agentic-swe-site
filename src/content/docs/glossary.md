@@ -2,8 +2,6 @@
 
 Short definitions for the public docs. Behavior and limits are on the linked pages.
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71).
-
 **Advisory memory.** The digest injected at session start. It can inform the session. **`state.json`** and repository files win when they disagree.
 
 **Approval wait.** A human gate after a pull request exists. The pipeline stops until you resume.
