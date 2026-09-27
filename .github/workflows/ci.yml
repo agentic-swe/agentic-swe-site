@@ -39,7 +39,9 @@ jobs:
         run: npm test
 
       - name: Verify generated catalog counts
-        run: npm run sync:counts:check
+        run: |
+          git clone --depth 1 https://github.com/agentic-swe/agentic-swe.git "$RUNNER_TEMP/agentic-swe-pack"
+          AGENTIC_SWE_PACK="$RUNNER_TEMP/agentic-swe-pack" npm run sync:counts:check
 
       - name: Build (tsc + Vite)
         run: npm run build
