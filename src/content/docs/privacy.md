@@ -2,8 +2,6 @@
 
 This page says what the pack reads and writes on your machine, and what it does not operate. **It is not legal advice.**
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71).
-
 ## No project backend
 
 agentic-swe does not run a hosted service for your code, chats, or memory. There is no project telemetry pipeline in this repository. Files stay on disk until **you** commit them, copy them, or point a tool at them.

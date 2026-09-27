@@ -1,6 +1,6 @@
 # Overview
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71) (merge commit `3d9788d`). The npm registry still listed `@agentic-swe/agentic-swe` at **3.3.0**, which does not include the new adapters. These steps describe the current source tree. If `agentic-swe setup` does not list your host, you are on an older install.
+These steps describe pack **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). If `agentic-swe setup` does not list your host, you are on an older install.
 
 The same pack runs in your repository: policy in root **`CLAUDE.md`**, work state under **`.worklogs/<id>/`**, and local memory under **`.agentic-swe/`**. There is no project-operated backend.
 

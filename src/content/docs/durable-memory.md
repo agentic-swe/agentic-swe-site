@@ -1,7 +1,5 @@
 # Durable memory
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71) (merge commit `3d9788d`). npm still listed **3.3.0**, which does not include the new adapters.
-
 The pack keeps a **local** project index in **`.agentic-swe/memory.sqlite`** and injects a bounded **memory prime** digest into the session. The digest is **advisory**. **`state.json`**, **`progress.md`**, and repository files stay authoritative.
 
 You do not run npm commands after each task. Session start and session stop run the same maintenance cycle.

@@ -68,6 +68,10 @@ test('public content rejects retired claims and the previously broken nested sou
     'open as of',
     'was open on',
     '3.3.1 plus [pull request #71]',
+    'Reviewed 27 Sep 2026',
+    'docs reviewed',
+    'Pack version reviewed',
+    'Source reviewed on',
   ]
 
   for (const file of files) {

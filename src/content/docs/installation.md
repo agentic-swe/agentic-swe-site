@@ -12,6 +12,4 @@ Hosts: **`claude-code`**, **`cursor`**, **`vscode`**, **`codex`**, **`opencode`*
 
 Codex requires hook trust. Windsurf requires Restricted Mode off. Copilot CLI and coding-agent hooks run; IDE transcripts vary. Generic VS Code maintains files and does not capture an agent transcript. Cline, Roo, Continue, Junie, and Zed use **`AGENTS.md`** plus explicit MCP.
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). npm still listed **3.3.0**, which does not include the new adapters.
-
 Manual steps in each tab are recovery. Comparison: [Host capabilities](host-support-tiers.md) · [Multi-platform support](multi-platform-support.md).

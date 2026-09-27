@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import logoMarkSrc from '../assets/logo-mark.svg?url'
-import { DOCS_REVIEWED_LABEL, SOURCE_REPO, SOURCE_VERSION } from '../data/project-status'
+import { SOURCE_REPO, SOURCE_VERSION } from '../data/project-status'
 import { AmbientBackground } from './AmbientBackground'
 import { SetupButton } from './SetupButton'
 
@@ -52,6 +52,9 @@ export function PageShell() {
               className={`nav-links${menuOpen ? ' open' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
+              <NavLink to="/" end className={navClass}>
+                Home
+              </NavLink>
               <NavLink to="/product" className={navClass}>
                 Product
               </NavLink>
@@ -85,6 +88,7 @@ export function PageShell() {
           <div className="footer-navs">
             <nav aria-label="Evaluate the project">
               <p className="footer-nav-label">Evaluate</p>
+              <Link to="/">Home</Link>
               <Link to="/evaluate">Project status</Link>
               <Link to="/product">Product</Link>
               <Link to="/documentation">Documentation</Link>
@@ -101,7 +105,7 @@ export function PageShell() {
             </nav>
           </div>
           <p className="footer-meta">
-            Open source · MIT · Suraj Gupta · source v{SOURCE_VERSION} · docs reviewed {DOCS_REVIEWED_LABEL} ·{' '}
+            Open source · MIT · Suraj Gupta · v{SOURCE_VERSION} ·{' '}
             <Link to="/evaluate">Project status</Link>
           </p>
         </footer>

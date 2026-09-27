@@ -4,8 +4,6 @@ Read [Host capabilities](host-support-tiers.md) for the current status of each a
 
 agentic-swe is one markdown pipeline. The Hypervisor session follows root **`CLAUDE.md`**. The pack layout is **`commands/`**, **`phases/`**, **`agents/`**, **`templates/`**, **`references/`**, and **`state-machine.json`**. Claude Code resolves that tree as **`${CLAUDE_PLUGIN_ROOT}/`**. Other hosts use the portable copy under **`.agentic-swe/`** after setup.
 
-Reviewed 27 Sep 2026 against runtime source **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). npm still listed **3.3.0**, which does not include the new adapters.
-
 ## Install
 
 From the repository root:
