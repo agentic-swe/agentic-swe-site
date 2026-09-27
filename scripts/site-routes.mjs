@@ -6,6 +6,10 @@ import { MARKETING_ROUTES } from '../src/seo/marketing-routes.js'
 /** Keep in sync with `SITE_ORIGIN` in src/data/project-status.ts */
 export const SITE_ORIGIN = 'https://agentic-swe.github.io'
 
+/** Where the site is published. The site repository's own Pages only redirects here. */
+export const PUBLIC_BASE = '/agentic-swe/'
+export const LEGACY_BASE = '/agentic-swe-site/'
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
 export { MARKETING_ROUTES }

@@ -45,12 +45,12 @@ test('legacy markdown URLs redirect at slugs that exist', () => {
 
 test('canonical URLs are trailing-slash locations on the project site', () => {
   assert.equal(
-    absoluteRouteUrl('/evaluate', '/agentic-swe-site/'),
-    'https://agentic-swe.github.io/agentic-swe-site/evaluate/',
+    absoluteRouteUrl('/evaluate', '/agentic-swe/'),
+    'https://agentic-swe.github.io/agentic-swe/evaluate/',
   )
   assert.equal(
-    absoluteRouteUrl('/', '/agentic-swe-site/'),
-    'https://agentic-swe.github.io/agentic-swe-site/',
+    absoluteRouteUrl('/', '/agentic-swe/'),
+    'https://agentic-swe.github.io/agentic-swe/',
   )
 })
 

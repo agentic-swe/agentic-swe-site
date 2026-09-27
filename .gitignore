@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-redirect
 showreel/out
 dist-ssr
 *.local

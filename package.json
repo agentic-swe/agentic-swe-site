@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "test": "node --test test/*.test.mjs",
     "audit": "node scripts/audit-site.mjs",
+    "build:redirect": "node scripts/emit-redirect-pages.mjs",
     "preview": "vite preview",
     "sync:counts": "node scripts/sync-catalog-counts.mjs",
     "sync:counts:check": "node scripts/sync-catalog-counts.mjs --check"

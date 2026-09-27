@@ -1,6 +1,7 @@
-# Build marketing site and deploy to GitHub Pages (project site: /<repo>/).
-# Repo → Settings → Pages → Build and deployment → Source: GitHub Actions.
-name: Deploy site to GitHub Pages
+# The site is published at https://agentic-swe.github.io/agentic-swe/ by the
+# Pages workflow in agentic-swe/agentic-swe, which builds this repository.
+# This repository's own Pages only redirects the old /agentic-swe-site/ URLs.
+name: Deploy redirects to GitHub Pages
 
 on:
   push:
@@ -31,22 +32,15 @@ jobs:
       - name: Install dependencies
         run: npm ci --registry=https://registry.npmjs.org/
 
-      - name: Test route and viewport contracts
+      - name: Test route and redirect contracts
         run: npm test
 
-      - name: Build site (subpath for project Pages)
-        env:
-          VITE_BASE: /${{ github.event.repository.name }}/
-        run: npm run build
-
-      - name: Audit generated routes and metadata
-        env:
-          VITE_BASE: /${{ github.event.repository.name }}/
-        run: npm run audit
+      - name: Emit redirect pages
+        run: npm run build:redirect
 
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: dist-redirect
 
   deploy:
     needs: build
