@@ -1,6 +1,6 @@
 # Host capabilities
 
-Runtime **3.3.1** includes [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71).
+Runtime **3.4.0** includes [pull request #73](https://github.com/agentic-swe/agentic-swe/pull/73).
 
 Support means what the host adapter actually runs today. Run **`agentic-swe host-parity`** on your machine. It prints one status per adapter in **`config/host-adapters.json`**.
 
