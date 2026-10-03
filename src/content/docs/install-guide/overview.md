@@ -1,6 +1,6 @@
 # Overview
 
-These steps describe pack **3.3.1**, including [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). If `agentic-swe setup` does not list your host, you are on an older install.
+These steps describe pack **3.4.0** ([pull request #73](https://github.com/agentic-swe/agentic-swe/pull/73)). If `agentic-swe setup` does not list your host, or `agentic-swe work status` is missing, you are on an older install.
 
 The same pack runs in your repository: policy in root **`CLAUDE.md`**, work state under **`.worklogs/<id>/`**, and local memory under **`.agentic-swe/`**. There is no project-operated backend.
 

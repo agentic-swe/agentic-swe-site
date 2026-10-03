@@ -21,6 +21,8 @@ claude
 /work Add retry logic to the API client
 ```
 
+From a terminal, `agentic-swe work status` shows the active work item. `agentic-swe work init` starts a new item on the lean track. If `pipeline.acceptance_command` is set in `.worklogs/<id>/state.json`, the step from validation to pull-request creation runs that command and does not advance when it exits non-zero.
+
 The pipeline automatically:
 - Creates a work branch (`work/add-retry-logic`)
 - Runs **feasibility analysis** (scans the repo, identifies relevant files, detects ambiguity)

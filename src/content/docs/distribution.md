@@ -2,7 +2,7 @@
 
 How people get the pack today. Publishing mechanics for maintainers are on the [Release checklist](release-checklist.md).
 
-Current pack **3.3.1** includes [merged pull request #71](https://github.com/agentic-swe/agentic-swe/pull/71). The GitHub installer tracks `main` and installs that version.
+Current pack **3.4.0** is the GitHub `main` line ([pull request #73](https://github.com/agentic-swe/agentic-swe/pull/73)). The GitHub installer tracks `main` and installs that version. `agentic-swe work status` shows the active work item.
 
 ## Channels you can use
 
@@ -13,7 +13,7 @@ Current pack **3.3.1** includes [merged pull request #71](https://github.com/age
 | **Cursor local plugin** | Setup writes **`~/.cursor/plugins/local/agentic-swe`**. |
 | **Source checkout** | Clone [agentic-swe/agentic-swe](https://github.com/agentic-swe/agentic-swe) to develop the pack or to run setup from that tree. |
 | **This site** | Guides and reference at [agentic-swe.github.io/agentic-swe](https://agentic-swe.github.io/agentic-swe/). |
-| **npm** | Package **`@agentic-swe/agentic-swe`**. Use it when **`npm view @agentic-swe/agentic-swe version`** reports **3.3.1**. Until then, use the GitHub installer. |
+| **npm** | Optional mirror **`@agentic-swe/agentic-swe`**. Use it only when **`npm view @agentic-swe/agentic-swe version`** reports **3.4.0**. Until then, use the GitHub installer. |
 
 Gemini CLI still loads **`gemini-extension.json`** and **`GEMINI.md`**. That context file is not the Antigravity hook adapter.
 
