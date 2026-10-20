@@ -3,8 +3,15 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { applyRouteMeta, escapeHtml, renderRobots, renderSitemap, writeRoutePages } from '../scripts/emit-route-pages.mjs'
-import { publicRoutes, readRegistrySource } from '../scripts/site-routes.mjs'
+import {
+  applyRouteMeta,
+  escapeHtml,
+  renderRobots,
+  renderRss,
+  renderSitemap,
+  writeRoutePages,
+} from '../scripts/emit-route-pages.mjs'
+import { BLOG_POSTS, publicRoutes, readRegistrySource } from '../scripts/site-routes.mjs'
 
 const shell = `<!doctype html>
 <html lang="en">
@@ -82,4 +89,8 @@ test('every public route is emitted as a directory index plus sitemap and robots
   assert.equal(robots, renderRobots(base))
   assert.match(robots, /^Sitemap: https:\/\/agentic-swe.github.io\/agentic-swe\/sitemap.xml$/m)
   assert.equal(fs.existsSync(path.join(distDir, '404.html')), true)
+
+  const rss = fs.readFileSync(path.join(distDir, 'rss.xml'), 'utf8')
+  assert.equal(rss, renderRss(BLOG_POSTS, base))
+  assert.equal(rss.match(/<item>/g)?.length ?? 0, BLOG_POSTS.length)
 })

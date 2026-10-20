@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
+  BLOG_POSTS,
   absoluteRouteUrl,
   publicRoutes,
   readRegistrySource,
@@ -90,11 +91,53 @@ export function renderRobots(base) {
   return `User-agent: *\nAllow: /\n\nSitemap: ${siteFileUrl('/sitemap.xml', base)}\n`
 }
 
+/** RFC 822 date at midnight UTC; posts carry calendar dates, not times. */
+function rssDate(isoDate) {
+  const date = new Date(`${isoDate}T00:00:00Z`)
+  if (Number.isNaN(date.getTime())) throw new Error(`invalid blog post date ${isoDate}`)
+  return date.toUTCString()
+}
+
+/** RSS 2.0 feed. `lastBuildDate` is the newest post date so rebuilds stay byte-identical. */
+export function renderRss(posts, base) {
+  const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date))
+  const blogUrl = escapeHtml(absoluteRouteUrl('/blog', base))
+  const feedUrl = escapeHtml(siteFileUrl('/rss.xml', base))
+  const items = sorted
+    .map((post) => {
+      const url = escapeHtml(absoluteRouteUrl(`/blog/${post.slug}`, base))
+      return [
+        '    <item>',
+        `      <title>${escapeHtml(post.title)}</title>`,
+        `      <link>${url}</link>`,
+        `      <guid isPermaLink="true">${url}</guid>`,
+        `      <pubDate>${rssDate(post.date)}</pubDate>`,
+        `      <description>${escapeHtml(post.description)}</description>`,
+        '    </item>',
+      ].join('\n')
+    })
+    .join('\n')
+  const lastBuild = sorted[0] ? `\n    <lastBuildDate>${rssDate(sorted[0].date)}</lastBuildDate>` : ''
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Agentic SWE blog</title>
+    <link>${blogUrl}</link>
+    <description>Release notes, design decisions, and field notes for the Agentic SWE local workflow pack.</description>
+    <language>en</language>
+    <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />${lastBuild}
+${items}
+  </channel>
+</rss>
+`
+}
+
 export function writeRoutePages({
   distDir,
   indexHtml,
   routes,
   base,
+  posts = BLOG_POSTS,
 }) {
   fs.mkdirSync(distDir, { recursive: true })
   const written = []
@@ -116,7 +159,8 @@ export function writeRoutePages({
   }
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), renderSitemap(routes, base))
   fs.writeFileSync(path.join(distDir, 'robots.txt'), renderRobots(base))
-  written.push('sitemap.xml', 'robots.txt')
+  fs.writeFileSync(path.join(distDir, 'rss.xml'), renderRss(posts, base))
+  written.push('sitemap.xml', 'robots.txt', 'rss.xml')
   return written
 }
 

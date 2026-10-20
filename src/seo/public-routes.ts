@@ -1,3 +1,4 @@
+import { BLOG_POSTS } from '../blog/posts.js'
 import { DOC_REGISTRY, isDocSlug } from '../docs/registry'
 import { MARKETING_ROUTES, type MarketingRoute } from './marketing-routes.js'
 
@@ -19,10 +20,22 @@ export function docRoute(slug: string): PublicRoute | null {
   }
 }
 
+export function blogRoute(slug: string): PublicRoute | null {
+  const post = BLOG_POSTS.find((item) => item.slug === slug)
+  if (!post) return null
+  return {
+    path: `/blog/${post.slug}`,
+    title: `${post.title} · Agentic SWE`,
+    description: post.description,
+  }
+}
+
 export function routeForPath(pathname: string): PublicRoute | null {
   const path = normalizePath(pathname)
   const marketing = MARKETING_ROUTES.find((route) => route.path === path)
   if (marketing) return marketing
+  const blogMatch = /^\/blog\/([^/]+)$/.exec(path)
+  if (blogMatch) return blogRoute(blogMatch[1] ?? '')
   const docMatch = /^\/docs\/([^/]+)$/.exec(path)
   if (!docMatch) return null
   return docRoute(docMatch[1] ?? '')

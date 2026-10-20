@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
 /** GitHub project Pages: `https://<owner>.github.io/<repo>/` → set `VITE_BASE=/<repo>/` when building. */
@@ -38,12 +38,49 @@ function directoryIndexRedirect(): Plugin {
   }
 }
 
+const DEFAULT_PLAUSIBLE_SRC = 'https://plausible.io/js/script.js'
+
+/**
+ * Cookieless Plausible pageviews, only when `VITE_PLAUSIBLE_DOMAIN` is set.
+ * The script records history navigation itself, so SPA route changes count without app code.
+ */
+function plausibleAnalytics(domain: string | undefined, src: string | undefined): Plugin {
+  const dataDomain = domain?.trim()
+  const scriptSrc = src?.trim() || DEFAULT_PLAUSIBLE_SRC
+  if (dataDomain && !/^[a-z0-9.-]+(,[a-z0-9.-]+)*$/i.test(dataDomain)) {
+    throw new Error(`VITE_PLAUSIBLE_DOMAIN must be a comma-separated list of hostnames, got "${dataDomain}"`)
+  }
+  if (dataDomain && !/^https:\/\/[^\s"'<>]+$/.test(scriptSrc)) {
+    throw new Error(`VITE_PLAUSIBLE_SRC must be an https URL, got "${scriptSrc}"`)
+  }
+  return {
+    name: 'plausible-analytics',
+    transformIndexHtml() {
+      if (!dataDomain) return []
+      return [
+        {
+          tag: 'script',
+          attrs: { defer: true, 'data-domain': dataDomain, src: scriptSrc },
+          injectTo: 'head',
+        },
+      ]
+    },
+  }
+}
+
 // Production bundle → site/dist/ (deploy this folder, not the whole site/ tree).
-export default defineConfig({
-  plugins: [react(), directoryIndexRedirect()],
-  base: viteBase(),
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-  },
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_')
+  return {
+    plugins: [
+      react(),
+      directoryIndexRedirect(),
+      plausibleAnalytics(env.VITE_PLAUSIBLE_DOMAIN, env.VITE_PLAUSIBLE_SRC),
+    ],
+    base: viteBase(),
+    build: {
+      outDir: 'dist',
+      emptyOutDir: true,
+    },
+  }
 })
