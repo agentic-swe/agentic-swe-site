@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { BLOG_POSTS } from '../src/blog/posts.js'
 import { MARKETING_ROUTES } from '../src/seo/marketing-routes.js'
 
 /** Keep in sync with `SITE_ORIGIN` in src/data/project-status.ts */
@@ -12,7 +13,7 @@ export const LEGACY_BASE = '/agentic-swe-site/'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
-export { MARKETING_ROUTES }
+export { BLOG_POSTS, MARKETING_ROUTES }
 
 export function viteBase(raw = process.env.VITE_BASE) {
   const value = raw?.trim()
@@ -98,9 +99,17 @@ export function docRoutesFromRegistry(source) {
   })
 }
 
-export function publicRoutes(source = readRegistrySource()) {
+export function blogRoutes(posts = BLOG_POSTS) {
+  return posts.map((post) => ({
+    path: `/blog/${post.slug}`,
+    title: `${post.title} · Agentic SWE`,
+    description: post.description,
+  }))
+}
+
+export function publicRoutes(source = readRegistrySource(), posts = BLOG_POSTS) {
   const docs = docRoutesFromRegistry(source)
-  const routes = [...MARKETING_ROUTES, ...docs]
+  const routes = [...MARKETING_ROUTES, ...blogRoutes(posts), ...docs]
   const seen = new Set()
   for (const route of routes) {
     if (seen.has(route.path)) throw new Error(`duplicate public route ${route.path}`)

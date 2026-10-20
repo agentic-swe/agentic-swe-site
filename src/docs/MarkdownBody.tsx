@@ -17,7 +17,12 @@ function isInAppPath(to: string): boolean {
     path === '/support' ||
     path === '/documentation' ||
     path === '/capabilities' ||
-    path === '/product'
+    path === '/product' ||
+    path === '/evaluate' ||
+    path === '/workspace' ||
+    path === '/blog' ||
+    path.startsWith('/blog/') ||
+    path === '/waitlist'
   )
 }
 

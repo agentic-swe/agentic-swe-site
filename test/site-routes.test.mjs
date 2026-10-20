@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  BLOG_POSTS,
   absoluteRouteUrl,
   docRoutesFromRegistry,
   parseDocSlugs,
@@ -25,7 +26,10 @@ test('public routes include marketing pages and every doc slug', () => {
     assert.match(route.title, / · Agentic SWE$/)
     assert.ok(route.description.length > 20)
   }
-  assert.equal(routes.length, MARKETING_ROUTES.length + parseDocSlugs(registry).length)
+  for (const post of BLOG_POSTS) {
+    assert.equal(paths.has(`/blog/${post.slug}`), true, post.slug)
+  }
+  assert.equal(routes.length, MARKETING_ROUTES.length + BLOG_POSTS.length + parseDocSlugs(registry).length)
 })
 
 test('doc descriptions are read from registry source, not invented', () => {

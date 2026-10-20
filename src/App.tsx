@@ -24,6 +24,11 @@ const WorkspacePage = lazy(() =>
 )
 const SupportPage = lazy(() => import('./pages/SupportPage').then((module) => ({ default: module.SupportPage })))
 const EvaluatePage = lazy(() => import('./pages/EvaluatePage').then((module) => ({ default: module.EvaluatePage })))
+const BlogPage = lazy(() => import('./pages/BlogPage').then((module) => ({ default: module.BlogPage })))
+const BlogPostPage = lazy(() =>
+  import('./pages/BlogPostPage').then((module) => ({ default: module.BlogPostPage })),
+)
+const WaitlistPage = lazy(() => import('./pages/WaitlistPage').then((module) => ({ default: module.WaitlistPage })))
 
 /** Matches `base` in `vite.config.ts` (e.g. GitHub Pages subpath). Root deploy uses `undefined`. */
 const routerBasename =
@@ -64,6 +69,9 @@ export default function App() {
             <Route path="/product" element={<Suspense fallback={<RouteLoading />}><ProductPage /></Suspense>} />
             <Route path="/workspace" element={<Suspense fallback={<RouteLoading />}><WorkspacePage /></Suspense>} />
             <Route path="/evaluate" element={<Suspense fallback={<RouteLoading />}><EvaluatePage /></Suspense>} />
+            <Route path="/blog" element={<Suspense fallback={<RouteLoading />}><BlogPage /></Suspense>} />
+            <Route path="/blog/:slug" element={<Suspense fallback={<RouteLoading />}><BlogPostPage /></Suspense>} />
+            <Route path="/waitlist" element={<Suspense fallback={<RouteLoading />}><WaitlistPage /></Suspense>} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

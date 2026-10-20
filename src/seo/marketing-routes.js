@@ -1,4 +1,4 @@
-/** Static public routes. Doc slugs are added from src/docs/registry.ts at build time. */
+/** Static public routes. Doc slugs (src/docs/registry.ts) and blog posts (src/blog/posts.js) are added at build time. */
 export const MARKETING_ROUTES = [
   {
     path: '/',
@@ -47,5 +47,17 @@ export const MARKETING_ROUTES = [
     title: 'Evaluate the project · Agentic SWE',
     description:
       'A plain-language evaluation path for developers, managers, security, stakeholders, and partners. Open source, no hosted runtime, no fabricated traction or ROI.',
+  },
+  {
+    path: '/blog',
+    title: 'Blog · Agentic SWE',
+    description:
+      'Release notes, design decisions, and field notes for the Agentic SWE local workflow pack. Available as an RSS feed.',
+  },
+  {
+    path: '/waitlist',
+    title: 'Team and Enterprise waitlist · Agentic SWE',
+    description:
+      'Join the waitlist for optional paid Team and Enterprise auditor features. The open-source pack stays MIT and local.',
   },
 ]

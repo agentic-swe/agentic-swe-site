@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import logoMarkSrc from '../assets/logo-mark.svg?url'
+import { rssHref } from '../blog/format'
 import { SOURCE_REPO, SOURCE_VERSION } from '../data/project-status'
 import { AmbientBackground } from './AmbientBackground'
 import { SetupButton } from './SetupButton'
@@ -73,6 +74,9 @@ export function PageShell() {
               <NavLink to="/workspace" className={navClass}>
                 Workspace
               </NavLink>
+              <NavLink to="/blog" className={navClass}>
+                Blog
+              </NavLink>
               <SetupButton className="nav-cta" />
             </div>
           </nav>
@@ -94,6 +98,12 @@ export function PageShell() {
               <Link to="/documentation">Documentation</Link>
               <Link to="/support">Support</Link>
               <a href={sitemapHref}>Sitemap</a>
+            </nav>
+            <nav aria-label="News and plans">
+              <p className="footer-nav-label">Updates</p>
+              <Link to="/blog">Blog</Link>
+              <a href={rssHref}>RSS feed</a>
+              <Link to="/waitlist">Team waitlist</Link>
             </nav>
             <nav aria-label="Maintainer documentation">
               <p className="footer-nav-label">Maintainers</p>

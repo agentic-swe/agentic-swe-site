@@ -57,6 +57,9 @@ if (!fs.existsSync(distIndex)) {
   if (!sitemap.includes(`<loc>${absoluteRouteUrl('/evaluate', base)}</loc>`)) missing.push('sitemap evaluate')
   if (!sitemap.includes(absoluteRouteUrl('/docs/installation', base))) missing.push('sitemap installation')
   if (!robots.includes(`Sitemap: ${sitemapUrl}`)) missing.push('robots sitemap')
+  const rssPath = path.join(root, 'dist/rss.xml')
+  const rss = fs.existsSync(rssPath) ? fs.readFileSync(rssPath, 'utf8') : ''
+  if (!rss.includes(`<link>${absoluteRouteUrl('/blog', base)}</link>`)) missing.push('rss feed')
   if (missing.length) fail(`generated route audit failed:\n${missing.join('\n')}`)
   else console.log(`audit: ${routes.length} routes, sitemap, and robots checked under dist/ (base ${base})`)
 }
