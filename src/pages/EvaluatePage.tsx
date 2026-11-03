@@ -136,9 +136,8 @@ export function EvaluatePage() {
         <div>
           <dt>Approval</dt>
           <dd>
-            <code>approval-wait</code> stops until a person approves, requests changes, or rejects. After approval,
-            the governed workflow can continue to completed, including the merge step. The project does not approve
-            itself.
+            <code>approval-wait</code> requires a human approval record before <code>completed</code> (branch
+            protection is separate). After approval, the governed workflow can continue, including the merge step.
           </dd>
         </div>
         <div>

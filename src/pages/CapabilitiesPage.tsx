@@ -50,7 +50,6 @@ const GROUPS: Group[] = [
           'Procedures are captured from validated work, so the source is a run that actually passed.',
           'A fail-closed eval gate blocks unevaluated procedures from autonomous use.',
           'Promotion to L0 requires two successes or explicit human approval; procedures that stop working are demoted.',
-          'Token reduction is measured by the benchmark suite in the pack repository, not asserted.',
         ],
         docSlug: 'durable-memory',
         body: <>The second time a shape of work appears, the runtime replays it rather than rediscovering it.</>,
@@ -73,8 +72,8 @@ const GROUPS: Group[] = [
         summary:
           'On the rigorous track, architect, security, and adversarial reviewers run in parallel and their findings merge into one design-panel-review artifact.',
         benefits: [
-          'Three independent perspectives cost roughly the wall-clock time of one.',
-          'The security reviewer catches vulnerabilities before implementation, not at code-review.',
+          'Reviewers can run in parallel where the host supports it.',
+          'A security reviewer examines the design before implementation.',
           'The adversarial reviewer stress-tests assumptions the architect treats as given.',
           'The Hypervisor resolves conflicts between reviewers, so one accountable decision comes out.',
         ],
@@ -169,7 +168,7 @@ const GROUPS: Group[] = [
           'An optional fourth panel axis that invokes an independent model CLI under sandbox-read-only safety.',
         benefits: [
           'A second architecture reduces the blind spots a single model shares with itself.',
-          'Sandbox-read-only execution prevents the external CLI from modifying the repository.',
+          'Runs external CLIs in their read-only / plan modes.',
           'Authorisation is per invocation, so you decide when it runs.',
           'Findings merge into the main review artifact instead of becoming a separate report.',
         ],

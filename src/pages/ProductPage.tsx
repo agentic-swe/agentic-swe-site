@@ -26,7 +26,7 @@ const OUTCOMES: ReadonlyArray<{ title: string; body: string }> = [
 
 const NOT_CLAIMS: ReadonlyArray<string> = [
   'It is not a hosted service. There is no multi-tenant cloud running your pipeline; your editor session, git, and CI are the runtime.',
-  'It does not approve its own merge. approval-wait stops until a person approves, requests changes, or rejects. After approval, the same governed workflow can continue to completed and proceed to merge.',
+  '`approval-wait` requires a human approval record before `completed` (branch protection is separate).',
   'It is not a model. Agentic SWE governs whichever assistant you already pay for.',
   'It does not silently reuse memory. Unevaluated procedures are never replayed, and promotion needs two successes or a human approval.',
 ]

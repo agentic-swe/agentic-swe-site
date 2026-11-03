@@ -191,7 +191,7 @@
   <!-- F: governance -->
   <section class="scene" id="sF">
     <div class="eyebrow" style="color: var(--gate)">// governance</div>
-    <div class="h2">Nothing ships <em style="color: var(--gate)">without a person</em></div>
+    <div class="h2">Work stops for a person <em style="color: var(--gate)">before it counts as approved</em></div>
     <div class="gov">
       <div class="checks">
         <div class="check" id="ck0"><span class="check__box">✓</span>/check budget</div>
@@ -283,8 +283,8 @@ const CATS = [
 $('cats').innerHTML = CATS.map(([l, c], i) => `<div class="cat" id="cat${i}">${l}<b>${c}</b></div>`).join('');
 
 const LADDER = [
-  ['L3', 'Deliberate', '~200K tokens', 1.0], ['L2', 'Assist', '~8K tokens', 0.62],
-  ['L1', 'Recall', '~1.5K tokens', 0.42], ['L0', 'Reflex', '0 tokens', 0.16],
+  ['L3', 'Deliberate', 'default budget estimate (configurable)', 1.0], ['L2', 'Assist', 'default budget estimate (configurable)', 0.62],
+  ['L1', 'Recall', 'default budget estimate (configurable)', 0.42], ['L0', 'Reflex', 'default budget estimate (configurable)', 0.16],
 ];
 $('ladder').innerHTML = LADDER.map(([t, n, c], i) =>
   `<div class="rung" id="rg${i}"><div class="rung__bar" id="rg${i}b"></div><div class="rung__tier" id="rg${i}t">${t}</div><div class="rung__name">${n}</div><div class="rung__cost">${c}</div></div>`).join('');

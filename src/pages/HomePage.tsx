@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Hero, InstallPlatforms } from '../components/Hero'
 import { PipelineViz } from '../components/PipelineViz'
 import { CATALOG_COUNTS, CATALOG_TOTAL } from '../data/catalog-counts'
+import { GITHUB_REPO_MAIN } from '../docs/registry'
 
 const AUDIENCE_PATHS: ReadonlyArray<{ id: string; title: string; note: string }> = [
   { id: 'developers', title: 'Developers', note: 'Install it and run one work item' },
@@ -35,6 +36,8 @@ const RECEIPT_DECISIONS: ReadonlyArray<{ edge: string; cost: string; evidence: s
   { edge: 'approval-wait → completed', cost: '$0.00', evidence: 'approved by a human reviewer' },
 ]
 
+const DESCENT_DEFAULT_CONFIG = `${GITHUB_REPO_MAIN}/config/descent.default.json`
+
 const LADDER: ReadonlyArray<{
   tier: string
   name: string
@@ -44,25 +47,25 @@ const LADDER: ReadonlyArray<{
   {
     tier: 'L0',
     name: 'Reflex',
-    cost: '0 tokens',
+    cost: 'default budget estimate (configurable)',
     desc: 'Replay a recorded procedure, the repo map, an engine transition, or the lint and test oracle. No model call at all.',
   },
   {
     tier: 'L1',
     name: 'Recall',
-    cost: '~1.5K tokens',
+    cost: 'default budget estimate (configurable)',
     desc: 'A procedure matches closely enough to verify rather than re-derive. Memory supplies the context.',
   },
   {
     tier: 'L2',
     name: 'Assist',
-    cost: '~8K tokens',
+    cost: 'default budget estimate (configurable)',
     desc: 'Memory-guided verification and repo-map test selection narrow the work before the model sees it.',
   },
   {
     tier: 'L3',
     name: 'Deliberate',
-    cost: '~200K tokens',
+    cost: 'default budget estimate (configurable)',
     desc: 'The frontier model reasons from scratch. This is the tier every new problem starts on.',
   },
 ]
@@ -221,7 +224,11 @@ export function HomePage() {
             <li key={level.tier} className={`ladder__level ladder__level--${level.tier.toLowerCase()}`}>
               <p className="ladder__tier">{level.tier}</p>
               <h3 className="ladder__name">{level.name}</h3>
-              <p className="ladder__cost">{level.cost}</p>
+              <p className="ladder__cost">
+                <a href={DESCENT_DEFAULT_CONFIG} target="_blank" rel="noopener noreferrer">
+                  {level.cost}
+                </a>
+              </p>
               <p className="ladder__desc">{level.desc}</p>
             </li>
           ))}
@@ -239,7 +246,7 @@ export function HomePage() {
         <header className="home-section__head">
           <p className="section-label">// governance</p>
           <h2 id="governance-title" className="home-section__title">
-            Nothing ships without a person
+            Work stops for a person before it counts as approved.
           </h2>
           <p className="home-section__lead">
             The primary session is the Hypervisor: it owns <code>state.json</code>, runs the enforcement steps,
